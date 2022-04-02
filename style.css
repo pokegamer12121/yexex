@@ -1,22 +1,22 @@
 @font-face {
-  font-family: sfuidisplay;
-  src: url(https://raw.githubusercontent.com/squid-app/desktop/master/src/fonts/SF-UI-Display-Regular.ttf);
+  font-family: arista;
+  src: url("arista-new.otf") format("opentype");
 }
 
 h1 {
     text-align: center;
-    color: black;
+    color: white;
     font-size: 40px;
 }
 
 h2 {
-    color: black;
+    color: white;
     text-align: center;
 }
 
 body {
-    background-color: #555;
-    font-family: sfuidisplay;
+    background-color: #444;
+    font-family: arista;
 }
 
 p {
@@ -26,10 +26,8 @@ p {
 }
 
 h3 {
-    color: floralwhite;
-    font-size: 26px;
-    text-decoration: underline;
-    text-decoration-style: dotted;
+    color: white;
+    font-size: 25px;
     text-align: center
 }
 
@@ -38,7 +36,7 @@ h3 {
 
 a {
     font-size: 22.5px;
-    color: yellowgreen;
+    color: dodgerblue;
     text-decoration: transparent;
     display: flex;
     justify-content: center;
@@ -46,13 +44,14 @@ a {
 }
 
 a:hover {
-    color: greenyellow;
+    color: deepskyblue;
     text-shadow: 0px 0px 8px;
+    transform: scale(1.05);
 }
 
 a.b {
     font-size: 22.5px;
-    color: yellowgreen;
+    color: dodgerblue;
     text-decoration: transparent;
     display: flex;
     justify-content: center;
@@ -60,13 +59,14 @@ a.b {
 }
 
 a.b:hover {
-    color: greenyellow;
+    color: deepskyblue;
     text-shadow: 0px 0px 8px;
+    transform: scale(1.05);
 }
 
 a.c {
     font-size: 22.5px;
-    color: yellowgreen;
+    color: dodgerblue;
     text-decoration: transparent;
     display: flex;
     justify-content: left;
@@ -75,8 +75,9 @@ a.c {
 }
 
 a.c:hover {
-    color: greenyellow;
+    color: deepskyblue;
     text-shadow: 0px 0px 8px;
+    transform: scale(1.05);
 }
 
 h4 {
@@ -97,9 +98,4 @@ iframe {
     width: 1000px;
     height: 562.45px;
     display:block;
-}
-
-a.gameboy {
-    font-size: 15px;
-    color: darkblue;
 }
