@@ -200,7 +200,7 @@ window.onload = function() {
 }
 
 function downloadBIOS() {
-    downloadFile("Binaries/gba_bios.bin", registerBIOS);
+    downloadFile("https://smangames.xyz/game/gameboy/Binaries/gba_bios.bin", registerBIOS);
 }
 
 function registerBIOS() {
@@ -210,7 +210,7 @@ function registerBIOS() {
 
 function downloadROM(gamename) {
     writeRedTemporaryText("Downloading \"" + games[gamename] + ".\"");
-    downloadFile("Binaries/" + gamename + ".gba", registerROM);
+    downloadFile("https://smangames.xyz/game/gameboy/Binaries/" + gamename + ".gba", registerROM);
 }
 
 function registerROM() {
