@@ -1,0 +1,231 @@
+/* New Font */
+
+@font-face {
+  font-family: arista;
+  src: url("arista-new.otf") format("opentype");
+}
+
+/* Background Color And Set Font */
+
+body {
+  background-color: #2e2e2e;
+  font-family: arista;
+}
+
+/* Nav Bar */
+
+nav.bar {
+  overflow: auto;
+  width: 100%;
+  background-color: #555;
+  border-radius: 15px;
+  animation-name: swap-bottom;
+  animation-duration: 0.75s;
+}
+
+/* Nav Bar Link */
+
+nav.bar a {
+  padding: 12px;
+  display: inline-block;
+  color: white;
+  text-decoration: transparent;
+  float: left;
+  transition: 0.5s all;
+  animation-name: swap-top;
+  animation-duration: 0.75s;
+}
+
+nav.bar a:hover {
+  padding: 12px;
+  color: rgb(50, 150, 255);
+  text-shadow: 0px 0px 8px rgb(50, 150, 255);
+  display: inline-block;
+  text-decoration: transparent;
+  transform: scale(1.05);
+  float: left;
+  animation-name: swap-top;
+  animation-duration: 0.75s;
+} 
+
+nav.bar a.active {
+  padding: 12px;
+  float: left;
+  color: rgb(50, 150, 255);
+  text-shadow: 0px 0px 8px rgb(50, 150, 255);
+  text-decoration: transparent;
+  display: inline-block;
+  animation-name: swap-top;
+  animation-duration: 0.75s;
+}
+
+/* Headers */
+
+h1 {
+  text-align: center;
+  color: white;
+  text-shadow: 3px 1px rgb(50, 150, 255);
+  font-size: 45px;
+  margin-top: 75px;
+  animation-name: swap-right;
+  animation-duration: 1.25s;
+}
+
+h1.left {
+  text-align: left;
+  color: white;
+  text-shadow: 3px 1px rgb(50, 150, 255);
+  font-size: 45px;
+  margin-top: 75px;
+  animation-name: swap-right;
+  animation-duration: 1s;
+}
+
+/* Paragraph */
+
+p {
+  width: 100%;
+  text-align: center;
+  color: whitesmoke;
+  text-shadow: 2px 1px rgb(50, 150, 255);
+  animation-name: swap-right;
+  animation-duration: 1.25s;
+}
+
+p.left {
+  width: 100%;
+  text-align: left;
+  color: whitesmoke;
+  text-shadow: 2px 1px rgb(50, 150, 255);
+  animation-name: swap-right;
+  animation-duration: 1s;
+}
+
+/* Profile Image */
+
+img.profile {
+  border-width: 5px;
+  border-color: blueviolet;
+  border-style: solid;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  box-shadow: 0px 0px 20px blueviolet;
+  animation-name: imgpopout;
+  animation-duration: 2.25s;
+}
+
+/* Game Link */
+
+a.game {
+  color: white;
+  border-radius: 15px;
+  background-color: #555;
+  text-decoration: transparent;
+  margin-right: 1%;
+  margin-top: 1%;
+  display: inline-block;
+  padding: 16px;
+  transition: 0.5s all;
+  animation-name: fadein;
+  animation-duration: 1s;
+}
+
+a.game:hover {
+  background-color: #666;
+  transform: scale(1.2);
+}
+
+/* Bookmarklet Buttons */
+
+a.bmrklet {
+  color: white;
+  border-radius: 15px;
+  background-color: #555;
+  text-decoration: transparent;
+  margin-right: 1%;
+  margin-top: 1%;
+  display: inline-block;
+  padding: 16px;
+  transition: 0.5s all;
+  animation-name: fadein;
+  animation-duration: 1s;
+}
+
+a.bmrklet:hover {}
+
+/* Horizontal Line */
+
+hr {
+  border-color: white;
+  animation-name: flowout;
+  animation-duration: 1.25s;
+}
+
+/* Hello! (Text) */
+
+#rnbw {
+  display: inline;
+}
+
+#rnbw:hover #y {
+  animation: hrn 7s linear infinite;
+  text-shadow: none;
+}
+#rnbw:hover #e {
+  animation: hrn 8s linear infinite;
+  text-shadow: none;
+}
+#rnbw:hover #x {
+  animation: hrn 9s linear infinite;
+  text-shadow: none;
+}
+
+/* Animations */
+
+@keyframes imgpopout {
+  0% { width: 0px; height: 0px; }
+  100% { width: 100px; height: 100px; } 
+}
+
+@keyframes flowout {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes fadein {
+  from { transform: scale(0.8); filter: blur(4px); }
+  to { transform: scale(1); filter: blur(0px); }
+}
+
+@keyframes hrn {
+  0% { color: #ff0000; }
+  10% { color: #ff7300; }
+  20% { color: #fffb00; }
+  30% { color: #d4ff00; }
+  40% { color: #48ff00; }
+  50% { color: #00ffd5; }
+  60% { color: #00d5ff; }
+  70% { color: #002bff; }
+  80% { color: #7a00ff; }
+  90% { color: #ff00c8; }
+  100% { color: #ff0000; }
+}
+
+@keyframes swap-bottom {
+  0% { transform: translateX(0) translateY(-100%); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes swap-top {
+  0% { transform: translateX(0) translateY(100%); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes swap-right {
+  0% { transform: translateX(-100%) translateY(0); }
+  100% { transform: translateX(0) translateY(0); }
+}

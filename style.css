@@ -1,0 +1,105 @@
+@font-face {
+  font-family: sfuidisplay;
+  src: url(https://raw.githubusercontent.com/squid-app/desktop/master/src/fonts/SF-UI-Display-Regular.ttf);
+}
+
+h1 {
+    text-align: center;
+    color: black;
+    font-size: 40px;
+}
+
+h2 {
+    color: black;
+    text-align: center;
+}
+
+body {
+    background-color: #555;
+    font-family: sfuidisplay;
+}
+
+p {
+    font-size: 22px;
+    color: crimson;
+    text-align: center;
+}
+
+h3 {
+    color: floralwhite;
+    font-size: 26px;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-align: center
+}
+
+
+/* Make sure check that the classes are in the right spots */
+
+a {
+    font-size: 22.5px;
+    color: yellowgreen;
+    text-decoration: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a:hover {
+    color: greenyellow;
+    text-shadow: 0px 0px 8px;
+}
+
+a.b {
+    font-size: 22.5px;
+    color: yellowgreen;
+    text-decoration: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a.b:hover {
+    color: greenyellow;
+    text-shadow: 0px 0px 8px;
+}
+
+a.c {
+    font-size: 22.5px;
+    color: yellowgreen;
+    text-decoration: transparent;
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    bottom: 0px;
+}
+
+a.c:hover {
+    color: greenyellow;
+    text-shadow: 0px 0px 8px;
+}
+
+h4 {
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    text-decoration: underline;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+iframe {
+    border-radius: 10px;
+    border: 3px solid black;
+    margin: 0 auto;
+    width: 1000px;
+    height: 562.45px;
+    display:block;
+}
+
+a.gameboy {
+    font-size: 15px;
+    color: darkblue;
+}
