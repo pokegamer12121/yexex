@@ -59,7 +59,7 @@ function registerGUIEvents() {
     addEvent("input", document.getElementById("speedset"), speedChangeFunc);
     addEvent("click", document.getElementById("fullscreen"), toggleFullScreen);
     addEvent("click", document.getElementById("home"), function() {
-        window.open(url, "_self");
+        window.open("../games.html", "_self");
     });
     addEvent("click", document.getElementById("key_a"), function() {
         IodineGUI.toMap = IodineGUI.defaults.keyZonesGBA;
