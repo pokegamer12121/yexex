@@ -25,17 +25,21 @@ body {
   margin-top:75px;
 }
 
-body::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 0.4rem;
   height: 0.6rem;
 }
 
-body::-webkit-scrollbar-track {
-  background: #1e1e24;
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
 }
 
-body::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background:rgb(50, 150, 255);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:rgb(9, 106, 211);
 }
 
 /* Nav Bar */
