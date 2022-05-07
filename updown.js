@@ -85,7 +85,6 @@ var lmao = 0;
 
 var lol = 0;
 var numpad = {
-  // (A) CREATE NUMPAD HTML
   hwrap: null, // numpad wrapper container
   hpad: null, // numpad itself
   hdisplay: null, // number display
