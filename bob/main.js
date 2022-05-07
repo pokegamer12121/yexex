@@ -23401,7 +23401,7 @@
                     Ua.instance.OnPlayButtonPressed()
                 })) : (s = t.CreateMainButton("ArrowOutline.png", "CLASSIC MODE", -140, (function() {
                     Ua.instance.OnPlayButtonPressed()
-                })), a = t.CreateMainButton("VsOutline.png", "2 PLAYER", 140, (function() {
+                })), a = t.CreateMainButton("VsOutline.png", "2 PLAYERS", 140, (function() {
                     Ua.instance.On2PlayerButtonPressed()
                 })));
                 var u = t.CreateRoundButton("settings.png", (function() {
