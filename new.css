@@ -160,7 +160,8 @@ img.profile {
   height: 100px;
   margin-inline:auto;
   display: block;
-  animation: swap-right 1.5s;
+  animation-name: topper;
+  animation-duration: 1.25s;
 }
 
 img.yex {
@@ -172,7 +173,8 @@ img.yex {
   height: 100px;
   margin-inline:auto;
   display: block;
-  animation: swap-right 1.5s;
+  animation-name: topper;
+  animation-duration: 1.25s;
 }
 
 img.profile:hover {
@@ -228,6 +230,10 @@ a.bmrklet {
 }
 
 a.bmrklet:hover {}
+
+#list {
+  text-align:center;
+}
 
 /* Horizontal Line */
 
