@@ -12,7 +12,7 @@ html {
 }
 
 
-*:not(#ud, .bar a) {
+*:not(#ud, #nav a) {
   transition: 0.5s all;
 }
 
