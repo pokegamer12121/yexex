@@ -775,18 +775,41 @@ typeof window&&window.document?window.document.createElement("textarea"):l,$=/\0
 a;o.na=o.makeSaxParser=z;o.oa=o.makeTagPolicy=g;o.qa=o.normalizeRCData=p;o.ra=o.sanitize=function(a,b,c,e){return L(a,g(b,c,e))};o.sa=o.sanitizeAttribs=s;o.ta=o.sanitizeWithPolicy=L;o.ua=o.unescapeEntities=u;return o}(M),ba=Q.sanitize;"undefined"!==typeof window&&(window.html=Q,window.html_sanitize=ba);})();
 ;
 gadgets.config.init({"core.io":{"jsonProxyUrl":"//%host%/gadgets/makeRequest","proxyUrl":"//www.gmodules.com/gadgets/proxy/refresh=%refresh%&container=%container%%rewriteMime%&gadget=%gadget%/%rawurl%"},"shindig.auth":{"authToken":"","trustedJson":""},"core.util":{"core":{}}});
-</script><script>gadgets.Prefs.setMessages_({});gadgets.Prefs.setDefaultPrefs_({});gadgets.io.preloaded_=[];</script><link href="style.css" rel="stylesheet">
+</script><script>gadgets.Prefs.setMessages_({});gadgets.Prefs.setDefaultPrefs_({});gadgets.io.preloaded_=[];</script>
+    <link href="style.css" rel="stylesheet" type="text/css">
     <meta charset="utf-8">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <title>1v1.LOL</title>
-
-
-    
-    
-  
-    
-  </head><body dir="ltr"><script src="UnityProgress.js"></script><script src="UnityLoader.js"></script><script>
+  </head>
+  <body dir="ltr">
+    <script src="UnityLoader.js"></script>
+    <script>
       var gameInstance = UnityLoader.instantiate("gameContainer", "get.json", {onProgress: UnityProgress,Module:{onRuntimeInitialized: function() {UnityProgress(gameInstance, "complete")}}});
+    function UnityProgress(gameInstance, progress) {
+  if (!gameInstance.Module)
+    return;
+  if (!gameInstance.logo) {
+    gameInstance.logo = document.createElement("div");
+    gameInstance.logo.className = "logo " + gameInstance.Module.splashScreenStyle;
+    gameInstance.container.appendChild(gameInstance.logo);
+  }
+  if (!gameInstance.progress) {    
+    gameInstance.progress = document.createElement("div");
+    gameInstance.progress.className = "progress " + gameInstance.Module.splashScreenStyle;
+    gameInstance.progress.empty = document.createElement("div");
+    gameInstance.progress.empty.className = "empty";
+    gameInstance.progress.appendChild(gameInstance.progress.empty);
+    gameInstance.progress.full = document.createElement("div");
+    gameInstance.progress.full.className = "full";
+    gameInstance.progress.appendChild(gameInstance.progress.full);
+    gameInstance.container.appendChild(gameInstance.progress);
+  }
+  gameInstance.progress.full.style.width = (100 * progress) + "%";
+  gameInstance.progress.empty.style.width = (100 * (1 - progress)) + "%";
+  if (progress == 1) {
+    gameInstance.logo.style.display = gameInstance.progress.style.display = "none";
+  }
+}
     </script>
     <div class="webgl-content">
       <div id="gameContainer" style="width: 100%; height: 100%; margin: auto;"></div>
