@@ -134,6 +134,11 @@ h1.left {
   text-align: left;
 }
 
+p i {
+  cursor:text;
+  white-space: pre;
+}
+
 /* Paragraph */
 
 p {
@@ -151,9 +156,10 @@ p.left {
 
 /* Profile Images */
 
-img.profile {
+.prof {
   border-width: 5px;
-  border-color: yellow;
+  color: var(--clr);
+  border-color: currentColor;
   border-style: solid;
   border-radius: 50%;
   width: 100px;
@@ -164,26 +170,8 @@ img.profile {
   animation-duration: 1.25s;
 }
 
-img.yex {
-  border-width: 5px;
-  border-color: blueviolet;
-  border-style: solid;
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-  margin-inline:auto;
-  display: block;
-  animation-name: topper;
-  animation-duration: 1.25s;
-}
-
-img.profile:hover {
-  box-shadow: 0px 0px 20px yellow;
-  transform: translateY(-5%);
-}
-
-img.yex:hover {
-  box-shadow: 0px 0px 20px blueviolet;
+.prof:hover {
+  box-shadow: 0px 0px 20px currentColor;
   transform: translateY(-5%);
 }
 
