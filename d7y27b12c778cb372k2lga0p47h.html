@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <link href="new.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet"href="prism.css">
 </head>
 
 <body>
@@ -22,12 +23,176 @@
     <a href="mailto:152135@mcpsmd.net"><i class="fa fa-fw fa-envelope"></i></a>
     <a class="active"><i class="fa fa-fw fa-unlock"></i></a>
   </nav>
-    <h1>Welcome <a class="rnbw"><span id="y">Y</span><span id="e">e</span><span id="x">x</span></a>!</h1>
-  <form action="ide.php" method="post">
-    <input type="text" name="name" placeholder="Test" />
-    <input type="submit" />
-  </form>
+  <div id="center">
+  <div id="ide" style="animation-name:topper;animation-duration:1s;">
+  <textarea placeholder="Enter HTML Source Code" id="editing-html" spellcheck="false" oninput="update(this.value, 'highlighting-content-html'); sync_scroll(this, 'highlighting-html');" onscroll="sync_scroll(this,'highlighting-html');" 
+onkeydown="check_tab(this, event);"></textarea>
+  <pre id="highlighting-html" aria-hidden="true">
+  <code class="language-html" id="highlighting-content-html">
+  </code>
+  </pre>
+  </div>
+  <div id="ide" style="animation-name:topper;animation-duration:1s;">
+  <textarea placeholder="Enter CSS Source Code" id="editing-css" spellcheck="false" oninput="update(this.value, 'highlighting-content-css'); sync_scroll(this, 'highlighting-css');" onscroll="sync_scroll(this,'highlighting-css');" 
+onkeydown="check_tab(this, event);"></textarea>
+  <pre id="highlighting-css" aria-hidden="true">
+  <code class="language-css" id="highlighting-content-css">
+  </code>
+  </pre>
+  </div> 
+  <div id="ide" style="animation-name:topper;animation-duration:1s;">
+  <textarea placeholder="Enter JavaScript Source Code" id="editing-js" spellcheck="false" oninput="update(this.value, 'highlighting-content-js'); sync_scroll(this, 'highlighting-js');" onscroll="sync_scroll(this, 'highlighting-js');" 
+onkeydown="check_tab(this, event);"></textarea>
+  <pre id="highlighting-js" aria-hidden="true">
+  <code class="language-javascript" id="highlighting-content-js">
+  </code>
+  </pre>
+  </div>
+  </div>
+  <br/>
+  <div id="center"> <a class="btn" onclick="exec('editing-html', 'html'); exec('editing-css', 'css'); exec('editing-js', 'js')">Execute Code</a> </div>
+  <br/>
+  <div id="center"> <iframe id="test" style="animation-name:topper;animation-duration:1s;" src="about:blank"></iframe> </div>
     
   <script src="updown.js"></script>
+  <script src="prism.js"></script>
+  <script>
+    let doc = document.getElementById('test').contentWindow.document;
+    doc.title="Code Exec";
+    var scrpt = doc.createElement('script');
+    var stylshit = doc.createElement('style');
+    const removeChildren = (parent) => {
+      while (parent.lastChild) {
+        parent.removeChild(parent.lastChild);
+      }
+    };
+    if(typeof localStorage.getItem('cdjs') != "undefined") {
+      document.getElementById('editing-js').textContent = localStorage.getItem('cdjs');
+      update(localStorage.getItem('cdjs'), 'highlighting-content-js');
+    }
+    if(typeof localStorage.getItem('cdhtml') != "undefined") {
+      document.getElementById('editing-html').textContent = localStorage.getItem('cdhtml');
+      update(localStorage.getItem('cdhtml'), 'highlighting-content-html');
+    }
+    if(typeof localStorage.getItem('cdcss') != "undefined") {
+      document.getElementById('editing-css').textContent = localStorage.getItem('cdcss');
+      update(localStorage.getItem('cdcss'), 'highlighting-content-css');
+    }
+    function exec(el, type) {
+      el = document.getElementById(el);
+      if(type == "js") {
+        localStorage.setItem('cdjs', el.value);
+        if(typeof doc.querySelector('#scrpt') == "undefined") {
+          scrpt.innerHTML = el.value;
+          scrpt.id="scrpt";
+          doc.body.appendChild(scrpt);
+        } else {
+          scrpt.remove();
+          scrpt=doc.createElement('script');
+          scrpt.innerHTML = el.value;
+          scrpt.id="scrpt";
+          doc.body.appendChild(scrpt);
+        }
+      } else if(type=="html") {
+        localStorage.setItem('cdhtml', el.value);
+        removeChildren(doc.body);
+        doc.body.insertAdjacentHTML('beforeend', el.value);
+      } else if(type=="css") {
+        localStorage.setItem('cdcss', el.value);
+        if(typeof doc.querySelector('#stylshit') == "undefined") {
+          stylshit.innerHTML = el.value;
+          stylshit.id="stylshit";
+          doc.body.appendChild(stylshit);
+        } else {
+          stylshit.remove();
+          stylshit=doc.createElement('style');
+          stylshit.innerHTML = el.value;
+          stylshit.id="stylshit";
+          doc.body.appendChild(stylshit);
+        }
+      }
+    }
+    function update(text, hel) {
+      let result_element = document.querySelector("#" + hel);
+      if(text[text.length-1] == "\n") {
+        text += " ";
+      }
+      result_element.innerHTML = text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;"); /* Global RegExp */
+      Prism.highlightElement(result_element);
+}
+
+  function sync_scroll(element, hel) {
+    let result_element = document.querySelector("#" + hel);
+    result_element.scrollTop = element.scrollTop;
+    result_element.scrollLeft = element.scrollLeft;
+  }
+
+let strt;
+let fnsh;  
+function check_tab(element, event) {
+  let code = element.value;
+  if(event.key == "Tab") {
+    /* Tab key pressed */
+    event.preventDefault(); // stop normal
+    let before_tab = code.slice(0, element.selectionStart); // text before tab
+    let after_tab = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let cursor_pos = element.selectionEnd + 1; // where cursor moves after tab - moving forward by 1 char to after tab
+    element.value = before_tab + "\t" + after_tab; // add tab char
+    // move cursor
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+  if(event.code == "Quote") {
+    var dble = event.key == '"';
+    event.preventDefault();
+    let before_add = code.slice(0, element.selectionStart); // text before tab
+    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let cursor_pos = element.selectionEnd + 1;
+    element.value = before_add + (dble ? '""' : "''") + after_add;
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    strt = cursor_pos;
+    fnsh = cursor_pos;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+  if(event.key == "Backspace" && element.selectionEnd == fnsh && element.selectionStart == strt) {
+    event.preventDefault();
+    let before_del = code.slice(0, element.selectionStart);
+    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let cursor_pos = element.selectionEnd - 1;
+    element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    strt = -1;
+    fnsh = -1;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+}
+  </script>
 </body>
 </html>

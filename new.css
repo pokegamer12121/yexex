@@ -28,6 +28,7 @@ body {
 ::-webkit-scrollbar {
   width: 0.4rem;
   height: 0.6rem;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -198,7 +199,7 @@ a.game {
 
 a.game:hover {
   background-color: #666;
-  transform: scale(1.1) translateY(-10%);
+  transform: scale(1.1) translateY(-5%);
 }
 
 /* Bookmarklet Buttons */
@@ -218,6 +219,36 @@ a.bmrklet {
 }
 
 a.bmrklet:hover {}
+
+
+a.btn {
+  color: white;
+  border-radius: 15px;
+  background-color: #555;
+  text-decoration: none;
+  margin-left: 10px;
+  margin-right: 1%;
+  margin-top: 1%;
+  display: inline-block;
+  padding: 16px;
+  font-size:20px;
+  animation-name: topper;
+  animation-duration: 1s;
+}
+
+a.btn:hover {
+  background-color: #666;
+  transform: scale(1.1);
+}
+
+a.btn:active {
+  background-color: #444;
+}
+
+#center {
+  display:flex;
+  justify-content: center;
+}
 
 #list {
   text-align:center;
