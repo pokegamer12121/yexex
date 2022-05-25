@@ -1,6 +1,6 @@
 @font-face {
   font-family: arista;
-  src: url("arista-new.otf") format("opentype");
+  src: url("arista-new.woff2") format("woff2");
 }
 
 h1 {

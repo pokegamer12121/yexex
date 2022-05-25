@@ -3,28 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Safe</title>
+  <title>IDE</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link href="new.css" rel="stylesheet" type="text/css" />
+  <link href="snackbar.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
   <link rel="stylesheet"href="prism.css">
 </head>
 
 <body>
   <nav class="bar" id="nav">
-    <h2><a class="rnbw"><span id="y">Y</span><span id="e">e</span><span id="x">x</span></a>'s Safe</h2>
-    <a class="updown" id="updown" onclick="b=!b; xd()"><i id="ud" class="fa fa-fw fa-angle-double-up"></i></a>
-    <a href="index.html"><i class="fa fa-fw fa-home"></i></a>
-    <a href="about.html"><i class="fa fa-fw fa-info-circle"></i></a>
-    <a href="games.html"><i class="fa fa-fw fa-gamepad"></i></a>
-    <a href="bookmarklets.html"><i class="fa fa-fw fa-bookmark"></i></a>
-    <a href="https://yex-is-very-cool.herokuapp.com/main/discord.gg/d55JGgdW4P"><i class="fab fa-discord"></i></a>
-    <a href="https://chat.undernet.org/#yexsgames"><i class="fa fa-fw fa-wechat"></i></a>
-    <a href="mailto:152135@mcpsmd.net"><i class="fa fa-fw fa-envelope"></i></a>
-    <a class="active"><i class="fa fa-fw fa-unlock"></i></a>
+    <h2 id="header"><a class="yex">Yex</a>'s Games</h2>
+    <a class="updown" id="updown" onclick="b=!b; xd()"><i id='ud' class="fa fa-fw fa-angle-double-up"></i></a>
+    <a href="index.html" data-tippy-content="Home"><i class="fa fa-fw fa-home"></i></a>
+    <a href="about.html" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
+    <a href="games.html" data-tippy-content="Games"><i class="fa fa-fw fa-gamepad"></i></a>
+    <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
+    <a href="https://discord.gg/d55JGgdW4P" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
+    <a href="mailto:152135@mcpsmd.net" data-tippy-content="Email"><i class="fa fa-fw fa-envelope"></i></a>
+    <a class="active"><i class="fa fa-fw fa-code"></i></a>
   </nav>
+  <div class="loader">
+    <div class="loader-logo">
+      <img src="favicon.png" class="loader-logo-image"></img>
+      <h1 class="loader-logo-title"> Yex </h1>
+    </div>
+    <div class="loader-bar"></div>
+  </div>
   <div id="center">
-  <div id="ide" style="animation-name:topper;animation-duration:1s;">
+  <div id="ide">
   <textarea placeholder="Enter HTML Source Code" id="editing-html" spellcheck="false" oninput="update(this.value, 'highlighting-content-html'); sync_scroll(this, 'highlighting-html');" onscroll="sync_scroll(this,'highlighting-html');" 
 onkeydown="check_tab(this, event);"></textarea>
   <pre id="highlighting-html" aria-hidden="true">
@@ -32,7 +39,7 @@ onkeydown="check_tab(this, event);"></textarea>
   </code>
   </pre>
   </div>
-  <div id="ide" style="animation-name:topper;animation-duration:1s;">
+  <div id="ide">
   <textarea placeholder="Enter CSS Source Code" id="editing-css" spellcheck="false" oninput="update(this.value, 'highlighting-content-css'); sync_scroll(this, 'highlighting-css');" onscroll="sync_scroll(this,'highlighting-css');" 
 onkeydown="check_tab(this, event);"></textarea>
   <pre id="highlighting-css" aria-hidden="true">
@@ -40,7 +47,7 @@ onkeydown="check_tab(this, event);"></textarea>
   </code>
   </pre>
   </div> 
-  <div id="ide" style="animation-name:topper;animation-duration:1s;">
+  <div id="ide">
   <textarea placeholder="Enter JavaScript Source Code" id="editing-js" spellcheck="false" oninput="update(this.value, 'highlighting-content-js'); sync_scroll(this, 'highlighting-js');" onscroll="sync_scroll(this, 'highlighting-js');" 
 onkeydown="check_tab(this, event);"></textarea>
   <pre id="highlighting-js" aria-hidden="true">
@@ -52,13 +59,16 @@ onkeydown="check_tab(this, event);"></textarea>
   <br/>
   <div id="center"> <a class="btn" onclick="exec('editing-html', 'html'); exec('editing-css', 'css'); exec('editing-js', 'js')">Execute Code</a> </div>
   <br/>
-  <div id="center"> <iframe id="test" style="animation-name:topper;animation-duration:1s;" src="about:blank"></iframe> </div>
-    
+  <div id="center"> <iframe id="test" src="about:blank"></iframe> </div>
+
+  <script src="popper.js"></script>
+  <script src="tippy.js"></script>
+  <script src="snackbar.js"></script>
   <script src="updown.js"></script>
   <script src="prism.js"></script>
   <script>
     let doc = document.getElementById('test').contentWindow.document;
-    doc.title="Code Exec";
+    doc.title="Code Environment";
     var scrpt = doc.createElement('script');
     var stylshit = doc.createElement('style');
     const removeChildren = (parent) => {
@@ -127,18 +137,19 @@ onkeydown="check_tab(this, event);"></textarea>
     result_element.scrollLeft = element.scrollLeft;
   }
 
-let strt;
-let fnsh;  
+let qstrt = 0;
+let qfnsh = 0; 
+let pstrt = 0;
+let pfnsh = 0;  
+let bstrt = 0;
+let bfnsh = 0;  
 function check_tab(element, event) {
   let code = element.value;
   if(event.key == "Tab") {
-    /* Tab key pressed */
-    event.preventDefault(); // stop normal
-    let before_tab = code.slice(0, element.selectionStart); // text before tab
-    let after_tab = code.slice(element.selectionEnd, element.value.length); // text after tab
-    let cursor_pos = element.selectionEnd + 1; // where cursor moves after tab - moving forward by 1 char to after tab
-    element.value = before_tab + "\t" + after_tab; // add tab char
-    // move cursor
+    event.preventDefault(); 
+    let before_tab = code.slice(0, element.selectionStart);
+    let after_tab = code.slice(element.selectionEnd, element.value.length); 
+    let cursor_pos = element.selectionEnd + 1;  + "\t" + after_tab;
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     if(element.id == "editing-js") {
@@ -151,6 +162,7 @@ function check_tab(element, event) {
       update(element.value, 'highlighting-content-js');
     }
   }
+  
   if(event.code == "Quote") {
     var dble = event.key == '"';
     event.preventDefault();
@@ -160,8 +172,8 @@ function check_tab(element, event) {
     element.value = before_add + (dble ? '""' : "''") + after_add;
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
-    strt = cursor_pos;
-    fnsh = cursor_pos;
+    qstrt = cursor_pos;
+    qfnsh = cursor_pos;
     if(element.id == "editing-js") {
       update(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
@@ -172,7 +184,51 @@ function check_tab(element, event) {
       update(element.value, 'highlighting-content-js');
     }
   }
-  if(event.key == "Backspace" && element.selectionEnd == fnsh && element.selectionStart == strt) {
+
+  if(event.code == "Digit9") {
+    event.preventDefault();
+    let before_add = code.slice(0, element.selectionStart); // text before tab
+    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let cursor_pos = element.selectionEnd + 1;
+    element.value = before_add + '()' + after_add;
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    pstrt = cursor_pos;
+    pfnsh = cursor_pos;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+
+  if(event.code == "BracketLeft") {
+    var crly = event.key == "{";
+    event.preventDefault();
+    let before_add = code.slice(0, element.selectionStart); // text before tab
+    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let cursor_pos = element.selectionEnd + 1;
+    element.value = before_add + (crly ? '{}' : '[]') + after_add;
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    bstrt = cursor_pos;
+    bfnsh = cursor_pos;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+  
+  if(event.key == "Backspace" && element.selectionEnd == qfnsh && element.selectionStart == qstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
     let after_del = code.slice(element.selectionEnd, element.value.length);
@@ -180,8 +236,50 @@ function check_tab(element, event) {
     element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
-    strt = -1;
-    fnsh = -1;
+    qstrt = -1;
+    qfnsh = -1;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+
+  if(event.key == "Backspace" && element.selectionEnd == pfnsh && element.selectionStart == pstrt) {
+    event.preventDefault();
+    let before_del = code.slice(0, element.selectionStart);
+    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let cursor_pos = element.selectionEnd - 1;
+    element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    pstrt = -1;
+    pfnsh = -1;
+    if(element.id == "editing-js") {
+      update(element.value, 'highlighting-content-js');
+    } else if(element.id == "editing-html") {
+      update(element.value, 'highlighting-content-html');
+    } else if(element.id == "editing-css") {
+      update(element.value, 'highlighting-content-css');
+    } else {
+      update(element.value, 'highlighting-content-js');
+    }
+  }
+
+  if(event.key == "Backspace" && element.selectionEnd == bfnsh && element.selectionStart == bstrt) {
+    event.preventDefault();
+    let before_del = code.slice(0, element.selectionStart);
+    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let cursor_pos = element.selectionEnd - 1;
+    element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
+    element.selectionStart = cursor_pos;
+    element.selectionEnd = cursor_pos;
+    bstrt = -1;
+    bfnsh = -1;
     if(element.id == "editing-js") {
       update(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {

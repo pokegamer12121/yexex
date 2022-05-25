@@ -7,25 +7,35 @@
   <title>Page Not Found</title>
   <link rel="icon" type="image/png" href="favicon.png" />	
   <link href="new.css" rel="stylesheet" type="text/css" />
+  <link href="snackbar.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <nav class="bar" id="nav">
-    <h2><a class="rnbw"><span id="y">Y</span><span id="e">e</span><span id="x">x</span></a>'s Games</h2>
-    <a class="updown" id="updown" onclick="b=!b; xd()"><i id="ud" class="fa fa-fw fa-angle-double-up"></i></a>
-    <a href="index.html"><i class="fa fa-fw fa-home"></i></a>
-    <a href="about.html""><i class="fa fa-fw fa-info-circle"></i></a>
-    <a href="games.html"><i class="fa fa-fw fa-gamepad"></i></a>
-    <a href="bookmarklets.html"><i class="fa fa-fw fa-bookmark"></i></a>
-    <a href="https://yex-is-very-cool.herokuapp.com/main/discord.gg/d55JGgdW4P"><i class="fab fa-discord"></i></a>
-    <a href="https://chat.undernet.org/#yexsgames"><i class="fa fa-fw fa-wechat"></i></a>
-    <a href="mailto:152135@mcpsmd.net"><i class="fa fa-fw fa-envelope"></i></a>
-    <a id="lock"><i class="fa fa-fw fa-lock"></i></a>
-    <a class="active"><i class="fa fa-fw fa-question"></i></a>
+    <h2 id="header"><a class="yex">Yex</a>'s Games</h2>
+    <a class="updown" id="updown" onclick="b=!b; xd()"><i id='ud' class="fa fa-fw fa-angle-double-up"></i></a>
+    <a href="index.html" data-tippy-content="Home"><i class="fa fa-fw fa-home"></i></a>
+    <a href="about.html" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
+    <a href="games.html" data-tippy-content="Games"><i class="fa fa-fw fa-gamepad"></i></a>
+    <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
+    <a href="https://discord.gg/d55JGgdW4P" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
+    <a href="mailto:152135@mcpsmd.net" data-tippy-content="Email"><i class="fa fa-fw fa-envelope"></i></a>
+    <a id="lock" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
+    <a class="active" data-tippy-content="Page Not Found"><i class="fa fa-fw fa-question"></i></a>
   </nav>
+  <div class="loader">
+    <div class="loader-logo">
+      <img src="favicon.png" class="loader-logo-image"></img>
+      <h1 class="loader-logo-title"> Yex </h1>
+    </div>
+    <div class="loader-bar"></div>
+  </div>
   <h1>Page Not Found</h1>
   <p>This file has either been removed or you've typed the URL incorrectly.</p>
+  <script src="popper.js"></script>
+  <script src="tippy.js"></script>
+  <script src="snackbar.js"></script>
   <script src="updown.js"></script>
   <script>
     window.addEventListener("load", () => {

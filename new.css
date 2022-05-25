@@ -12,13 +12,13 @@ html {
 }
 
 
-*:not(#ud, #nav a) {
+*:not(#ud, #nav a, a.yex) {
   transition: 0.5s all;
 }
 
 body {
   background-color: #2e2e2e;
-  font-family: arista;
+  font-family: arista, arial, helvetica, sans-serif;
   margin:0;
   width:100%;
   height:100%;
@@ -53,7 +53,7 @@ nav.bar {
   margin-top:0;
   background-color: #696969;
   position:fixed;
-  z-index:1;
+  z-index:3;
   animation: swap-bottom 1s;
 }
 
@@ -78,6 +78,7 @@ nav.bar h2 {
 nav.bar a {
   padding: 8px;
   display:block;
+  position: relative;
   font-size: 20px;
   margin-top: 4px;
   margin-left: 5px;
@@ -87,7 +88,7 @@ nav.bar a {
   text-decoration: transparent;
 }
 
-nav.bar a:hover {
+nav.bar a:not(.yex, .active):hover {
   color: rgb(50, 150, 255);
   text-shadow: 0px 0px 8px rgb(50, 150, 255);
   transform: scale(1.05) translateY(-5%);
@@ -98,23 +99,19 @@ nav.bar .active {
   text-shadow: 0px 0px 8px rgb(50, 150, 255);
 }
 
-nav.bar a.active:hover {
-  transform: scale(1);
-}
-
 /* Nav Bar Header Rainbow Link */
 
-nav.bar a.rnbw {
+nav.bar a.yex {
   padding: 0px;
   margin-left: 5px;
-  float:left;
+  float: left;
   color: white;
   margin-top: 0px;
   text-shadow: 3px 1px rgb(50, 150, 255);
   font-size: inherit;
 }
 
-nav.bar a.rnbw:hover {
+nav.bar a.yex:hover {
   color:white;
   text-shadow: none;
   transform: scale(1.05);
@@ -127,8 +124,6 @@ h1 {
   color: white;
   text-shadow: 3px 1px rgb(50, 150, 255);
   font-size: 45px;
-  animation-name: swap-right;
-  animation-duration: 1.25s;
 }
 
 h1.left {
@@ -137,7 +132,6 @@ h1.left {
 
 p i {
   cursor:text;
-  white-space: pre;
 }
 
 /* Paragraph */
@@ -147,8 +141,6 @@ p {
   text-align: center;
   color: white;
   text-shadow: 2px 1px rgb(50, 150, 255);
-  animation-name: swap-right;
-  animation-duration: 1.25s;
 }
 
 p.left {
@@ -159,7 +151,7 @@ p.left {
 
 .prof {
   border-width: 5px;
-  color: var(--clr);
+  color: var(--clr-prof);
   border-color: currentColor;
   border-style: solid;
   border-radius: 50%;
@@ -167,8 +159,6 @@ p.left {
   height: 100px;
   margin-inline:auto;
   display: block;
-  animation-name: topper;
-  animation-duration: 1.25s;
 }
 
 .prof:hover {
@@ -193,8 +183,6 @@ a.game {
   display: inline-block;
   padding: 16px;
   font-size:20px;
-  animation-name: topper;
-  animation-duration: 1s;
 }
 
 a.game:hover {
@@ -214,12 +202,7 @@ a.bmrklet {
   font-size:20px;
   display: inline-block;
   padding: 16px;
-  animation-name: topper;
-  animation-duration: 1s;
 }
-
-a.bmrklet:hover {}
-
 
 a.btn {
   color: white;
@@ -232,8 +215,6 @@ a.btn {
   display: inline-block;
   padding: 16px;
   font-size:20px;
-  animation-name: topper;
-  animation-duration: 1s;
 }
 
 a.btn:hover {
@@ -258,30 +239,102 @@ a.btn:active {
 
 hr {
   border-color: white;
-  animation-name: flowout;
-  animation-duration: 1.25s;
 }
 
 /* Yex (Text) */
 
-.rnbw {
+.yex {
   display: inline-block;
   text-decoration: none;
-  cursor:pointer;
-  color:white;
+  cursor:pointer; 
+  color: white;
+  transition: 0.5s transform, 0.5s background;
 }
 
-.rnbw:hover #y {
-  animation: hrn 7s linear infinite;
-  text-shadow: 0px 0px 4px;
+.yex:hover {
+  transform: scale(1.05);
+  font-weight: bolder;
+  background: linear-gradient(45deg, purple, blueviolet);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
 }
-.rnbw:hover #e {
-  animation: hrn 8s linear infinite;
-  text-shadow: 0px 0px 4px;
+
+/* Loader */
+
+div.loader {
+ background-color: #2e2e2e;
+ z-index: 2;
+ position:fixed;
+ top: 0;
+ overflow:hidden;
+ width: 100%;
+ height: 100%;
 }
-.rnbw:hover #x {
-  animation: hrn 9s linear infinite;
-  text-shadow: 0px 0px 4px;
+
+div.loader-logo {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background-color:#222;
+  width: 100%;
+  height: calc(100% - 10px);
+}
+
+h1.loader-logo-title {
+ font-size: 55px;
+ background-image: linear-gradient(45deg, purple, blueviolet);
+ background-size: 100%;
+ background-repeat: repeat;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent; 
+ text-shadow: none;
+ filter: drop-shadow(0px 0px 6px #8515b1);
+}
+
+img.loader-logo-image {
+  width: 135px;
+  height: 135px;
+  filter: drop-shadow(1px -1px 5px #8515b1);
+}
+
+div.loader-bar {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(45deg, purple, blueviolet);
+  border-radius: 5px;
+  filter: drop-shadow(0 0 5px #8515b1);
+  animation: loader-bar-animation 1.5s linear;
+}
+
+@keyframes loader-bar-animation {
+  from {
+    width:0;
+  }
+  5% {
+    width: 15%;
+  }
+  20% {
+    width: 25%;
+  }
+  35% {
+    width: 60%;
+  }
+  45% {
+    width: 65%;
+  }
+  65% {
+    width: 70%;
+  }
+  80% {
+    width: 75%;
+  }
+  90% {
+    width: 90%;
+  }
+  to {
+    width:100%;
+  }
 }
 
 /* Animations */
@@ -401,6 +454,10 @@ hr {
 @media only screen and (max-width:650px) {
   nav.bar h2 { display:none; }
   nav.bar #updown { display:none; }
-  nav.bar a { margin-left: auto; margin-right:auto; }
-  nav.bar { display:flex; top:auto; bottom:0; animation: swap-top 1s;}
+  nav.bar a { margin-inline:auto; }
+  nav.bar { display:flex; }
+}
+
+.tippy-box[data-theme~='darker'] {
+  background-color: #555;
 }

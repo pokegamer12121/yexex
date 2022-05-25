@@ -6,23 +6,29 @@
   <title>Bookmarklets</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link href="new.css" rel="stylesheet" type="text/css" />
+  <link href="snackbar.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <nav class="bar" id="nav">
-    <h2><a class="rnbw"><span id="y">Y</span><span id="e">e</span><span id="x">x</span></a>'s Games</h2>
-    <a class="updown" id="updown" onclick="b=!b; xd()"><i id="ud" class="fa fa-fw fa-angle-double-up"></i></a>
-    <a href="index.html"><i class="fa fa-fw fa-home"></i></a>
-    <a href="about.html"><i class="fa fa-fw fa-info-circle"></i></a>
-    <a href="games.html"><i class="fa fa-fw fa-gamepad"></i></a>
+    <h2 id="header"><a class="yex">Yex</a>'s Games</h2>
+    <a class="updown" id="updown" onclick="b=!b; xd()"><i id='ud' class="fa fa-fw fa-angle-double-up"></i></a>
+    <a href="index.html" data-tippy-content="Home"><i class="fa fa-fw fa-home"></i></a>
+    <a href="about.html" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
+    <a href="games.html" data-tippy-content="Games"><i class="fa fa-fw fa-gamepad"></i></a>
     <a class="active"><i class="fa fa-fw fa-bookmark"></i></a>
-    <a href="https://yex-is-very-cool.herokuapp.com/main/discord.gg/d55JGgdW4P"><i class="fab fa-discord"></i></a>
-    <a href="https://chat.undernet.org/#yexsgames"><i class="fa fa-fw fa-wechat"></i></a>
-    <a href="mailto:152135@mcpsmd.net"><i class="fa fa-fw fa-envelope"></i></a>
-    <a id="lock"><i class="fa fa-fw fa-lock"></i></a>
+    <a href="https://discord.gg/d55JGgdW4P" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
+    <a href="mailto:152135@mcpsmd.net" data-tippy-content="Email"><i class="fa fa-fw fa-envelope"></i></a>
+    <a id="lock" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
   </nav>
-
+  <div class="loader">
+    <div class="loader-logo">
+      <img src="favicon.png" class="loader-logo-image"></img>
+      <h1 class="loader-logo-title"> Yex </h1>
+    </div>
+    <div class="loader-bar"></div>
+  </div>
   <h1> Bookmarklets </h1>
   <p> Simply drag and drop these onto your bookmark bar and click them to use them.</p>
   <hr>
@@ -36,6 +42,9 @@
   <a class="bmrklet" href="javascript:(function() {  var b = document.createElement('a');var w=document.createElement('iframe');w.allowFullscreen=true;w.style.width = 'calc(100% / 5)';w.style.height = '275px';w.style.bottom = '0%';w.style.right = '0%';w.style.borderColor = 'lime';w.style.borderWidth = '5px';w.style.borderStyle = 'solid';w.style.borderRadius = '20px';w.style.position = 'fixed'; w.style.zIndex = '1000000000001';w.src = 'https:///yexex.github.io/'; b.style.color = 'black';b.style.backgroundColor = 'lime';b.style.padding = '16px 8px 16px 8px';b.style.transition = '0.5s all';b.style.width = 'calc(100% / 5 - 6px)';b.style.bottom = '287.5px';b.style.right = '0%';b.style.borderColor = 'black';b.style.borderWidth = '20px';b.style.borderRadius = '20px';b.text = 'Close';var arista = new FontFace('arista-new', 'url(https://raw.githack.com/Luminous-Technologies/files/main/arista-new.otf) format(&quot;opentype&quot;)');arista.load().then(function(loaded) {document.fonts.add(loaded); b.style.fontFamily = &quot;'arista-new'&quot;;}).catch(function(error) {console.log('Error: ' + error);});b.style.fontSize='15px';b.style.textDecoration = 'none';b.style.textAlign = 'center';b.style.position = 'fixed'; b.style.zIndex = '1000000000002';document.body.appendChild(w);document.body.appendChild(b);b.onmouseleave = function() {b.style.transform = 'scale(1)';};b.onmouseover = function() {b.style.transform = 'scale(1.05)';};b.onclick = function() {w.remove();b.remove();};}());"> Mini Site Embed </a>
   <a class="bmrklet" href="javascript:(function(){window.mcbmRootURI='https://yexex.github.io/mc/';window.mcbmScriptURI='mcbm.min.js';window.mcbmLang='eng';var s,ss=window.mcbmRootURI+'js/mcbm-load.min.js';s=document.createElement('script');s.src=ss;document.body.appendChild(s);})();"> MC Fun </a>
   </div>
+  <script src="popper.js"></script>
+  <script src="tippy.js"></script>
+  <script src="snackbar.js"></script>
   <script src="updown.js"></script>
   <script>
     window.addEventListener("load", () => {

@@ -3,7 +3,7 @@ var nav = document.getElementById('nav');
 var up = document.getElementById('updown');
 var ud = document.getElementById('ud');
 var yes;
-var no = document.getElementsByClassName('rnbw');
+var no = document.getElementsByClassName('yex');
 var maybe = document.getElementsByClassName('lumi');
 var mrgns = [];
 var tbInput = document.getElementById('tbInput');
@@ -38,7 +38,6 @@ if(document.URL.endsWith("about.html")) {
       lo.className='';
     }
   }
-
   let x = window.matchMedia("(max-width: 1075px)");
   check(x);
   x.addListener(check);
@@ -66,9 +65,17 @@ if(localStorage.getItem('ft') == null) {
   localStorage.setItem('ft', 'false');
 }
 
+const removeChilds = (parent) => {
+  while (parent.lastChild) {
+    parent.removeChild(parent.lastChild);
+  }
+};
+
 if(document.URL.endsWith(atob('ZDd5MjdiMTJjNzc4Y2IzNzJrMmxnYTBwNDdoLmh0bWw='))) {
   if(localStorage.getItem('uuid')!=atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) {
-    window.open('404.html', '_self');
+    removeChilds(document.body);
+    document.body.cssText = "margin-top:0px;"
+    document.write("<iframe src='404.html' width='100%' height='100%' frameborder='0' style='width: 100%; height:100%; margin:0; position:absolute; top:0;'></iframe>");
   }
 }
 
@@ -77,19 +84,54 @@ function sub(val) {
     window.open(atob('ZDd5MjdiMTJjNzc4Y2IzNzJrMmxnYTBwNDdoLmh0bWw='), '_self');
   }
   if(val == atob('MDcyOTA4') && localStorage.getItem('uuid')!=atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) {
-    window.open('404.html', '_self');
+      SnackBar({
+        message: "The password you've entered is incorrect, please try again.",
+        status: 'error',
+        icon: "!",
+        position: "br",
+        timeout: 2500
+      });
   }
 }
+
+SnackBar({
+  message: "Loading...",
+  status: 'info',
+  icon: "i",
+  fixed: true,
+  position: "br",
+  timeout: 1000
+});
+
+setTimeout(() => {
+  tippy('[data-tippy-content]', {
+    arrow: false,
+    theme: 'darker',
+    offset: [0, -1],
+    placement: "bottom"
+  });
+}, 800)
+
+setTimeout(() => { 
+  document.querySelector('div.loader').remove();
+  SnackBar({
+    message: "Loaded Successfully",
+    status: 'success',
+    position: "br",
+    fixed: true,
+    timeout: 1500
+  });
+}, 1500);
 
 var lmao = 0;
 
 var lol = 0;
 var numpad = {
-  hwrap: null, // numpad wrapper container
-  hpad: null, // numpad itself
-  hdisplay: null, // number display
-  hbwrap: null, // buttons wrapper
-  hbuttons: {}, // individual buttons
+  hwrap: null, 
+  hpad: null, 
+  hdisplay: null, 
+  hbwrap: null, 
+  hbuttons: {},
   init: () => {
     // (A1) WRAPPER
     numpad.hwrap = document.createElement("div");
@@ -144,10 +186,8 @@ var numpad = {
     document.body.appendChild(numpad.hwrap);
   },
 
-  // (B) BUTTON ACTIONS
-  // (B1) CURRENTLY SELECTED FIELD + MAX LIMIT
-  nowTarget: null, // Current selected input field
-  nowMax: 0, // Current max allowed digits
+  nowTarget: null,
+  nowMax: 0,
 
   // (B2) NUMBER (0 TO 9)
   digit: (num) => {
@@ -180,7 +220,13 @@ var numpad = {
     lmao = numpad.hdisplay.value;
     if(numpad.hdisplay.value != atob('MDcyOTA4')) {
       numpad.hdisplay.value = '';
-      numpad.hdisplay.placeholder = 'Incorrect';
+      SnackBar({
+        message: "The password you've entered is incorrect, please try again.",
+        status: 'error',
+        icon: "!",
+        position: "br",
+        timeout: 2500
+      });
       if(lol != 3) {lol += 1;}
     } else {
       numpad.hide(); 
@@ -196,12 +242,6 @@ var numpad = {
 
   // (C) ATTACH NUMPAD TO INPUT FIELD
   attach: (opt) => {
-  // OPTIONS
-  //  target: required, target field.
-  //  max: optional, maximum number of characters. Default 255.
-  //  decimal: optional, allow decimal? Default true.
-  //  onselect: optional, function to call after selecting number.
-  //  oncancel: optional, function to call after canceling.
 
     // (C1) DEFAULT OPTIONS
     if (opt.max === undefined) { opt.max = 255; }
