@@ -29,7 +29,7 @@ var firebaseConfig = {
 
   //auto scroll to bottom
     document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
-
+    
   // create db collection and send in the data
     database.ref("messages/" + timestamp).set({
       username,
