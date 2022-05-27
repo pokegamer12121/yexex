@@ -1,3 +1,20 @@
+/* Global Styles */
+
+html {
+  overflow:visible;
+}
+
+a {
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*:not(#ud, #nav a, a.yex, #nav button) {
+  transition: 0.5s all;
+}
 
 /* New Font */
 
@@ -6,15 +23,7 @@
   src: url("arista-new.woff2") format("woff2");
 }
 
-/* Background Color And Set Font */
-html {
-  overflow:visible;
-}
-
-
-*:not(#ud, #nav a, a.yex) {
-  transition: 0.5s all;
-}
+/* Background Color And Set Font And Margin */
 
 body {
   background-color: #2e2e2e;
@@ -24,6 +33,8 @@ body {
   height:100%;
   margin-top:75px;
 }
+
+/* Scroll Bar */
 
 ::-webkit-scrollbar {
   width: 0.4rem;
@@ -47,7 +58,7 @@ body {
 
 nav.bar {
   overflow: visible;
-  width: 100%;
+  width: clamp(120px, 100%, 100%);
   height: 50px;
   top: 0;
   margin-top:0;
@@ -75,7 +86,7 @@ nav.bar h2 {
 
 /* Nav Bar Link */
 
-nav.bar a {
+nav.bar a, nav.bar button {
   padding: 8px;
   display:block;
   position: relative;
@@ -83,12 +94,15 @@ nav.bar a {
   margin-top: 4px;
   margin-left: 5px;
   color: white;
+  background:transparent;
+  border:none;
+  outline:none;
   float:right;
   transition: 0.5s transform;
-  text-decoration: transparent;
+  text-decoration: none;
 }
 
-nav.bar a:not(.yex, .active):hover {
+nav.bar a:not(.yex, .active):hover, nav.bar button:hover {
   color: rgb(50, 150, 255);
   text-shadow: 0px 0px 8px rgb(50, 150, 255);
   transform: scale(1.05) translateY(-5%);
@@ -99,7 +113,7 @@ nav.bar .active {
   text-shadow: 0px 0px 8px rgb(50, 150, 255);
 }
 
-/* Nav Bar Header Rainbow Link */
+/* Nav Bar Header Link */
 
 nav.bar a.yex {
   padding: 0px;
@@ -115,6 +129,47 @@ nav.bar a.yex:hover {
   color:white;
   text-shadow: none;
   transform: scale(1.05);
+}
+
+nav.bar .dropdown {
+    opacity: 0;
+    position: absolute;
+    width: 300px;
+    z-index: 2;
+    color: #555;
+    background: currentcolor;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 2rem;
+    margin-top: 0.35rem;
+    padding: 0.5rem;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    transform: translateX(-40%);
+    transition: opacity .15s ease-out;
+}
+
+nav.bar div.has-dropdown ul.dropdown li.dropdown-item a {
+  width:100%;
+  height:100%;
+  margin-top: -0.15rem;
+}
+
+div.has-dropdown:focus-within .dropdown {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+div.has-dropdown {
+  display:block;
+  position: relative;
+  background:transparent;
+  float:right;
+}
+
+div.has-dropdown button {
+  float:none;
 }
 
 /* Headers */
@@ -304,7 +359,7 @@ div.loader-bar {
   background: linear-gradient(45deg, purple, blueviolet);
   border-radius: 5px;
   filter: drop-shadow(0 0 5px #8515b1);
-  animation: loader-bar-animation 1.5s linear;
+  animation: loader-bar-animation 1.5s linear forwards;
 }
 
 @keyframes loader-bar-animation {
@@ -342,20 +397,6 @@ div.loader-bar {
 @keyframes flowout {
   from { transform:scaleX(0%); }
   to { transform:scaleX(100%); }
-}
-
-@keyframes hrn {
-  0% { color: #ff0000; }
-  10% { color: #ff7300; }
-  20% { color: #fffb00; }
-  30% { color: #d4ff00; }
-  40% { color: #48ff00; }
-  50% { color: #00ffd5; } 
-  60% { color: #00d5ff; }
-  70% { color: #516cf0; }
-  80% { color: #780aff; }
-  90% { color: #ff00c8; }
-  100% { color: #ff0000; }
 }
 @keyframes swap-bottom {
   0% { transform: translateX(0) translateY(-100%); }
@@ -420,9 +461,16 @@ div.loader-bar {
   color: #fff;
   font-size: 42px;
   text-align: center;
+  user-select: none;
 }
-#numDisplay:focus { outline: none; }
-#numDisplay::selection { background: none; }
+
+#numDisplay::placeholder {
+  color: white;
+}
+
+#numDisplay::-moz-placeholder {
+  color: white;
+}
 
 /* (D) BUTTONS WRAPPER */
 #numBWrap {
@@ -443,9 +491,9 @@ div.loader-bar {
 #numBWrap div:hover { cursor: pointer; opacity:0.85; transform: scale(1.05); }
 #numBWrap .num, #numBWrap .zero, #numBWrap .dot { background: #565656; }
 #numBWrap .zero { grid-column: span 2; }
-#numBWrap .del { background: #333; }
-#numBWrap .cx { background: #940909; }
-#numBWrap .ok { background: #115296; }
+#numBWrap .del { background: #333; color: transparent; text-shadow: 0 0 0 white; }
+#numBWrap .cx { background: #940909; color: transparent; text-shadow: 0 0 0 white; }
+#numBWrap .ok { background: #115296; color: transparent; text-shadow: 0 0 0 white; }
 
 /* No decimal points allowed */
 #numBWrap.noDec .dot { display: none; }
@@ -454,8 +502,7 @@ div.loader-bar {
 @media only screen and (max-width:650px) {
   nav.bar h2 { display:none; }
   nav.bar #updown { display:none; }
-  nav.bar a { margin-inline:auto; }
-  nav.bar { display:flex; }
+  nav.bar { display:grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); place-items:center; }
 }
 
 .tippy-box[data-theme~='darker'] {

@@ -15,12 +15,25 @@
   <nav class="bar" id="nav">
     <h2 id="header"><a class="yex">Yex</a>'s Games</h2>
     <a class="updown" id="updown" onclick="b=!b; xd()"><i id='ud' class="fa fa-fw fa-angle-double-up"></i></a>
-    <a href="index.html" data-tippy-content="Home"><i class="fa fa-fw fa-home"></i></a>
-    <a href="about.html" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
-    <a href="games.html" data-tippy-content="Games"><i class="fa fa-fw fa-gamepad"></i></a>
-    <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
-    <a href="https://discord.gg/d55JGgdW4P" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
-    <a href="mailto:152135@mcpsmd.net" data-tippy-content="Email"><i class="fa fa-fw fa-envelope"></i></a>
+    <a href="index.html" target="_parent" data-tippy-content="Home"><i class="fa fa-fw fa-home"></i></a>
+    <a href="about.html" target="_parent" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
+    <a href="games.html" target="_parent" data-tippy-content="Games"><i class="fa fa-fw fa-gamepad"></i></a>
+    <div class="has-dropdown"> 
+      <button id="settings" data-tippy-content="Settings"><i class="fa fa-fw fa-gear"></i></button>
+      <ul class="dropdown">
+        <li class="dropdown-item">
+          <a onclick="SnackBar({message: 'Sorry, that feature is not available yet!', status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 1500});" href="#">Light</a>
+        </li>
+        <li class="dropdown-item">
+          <a class="active" href="#">Dark</a>
+        </li>
+        <li class="dropdown-item">
+          <a onclick="SnackBar({message: 'Sorry, that feature is not available yet!', status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 1500});" href="#">Lime Green</a>
+        </li>
+      </ul>
+    </div>
+    <a href="bookmarklets.html" target="_parent" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
+    <a href="https://discord.gg/d55JGgdW4P" target="_parent" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
     <a id="lock" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
     <a class="active" data-tippy-content="Page Not Found"><i class="fa fa-fw fa-question"></i></a>
   </nav>

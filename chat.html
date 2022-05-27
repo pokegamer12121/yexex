@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link href="new.css" rel="stylesheet" type="text/css" />
+  <link href="snackbar.css" rel="stylesheet" type="text/css" />
+  <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
+  <style> 
+  #message-form {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }  
+  #message-form input {
+    width: 30%;
+    height: 40px;
+    font-size: 20px;
+    font-family: arista;
+  }  
+  #message-form button {
+    width: 5%;
+    height: 40px;
+    font-size: 20px;
+    margin-left: 5px;
+    font-family: arista;
+  }  
+  #message-form input, #message-form button {
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+    border: 1px rgb(50, 150, 255) solid; 
+    background-color: #696969;
+  }
+  #message-form input[type=text]::placeholder {
+    color: white;
+  }  
+    
+  #messages {
+    list-style: none;
+    scroll-behavior: smooth;
+    padding:10px 0;
+    width: 60%;
+    height: 250px;
+    background: #555;
+    border-radius: 15px;
+    margin: 0 auto 0 auto;
+    overflow-y: scroll;
+  }
+
+  li {
+    position: relative;
+    display: inline-block;
+    width: min-content;
+    user-select:none;
+    font-size: 20px;
+  }
+
+  li #user {
+    color: white;
+  }
+
+  li #msg {
+    color: white;
+    position: relative;
+    display: inline-block;
+    width: max-content;
+    margin-top: 8px;
+    font-size: 20px;
+  }
+
+  #fname {
+    user-select: none;
+    color: white;
+    font-size: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    box-shadow: 0 0 5px aqua;
+    width:65px;
+    height:65px;
+    background-image: linear-gradient(215deg, aquamarine, aqua, dodgerblue);
+    border-radius: 100%;
+    border: 3px aqua solid;
+    margin-right: 10px;
+    margin-top: 15px;
+    transform: translateY(-18%);
+  }
+
+  #chat #messages > #fname:first-child {
+    margin-top: 0;
+  }
+  </style>
+</head>
+<body>
+  <nav class="bar" id="nav">
+    <h2 id="header"><a class="yex">Yex</a>'s Chat</h2>
+    <a class="updown" id="updown" onclick="b=!b; xd()"><i id='ud' class="fa fa-fw fa-angle-double-up"></i></a>
+    <a href="index.html"><i class="fa fa-fw fa-home"></i></a>
+    <a href="about.html" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
+    <a href="games.html" data-tippy-content="Games"><i class="fa fa-fw fa-gamepad"></i></a>
+    <div class="has-dropdown"> 
+      <button id="settings" data-tippy-content="Settings"><i class="fa fa-fw fa-gear"></i></button>
+      <ul class="dropdown">
+        <li class="dropdown-item">
+          <a onclick="SnackBar({message: 'Sorry, that feature is not available yet!', status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 1500});" href="#">Light</a>
+        </li>
+        <li class="dropdown-item">
+          <a class="active" href="#">Dark</a>
+        </li>
+        <li class="dropdown-item">
+          <a onclick="SnackBar({message: 'Sorry, that feature is not available yet!', status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 1500});" href="#">Lime Green</a>
+        </li>
+      </ul>
+    </div>
+    <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
+    <a class="active"><i class="fa fa-fw fa-wechat"></i></a>
+    <a href="https://discord.gg/d55JGgdW4P" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
+    <a id="lock" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
+  </nav>
+  <div class="loader">
+    <div class="loader-logo">
+      <img src="favicon.png" class="loader-logo-image"></img>
+      <h1 class="loader-logo-title"> Yex </h1>
+    </div>
+    <div class="loader-bar"></div>
+  </div>
+  <h1>Chat</h1>
+
+  <div id="chat">
+      <!-- messages will display here -->
+  <ul id="messages"></ul>
+
+      <!-- form to send message -->
+  <form id="message-form">
+    <input id="message-input" type="text" placeholder="Enter Message" />
+    <button id="message-btn" type="submit">Send</button>
+  </form>
+  </div>
+  <script src="popper.js"></script>
+  <script src="tippy.js"></script>
+  <script src="snackbar.js"></script>
+  <script src="updown.js"></script>
+  <script>
+    window.addEventListener("load", () => {
+    numpad.attach({
+          target: document.getElementById("lock"),
+          max: 6,
+          decimal: false,
+          onselect : () => {
+            sub(lmao);
+        },
+    });
+  });
+  </script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+<script src="chat.js"></script>
+</body>
+
+</html>

@@ -1,14 +1,12 @@
 var b = false;
-var nav = document.getElementById('nav');
+var nav = document.querySelector('nav.bar');
 var up = document.getElementById('updown');
 var ud = document.getElementById('ud');
 var yes;
 var no = document.getElementsByClassName('yex');
 var maybe = document.getElementsByClassName('lumi');
-var mrgns = [];
-var tbInput = document.getElementById('tbInput');
 var lol2 = false;
-let lo;
+let norun = false;
 function xd() {
   if(b) {
     nav.style.top="-60px";
@@ -27,23 +25,8 @@ function xd() {
   }
 }
 
-if(document.URL.endsWith("about.html")) {
-  yes = document.getElementById('image');
-  yes.href="https://github.com/" + document.URL.substring(8, 13);
-  lo = document.getElementById('yes');
-  function check(x) {
-    if (x.matches) { // If media query matches
-      lo.className='nopls';
-    } else {
-      lo.className='';
-    }
-  }
-  let x = window.matchMedia("(max-width: 1075px)");
-  check(x);
-  x.addListener(check);
-}
 for (var i = 0; i < no.length; i++) {
-    no[i].href="https://github.com/" + document.URL.substring(8, 13);
+    no[i].href="https://github.com/" + window.location.href.substring(8, 13);
 }
 for (var i = 0; i < maybe.length; i++) {
     maybe[i].href="https://github.com/Luminous-Technologies";
@@ -65,17 +48,18 @@ if(localStorage.getItem('ft') == null) {
   localStorage.setItem('ft', 'false');
 }
 
-const removeChilds = (parent) => {
+const removeAllChildrenOf = (parent) => {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
   }
 };
 
-if(document.URL.endsWith(atob('ZDd5MjdiMTJjNzc4Y2IzNzJrMmxnYTBwNDdoLmh0bWw='))) {
+if(window.location.href.endsWith(atob('ZDd5MjdiMTJjNzc4Y2IzNzJrMmxnYTBwNDdoLmh0bWw='))) {
   if(localStorage.getItem('uuid')!=atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) {
-    removeChilds(document.body);
+    removeAllChildrenOf(document.body);
     document.body.cssText = "margin-top:0px;"
     document.write("<iframe src='404.html' width='100%' height='100%' frameborder='0' style='width: 100%; height:100%; margin:0; position:absolute; top:0;'></iframe>");
+    norun=true;
   }
 }
 
@@ -93,35 +77,36 @@ function sub(val) {
       });
   }
 }
-
-SnackBar({
-  message: "Loading...",
-  status: 'info',
-  icon: "i",
-  fixed: true,
-  position: "br",
-  timeout: 1000
-});
-
-setTimeout(() => {
-  tippy('[data-tippy-content]', {
-    arrow: false,
-    theme: 'darker',
-    offset: [0, -1],
-    placement: "bottom"
-  });
-}, 800)
-
-setTimeout(() => { 
-  document.querySelector('div.loader').remove();
+if(!norun) {
   SnackBar({
-    message: "Loaded Successfully",
-    status: 'success',
-    position: "br",
+    message: "Loading...",
+    status: 'info',
+    icon: "i",
     fixed: true,
-    timeout: 1500
+    position: "br",
+    timeout: 1000
   });
-}, 1500);
+
+  setTimeout(() => {
+    tippy('[data-tippy-content]', {
+      arrow: false,
+      theme: 'darker',
+      offset: [0, -1],
+      placement: "bottom"
+    });
+  }, 800)
+
+  setTimeout(() => { 
+    document.querySelector('div.loader').remove();
+    SnackBar({
+      message: "Loaded Successfully",
+      status: 'success',
+      position: "br",
+      fixed: true,
+      timeout: 1500
+    });
+  }, 1500);
+}
 
 var lmao = 0;
 
@@ -176,11 +161,11 @@ var numpad = {
     // .
     buttonator(".", "dot", numpad.dot);
     // OK
-    buttonator("&#10004;", "ok", numpad.select);
+    buttonator("✔", "ok", numpad.select);
     // CANCEL
-    buttonator("&#10006;", "cx", () => { numpad.hide(1); });
+    buttonator("✖", "cx", () => { numpad.hide(1); });
      // BACKSPACE
-    buttonator("&#10502;", "del", numpad.delete);
+    buttonator("⌫", "del", numpad.delete);
 
     // (A6) ATTACH NUMPAD TO HTML BODY
     document.body.appendChild(numpad.hwrap);
