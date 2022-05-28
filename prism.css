@@ -29,7 +29,7 @@ https://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javasc
   z-index: 1;
   color: transparent;
   background: transparent;
-  caret-color: blueviolet; /* Or choose your favourite color */
+  caret-color: orange;
   white-space: nowrap; /* Allows textarea to scroll horizontally */
   resize: none;
 }

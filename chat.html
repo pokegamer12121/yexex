@@ -10,47 +10,51 @@
   <link href="snackbar.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
   <style> 
-  #message-form {
+  #chat {
+    display: none;
+  }
+    
+  #message-form, #user-form {
     display: flex;
     justify-content: center;
     margin-top: 15px;
   }  
-  #message-form input {
+  #message-form input, #user-form input {
     width: 30%;
     height: 40px;
     font-size: 20px;
     font-family: arista;
   }  
-  #message-form button {
+  #message-form button, #user-form button {
     width: 75px;
     height: 40px;
     font-size: 20px;
     margin-left: 5px;
     font-family: arista;
   }  
-  #message-form button:hover {
+  #message-form button:hover, #user-form button:hover {
     background-color: #777;
   }    
-  #message-form button:active {
+  #message-form button:active, #user-form button:active {
     background-color: #555;
   }   
-  #message-form input, #message-form button {
+  #message-form input, #message-form button , #user-form input, #user-form button {
     text-align: center;
     color: white;
     border-radius: 10px;
     border: 1px rgb(50, 150, 255) solid; 
     background-color: #696969;
   }
-  #message-form input[type=text]::placeholder {
+  #message-form input[type=text]::placeholder, #user-form input[type=text]::placeholder {
     color: white;
   }  
     
   #messages {
     list-style: none;
     scroll-behavior: smooth;
-    padding:10px 0;
+    padding:10px 10px;
     width: 60%;
-    height: 250px;
+    height: 300px;
     background: #555;
     border-radius: 15px;
     margin: 0 auto 0 auto;
@@ -61,16 +65,16 @@
     position: relative;
     display: inline-block;
     width: min-content;
-    user-select:none;
+    white-space: nowrap;
+    color:white;
     font-size: 20px;
   }
 
   li #user {
-    color: white;
+    color: aqua;
   }
-
+    
   li #msg {
-    color: white;
     position: relative;
     display: inline-block;
     width: max-content;
@@ -99,6 +103,10 @@
 
   #chat #messages > #fname:first-child {
     margin-top: 0;
+  }
+
+  #mcolor {
+    color:red;
   }
   </style>
 </head>
@@ -137,6 +145,11 @@
   </div>
   <h1>Chat</h1>
 
+  <form id="user-form">
+    <input id="user-input" type="text" placeholder="Enter A Username" />
+    <button id="user-btn" type="submit">Submit</button>
+  </form>
+  
   <div id="chat">
       <!-- messages will display here -->
   <ul id="messages"></ul>
