@@ -15,10 +15,12 @@ const firebaseConfig = {
 let username = "";
 let usernames = [];
 let users = [];
+let cusers = [];
 const fetchUsers = database.ref("users/");
 fetchUsers.on("child_added", function (snapshot) {
-  usernames.push(snapshot.val().username.toLowerCase());
-  users = usernames.map(og => "@" + og);
+  usernames = [...usernames, snapshot.val().username.toLowerCase()];
+  users.push("@" + snapshot.val().username);
+  cusers.push("<span id='mcolor'>@" + snapshot.val().username + "</span>")
 });
 document.getElementById("message-form").addEventListener("submit", sendMessage);
 
@@ -51,7 +53,6 @@ String.prototype.replaceArray = function(find, replace) {
 };
 
 const fetchChat = database.ref("messages/");
-let cusers = [];
 let tStamp = Date.now() + 250;
 
 setTimeout(() => {
@@ -63,6 +64,10 @@ setTimeout(() => {
    if(lenConstraint && isNotDupe) {
      document.getElementById("user-form").style.display = "none";
      database.ref("users/" + tStamp).set({username});
+  usernames = [...usernames, username];
+   usernames.splice(usernames.indexOf(username), 1);
+    users.push("@" + username);
+     cusers.push("<span id='mcolor'>@" + username + "</span>");
       SnackBar({
         message: "Chat Loaded Successfully!",
         status: 'success',
@@ -71,26 +76,20 @@ setTimeout(() => {
         timeout: 1500
       });
       document.getElementById("chat").style.display = "block";
+      document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
   } else {
      username = null;
      document.getElementById("user-input").value = "";
      SnackBar({
-        message: "Username cannot be more than 25 characters!",
+        message: !isNotDupe ? "That username is in use!" : "Username cannot be more than 25 characters!",
         status: 'error',
         icon: "!",
         position: "br",
         fixed: true,
-        timeout: 1500
+        timeout: 2000
       });     
    } 
   });
-
-  users.forEach((value) => {
-      if(!cusers.includes("<span id='mcolor'>" + value + "</span>")) {
-        cusers.push("<span id='mcolor'>" + value + "</span>");
-      }
-  });
-  
   fetchChat.on("child_added", function (snapshot) {
   
   const messages = snapshot.val();
@@ -113,8 +112,13 @@ setTimeout(() => {
       localStorage.setItem('mentions', JSON.stringify(mentions));
   } 
 });
-
-if(document.querySelectorAll('#messages > li').length > 0) document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
+  
+fetchUsers.on("child_removed", function (snapshot) {
+  const del = snapshot.val().username;
+  usernames.splice(usernames.indexOf(del), 1);
+  users = usernames.map((og) => "@" + og);
+  cusers = users.map((og) => "<span id='mcolor'>" + og + "</span>");
+});
 
 fetchChat.on("child_removed", function (snapshot) {
   const deletedMessage = snapshot.val();
