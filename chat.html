@@ -10,6 +10,16 @@
   <link href="snackbar.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
   <style> 
+  :root {
+    --user-color: aqua;
+    --mention-color: lime;
+    --first-gradient-color: aquamarine;
+    --second-gradient-color: aqua;
+    --third-gradient-color: dodgerblue;
+    --border-gradient-color: aqua;
+    --box-shadow-gradient-color: aqua;
+  }
+    
   #chat {
     display: none;
   }
@@ -20,16 +30,17 @@
     margin-top: 15px;
   }  
   #message-form input, #user-form input {
-    width: 30%;
+    width: clamp(35%, 40%, 45%);
     height: 40px;
     font-size: 20px;
     font-family: arista;
   }  
   #message-form button, #user-form button {
-    width: 75px;
+    width: clamp(85px, 105px, 115px);
     height: 40px;
     font-size: 20px;
     margin-left: 5px;
+    text-align: center;
     font-family: arista;
   }  
   #message-form button:hover, #user-form button:hover {
@@ -71,7 +82,7 @@
   }
 
   li #user {
-    color: aqua;
+    color: var(--user-color);
   }
     
   li #msg {
@@ -90,12 +101,12 @@
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
-    box-shadow: 0 0 5px aqua;
+    box-shadow: 0 0 5px var(--box-shadow-gradient-color);
     width:65px;
     height:65px;
-    background-image: linear-gradient(215deg, aquamarine, aqua, dodgerblue);
+    background-image: linear-gradient(215deg, var(--first-gradient-color), var(--second-gradient-color), var(--third-gradient-color));
     border-radius: 100%;
-    border: 3px aqua solid;
+    border: 3px var(--border-gradient-color) solid;
     margin-right: 10px;
     margin-top: 15px;
     transform: translateY(-18%);
@@ -106,7 +117,7 @@
   }
 
   #mcolor {
-    color:red;
+    color: var(--mention-color);
   }
   </style>
 </head>
