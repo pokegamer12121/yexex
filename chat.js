@@ -67,7 +67,9 @@ setTimeout(() => {
   usernames = [...usernames, username];
    usernames.splice(usernames.indexOf(username), 1);
     users.push("@" + username);
-     cusers.push("<span id='mcolor'>@" + username + "</span>");
+     users.splice(users.indexOf("@" + username), 1);
+      cusers.push("<span id='mcolor'>@" + username + "</span>");
+       cusers.splice(cusers.indexOf("<span id='mcolor'>@" + username + "</span>"), 1);
       SnackBar({
         message: "Chat Loaded Successfully!",
         status: 'success',
