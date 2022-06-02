@@ -184,13 +184,6 @@ let tStamp = Date.now() + 250;
       localStorage.setItem('mentions', JSON.stringify(mentions));
   } 
 });
-  
-fetchUsers.on("child_removed", function (snapshot) {
-  const del = snapshot.val().username;
-  usernames.deleteItem(del);
-  users = usernames.map((og) => "@" + og);
-  cusers = users.map((og) => "<span id='mcolor'>" + og + "</span>");
-});
 
 fetchChat.on("child_removed", function (snapshot) {
   const deletedMessage = snapshot.val();
