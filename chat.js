@@ -194,7 +194,6 @@ fetchUsers.on("child_removed", function (snapshot) {
 
 fetchChat.on("child_removed", function (snapshot) {
   const deletedMessage = snapshot.val();
-  const len = document.querySelectorAll('#messages > li').length;
   for(const listItem of document.querySelectorAll('#messages > li')) {
     if(listItem.textContent.includes(deletedMessage.username) && listItem.textContent.includes(deletedMessage.message)) {
       listItem.previousElementSibling.remove();
@@ -203,6 +202,6 @@ fetchChat.on("child_removed", function (snapshot) {
       listItem.remove();
     }
   }
-  if(len > 0) document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
+  if(document.querySelectorAll('#messages > li').length > 0) document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
 });
   window.onunload = () => database.ref("users/" + tStamp).remove();
