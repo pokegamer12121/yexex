@@ -188,7 +188,7 @@ div.overlay-container {
   overflow: hidden;
   width: 100px;
   height:100px;
-  transform: scaleX(40%) scaleY(0);
+  transform: scaleX(30%) scaleY(0);
   transform-origin: center;
   transition: 0.5s all;
 }
@@ -198,7 +198,7 @@ div.overlay-info:hover div.overlay-container {
 }
 
 div.overlay-text {
-  color: white;
+  color: black;
   font-size: 20px;
   position: absolute;
   top: 50%;
