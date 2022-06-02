@@ -39,15 +39,16 @@ body {
 ::-webkit-scrollbar {
   width: 0.4rem;
   height: 0.6rem;
-  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: #1e1e1e;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   background:rgb(50, 150, 255);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -172,6 +173,45 @@ div.has-dropdown button {
   float:none;
 }
 
+div.overlay-info {
+  position: relative;
+}
+
+div.overlay-container {
+  position: absolute;
+  border-radius: 50%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  background-color: var(--clr-prof);
+  overflow: hidden;
+  width: 100px;
+  height:100px;
+  transform: scaleX(40%) scaleY(0);
+  transform-origin: center;
+  transition: 0.5s all;
+}
+
+div.overlay-info:hover div.overlay-container {
+   transform: scaleX(100%) scaleY(100%);
+}
+
+div.overlay-text {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* Headers */
 
 h1 {
@@ -204,21 +244,13 @@ p.left {
 
 /* Profile Images */
 
-.prof {
-  border-width: 5px;
-  color: var(--clr-prof);
-  border-color: currentColor;
-  border-style: solid;
+img.prof {
+  border: var(--clr-prof) solid 5px;
   border-radius: 50%;
   width: 100px;
   height: 100px;
-  margin-inline:auto;
+  margin-inline: auto;
   display: block;
-}
-
-.prof:hover {
-  box-shadow: 0px 0px 20px currentColor;
-  transform: translateY(-5%);
 }
 
 /* Luminous Tech */

@@ -1,3 +1,48 @@
+/* 
+   ~~~~~~~~~~~~~~~~~~~~~~
+                           
+  𝒴𝑒𝓍'𝓈 𝒥𝒶𝓋𝒶𝒮𝒸𝓇𝒾𝓅𝓉 𝒜𝒹𝒹𝑜𝓃𝓈
+
+   ~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+Array.prototype.deleteItem = function(item) {
+  this.splice(this.indexOf(item), 1);
+};
+
+Array.prototype.deleteIndex = function(index) {
+  this.splice(index, 1);
+};
+
+Object.prototype.includes = function(query) {
+  return this.hasOwnProperty(query);
+}
+
+Object.prototype.createInstance = function() {
+  return Object.create(this);
+}
+
+Object.prototype.setKey = function(key, value) {
+  this[key] = value;
+}
+
+Object.prototype.deleteKey = function(key) {
+  delete this[key];
+}
+
+Object.prototype.forEachKey = function(callback) {
+  for (const key of Object.keys(this)) {
+    callback(key);
+  }
+}
+
+Object.prototype.forEachValue = function(callback) {
+  for (const value of Object.values(this)) {
+    callback(value);
+  }
+}
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyAa9nIvVqumqkClFO8il19Va0KoQ_wmN8M",
   authDomain: "yexs-chat.firebaseapp.com",
@@ -7,21 +52,55 @@ const firebaseConfig = {
   messagingSenderId: "784190773413",
   appId: "1:784190773413:web:5de305c6e34bc779a6154c"
 };
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-
-let username = "";
 let usernames = [];
 let users = [];
 let cusers = [];
 const fetchUsers = database.ref("users/");
 fetchUsers.on("child_added", function (snapshot) {
-  usernames = [...usernames, snapshot.val().username.toLowerCase()];
+  usernames.push(snapshot.val().username.toLowerCase());
   users.push("@" + snapshot.val().username);
-  cusers.push("<span id='mcolor'>@" + snapshot.val().username + "</span>")
+  cusers.push("<span id='mcolor'>@" + snapshot.val().username + "</span>");
 });
+
+fetchUsers.on("child_removed", function (snapshot) {
+  usernames.deleteItem(snapshot.val().username.toLowerCase());
+  users.deleteItem("@" + snapshot.val().username);
+  cusers.deleteItem("<span id='mcolor'>@" + snapshot.val().username + "</span>");
+});
+
+class User {
+  constructor(name) {
+    this.username = name;
+  }
+  meetsConstraints() {
+    return (this.username.length <= 25 && !usernames.includes(this.username) && !(/^yex$/i.test(this.username))) || ((/^yex$/i.test(this.username)) && localStorage.getItem('uuid') == atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5"));
+  }
+  changeUsername(newName) {
+    usernames.deleteItem(this.username);
+    this.username = newName;
+    usernames.push(newName);
+    users = usernames.map((og) => "@" + og);
+    cusers = users.map((og) => "<span id='mcolor'>" + og + "</span>");
+  }
+  get name() {
+    return this.username;
+  }
+  get errorMsg() {
+   const errorMsgs = ["That username is too long! max is 25 chars", "That username is in use!"]; 
+   if(!this.meetsConstraints()) {
+    if(this.username.length > 25)
+      return errorMsgs[0];
+    else if(usernames.includes(this.username))
+      return errorMsgs[1]; 
+    else if((/^yex$/i.test(this.username)) && localStorage.getItem('uuid') != atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) 
+      return errorMsgs[1];
+   } else return "No Error Thrown!"; 
+  }
+}
+let username = new User("Guest");
 document.getElementById("message-form").addEventListener("submit", sendMessage);
 
 function sendMessage(e) {
@@ -37,7 +116,7 @@ function sendMessage(e) {
     
   // create db collection and send in the data
     database.ref("messages/" + timestamp).set({
-      username,
+      username: username.name,
       message
     });
 }
@@ -55,49 +134,40 @@ String.prototype.replaceArray = function(find, replace) {
 const fetchChat = database.ref("messages/");
 let tStamp = Date.now() + 250;
 
-setTimeout(() => {
   document.getElementById("user-form").addEventListener("submit", (ev) => {
    ev.preventDefault();
-   username = document.getElementById("user-input").value;
-   const lenConstraint = !(username.length > 25);
-   const isNotDupe = !(usernames.includes(username.toLowerCase()));
-   if(lenConstraint && isNotDupe) {
+   username = new User(document.getElementById("user-input").value);
+   if(username.meetsConstraints()) {
      document.getElementById("user-form").style.display = "none";
-     database.ref("users/" + tStamp).set({username});
-  usernames = [...usernames, username];
-   usernames.splice(usernames.indexOf(username), 1);
-    users.push("@" + username);
-     users.splice(users.indexOf("@" + username), 1);
-      cusers.push("<span id='mcolor'>@" + username + "</span>");
-       cusers.splice(cusers.indexOf("<span id='mcolor'>@" + username + "</span>"), 1);
-      SnackBar({
-        message: "Chat Loaded Successfully!",
+     database.ref("users/" + tStamp).set({username: username.name});
+     SnackBar({
+        message: "Username set to " + username.name,
         status: 'success',
         position: "br",
         fixed: true,
         timeout: 1500
-      });
-      document.getElementById("chat").style.display = "block";
-      document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
+    });
+    document.getElementById("chat").style.display = "block";
+    document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
   } else {
-     username = null;
      document.getElementById("user-input").value = "";
      SnackBar({
-        message: !isNotDupe ? "That username is in use!" : "Username cannot be more than 25 characters!",
+        message: username.errorMsg,
         status: 'error',
         icon: "!",
         position: "br",
         fixed: true,
         timeout: 2000
-      });     
+      });
    } 
   });
   fetchChat.on("child_added", function (snapshot) {
-  
   const messages = snapshot.val();
+  const linkCatch = messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) : [];
+  const linkReplace = messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g).map(og => `<a id='clink' target='_blank' href='${og.startsWith("http://") || og.startsWith("https://") ? og : "https://" + og}'>` + og + "</a>") : [];
   const message = `<div id="fname">${messages.username.substring(0, 1)}</div><li class=${
     username === messages.username ? "sent" : "receive"
-  }><span id="user">@${messages.username}</span><br/><span id="msg">${messages.message.replaceArray(users, cusers)}</span></li><br/>`;
+  }><span id="user">@${messages.username}</span><br/><span id="msg">${messages.message.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + window.location.href.substring(8, 13) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
   // append the message on the page
   document.getElementById("messages").innerHTML += message;
   document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
@@ -105,7 +175,7 @@ setTimeout(() => {
   if(messages.message.includes('@' + (username ? username : localStorage.uuid)) && !mentions.includes(messages.message)) {
       SnackBar({message: `${messages.username} mentioned you!`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500, actions: [{text: "View", function: function () {
         for (let lm of document.querySelectorAll('#messages > li')) {
-          if(lm.children[2].textContent.includes('@' + username)) {
+          if(lm.children[2].textContent == messages.message && lm.children[0].textContent == messages.username) {
             lm.scrollIntoView();
           }
         }
@@ -117,7 +187,7 @@ setTimeout(() => {
   
 fetchUsers.on("child_removed", function (snapshot) {
   const del = snapshot.val().username;
-  usernames.splice(usernames.indexOf(del), 1);
+  usernames.deleteItem(del);
   users = usernames.map((og) => "@" + og);
   cusers = users.map((og) => "<span id='mcolor'>" + og + "</span>");
 });
@@ -136,4 +206,3 @@ fetchChat.on("child_removed", function (snapshot) {
   if(len > 0) document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
 });
   window.onunload = () => database.ref("users/" + tStamp).remove();
-}, 250);
