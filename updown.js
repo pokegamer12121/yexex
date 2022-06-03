@@ -87,6 +87,8 @@ if(!norun) {
     timeout: 1000
   });
 
+  console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loading...");
+
   setTimeout(() => {
     tippy('[data-tippy-content]', {
       arrow: false,
@@ -98,6 +100,7 @@ if(!norun) {
 
   setTimeout(() => { 
     document.querySelector('div.loader').remove();
+    console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loaded");
     SnackBar({
       message: "Loaded Successfully",
       status: 'success',

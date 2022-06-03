@@ -1,10 +1,19 @@
 /* 
-   ~~~~~~~~~~~~~~~~~~~~~~
-                           
-  𝒴𝑒𝓍'𝓈 𝒥𝒶𝓋𝒶𝒮𝒸𝓇𝒾𝓅𝓉 𝒜𝒹𝒹𝑜𝓃𝓈
 
-   ~~~~~~~~~~~~~~~~~~~~~~
+ \|          /|\           |/   
+  \|      {| [|] |}       |/
+
 */
+
+/*  \---> 𝙔𝙚𝙭'𝙨 𝙅𝙖𝙫𝙖𝙎𝙘𝙧𝙞𝙥𝙩 𝘼𝙙𝙙𝙤𝙣𝙨 <---/  */
+
+String.prototype.toNumber = function() {
+  return parseInt(this);
+};
+
+Number.prototype.isInteger = function() {
+  return Number.isInteger(this);
+};
 
 Array.prototype.deleteItem = function(item) {
   this.splice(this.indexOf(item), 1);
@@ -14,34 +23,113 @@ Array.prototype.deleteIndex = function(index) {
   this.splice(index, 1);
 };
 
+Array.prototype.removeItem = function(item) {
+  this.splice(this.indexOf(item), 1);
+};
+
+Array.prototype.removeIndex = function(index) {
+  this.splice(index, 1);
+};
+
+Array.prototype.reorder = function() {
+  let numArray = false;
+  this.forEach(value => {
+    if(/^[0-9]+$/g.test(value)) {
+      numArray = true;
+    } else if(/^[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/a-zA-Z ]+$/gi.test(value)) {
+      numArray = false;
+    }
+  });
+  if(numArray) {
+    this.sort(function(a, b) { return a - b; });
+  } else {
+    this.sort();
+  }
+};
+
+Array.prototype.toObject = function() {
+  let arrayObj = {};
+  this.forEach((v, i) => {
+    arrayObj[i] = v;
+  });
+  return arrayObj;
+};
+
+Array.prototype.subarray = function(start, end) {
+  return this.slice(start, end);
+};
+
+Array.prototype.subarr = function(start, length) {
+  return this.slice(start, start + length);
+};
+
+Array.prototype.replace = function(rval, rwith) {
+  let replaceItems = [];
+  this.forEach(value => {
+    const matches = value.match(rval) ? value.match(rval) : null;
+    replaceItems.push(matches != null ? value.replace(...matches, rwith) : value);
+  });
+  return replaceItems;
+};
+
 Object.prototype.includes = function(query) {
   return this.hasOwnProperty(query);
-}
+};
 
 Object.prototype.createInstance = function() {
   return Object.create(this);
-}
+};
 
 Object.prototype.setKey = function(key, value) {
   this[key] = value;
-}
+};
 
 Object.prototype.deleteKey = function(key) {
   delete this[key];
-}
+};
+
+Object.prototype.forEach = function(callback) {
+  for (const [key, value] of Object.entries(this)) {
+    callback(key, value);
+  }
+};
+
+Object.prototype.toArray = function() {
+  let objArray = [];
+  this.forEach((k, v) => {
+    const kvObj = {};
+    kvObj.setKey(k, v);
+    objArray.push(kvObj);
+  });
+  return objArray;
+};
+
+Object.prototype.keys = function() {
+  return Object.keys(this);
+};
 
 Object.prototype.forEachKey = function(callback) {
   for (const key of Object.keys(this)) {
     callback(key);
   }
-}
+};
+
+Object.prototype.values = function() {
+  return Object.values(this);
+};
 
 Object.prototype.forEachValue = function(callback) {
   for (const value of Object.values(this)) {
     callback(value);
   }
-}
+};
 
+/*
+
+  /|      {| [|] |}       |\
+ /|          \|/           |\
+
+*/
 
 const firebaseConfig = {
   apiKey: "AIzaSyAa9nIvVqumqkClFO8il19Va0KoQ_wmN8M",
