@@ -71,7 +71,7 @@ onkeydown="check_tab(this, event);"></textarea>
   </div>
   </div>
   <br/>
-  <div id="center"> <a class="btn" onclick="exec('editing-html', 'html'); exec('editing-css', 'css'); exec('editing-js', 'js')">Execute Code</a> </div>
+  <div id="center"> <a class="btn" onclick="exec('#editing-html', 'html'); exec('#editing-css', 'css'); exec('#editing-js', 'js')">Execute Code</a> </div>
   <br/>
   <div id="center"> <iframe id="test" src="about:blank"></iframe> </div>
 
@@ -81,7 +81,6 @@ onkeydown="check_tab(this, event);"></textarea>
   <script src="updown.js"></script>
   <script src="prism.js"></script>
   <script>
-    if(!norun) {
     let doc = document.getElementById('test').contentWindow.document;
     doc.title="Code Environment";
     var scrpt = doc.createElement('script');
@@ -91,6 +90,7 @@ onkeydown="check_tab(this, event);"></textarea>
         parent.removeChild(parent.lastChild);
       }
     };
+    if(!norun) {
     if(typeof localStorage.getItem('cdjs') != "undefined") {
       document.getElementById('editing-js').textContent = localStorage.getItem('cdjs');
       update(localStorage.getItem('cdjs'), 'highlighting-content-js');
@@ -105,7 +105,7 @@ onkeydown="check_tab(this, event);"></textarea>
     }
     }
     function exec(el, type) {
-      el = document.getElementById(el);
+      el = document.querySelector(el);
       if(type == "js") {
         localStorage.setItem('cdjs', el.value);
         if(typeof doc.querySelector('#scrpt') == "undefined") {

@@ -5,7 +5,7 @@
 
 */
 
-/*  \---> 𝙔𝙚𝙭'𝙨 𝙅𝙖𝙫𝙖𝙎𝙘𝙧𝙞𝙥𝙩 𝘼𝙙𝙙𝙤𝙣𝙨 <---/  */
+/* </> \---> 𝙔𝙚𝙭'𝙨 𝙅𝙖𝙫𝙖𝙎𝙘𝙧𝙞𝙥𝙩 𝘼𝙙𝙙𝙤𝙣𝙨 <---/ </> */
 
 String.prototype.toNumber = function() {
   return parseInt(this);
@@ -31,28 +31,89 @@ Array.prototype.removeIndex = function(index) {
   this.splice(index, 1);
 };
 
+Array.prototype.clear = function() {
+  while(this[0]) this.deleteIndex(0);
+};
+
+Array.prototype.push = function(...items) {
+  this.splice(this.length, 0, ...items);
+};
+
+Array.prototype.unshift = function(...items) {
+  this.splice(0, 0, ...items);
+};
+
+Array.prototype.prepend = function(...items) {
+  this.unshift(...items);
+}
+
+Array.prototype.append = function(item) {
+  this.push(item);
+};
+
 Array.prototype.reorder = function() {
-  let numArray = false;
+  let nums = 0;
+  let letters = 0;
   this.forEach(value => {
-    if(/^[0-9]+$/g.test(value)) {
-      numArray = true;
-    } else if(/^[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/a-zA-Z ]+$/gi.test(value)) {
-      numArray = false;
+    if(!isNaN(value)) {
+        nums++;
+    } else {
+        letters++;
     }
   });
-  if(numArray) {
+  if(nums > letters && letters == 0) {
     this.sort(function(a, b) { return a - b; });
-  } else {
+    return this;
+  } else if(letters > nums && nums == 0) {
     this.sort();
+    return this;
+  } else if(letters > nums && nums != 0) {
+    const numArray = [], letArray = [];
+    this.forEach(value => {
+      if(!isNaN(value)) {
+        numArray.push(value);
+      } else {
+        letArray.push(value);
+      }
+    });
+    numArray.sort(function(a, b) { return a - b; });
+    letArray.sort();
+    this.clear();
+    this.push(...numArray, ...letArray);
+    return this;
+  } else if(nums > letters && letters != 0) {
+    const numArray = [], letArray = [];
+    this.forEach(value => {
+      if(!isNaN(value)) {
+        numArray.push(value);
+      } else {
+        letArray.push(value);
+      }
+    });
+    numArray.sort(function(a, b) { return a - b; });
+    letArray.sort();
+    this.clear();
+    this.push(...numArray, ...letArray);
+    return this;
   }
 };
 
 Array.prototype.toObject = function() {
   let arrayObj = {};
-  this.forEach((v, i) => {
-    arrayObj[i] = v;
-  });
+  this.forEach((v, i) => arrayObj[i] = v);
   return arrayObj;
+};
+
+Array.prototype.toMap = function() {
+  let arrayMap = new Map();
+  this.forEach((v, i) => arrayMap.set(i, v));
+  return arrayMap;
+};
+
+Array.prototype.toSet = function() {
+  let arraySet = new Set();
+  this.forEach(v => arraySet.add(v));
+  return arraySet;
 };
 
 Array.prototype.subarray = function(start, end) {
@@ -65,12 +126,92 @@ Array.prototype.subarr = function(start, length) {
 
 Array.prototype.replace = function(rval, rwith) {
   let replaceItems = [];
-  this.forEach(value => {
-    const matches = value.match(rval) ? value.match(rval) : null;
-    replaceItems.push(matches != null ? value.replace(...matches, rwith) : value);
-  });
+  if(rval instanceof RegExp) {
+    this.forEach(value => {
+      const matches = value.match(rval) ? value.match(rval) : null;
+      replaceItems.push(matches != null ? value.replace(...matches, rwith) : value);
+    });
+  } else {
+    this.forEach(value => {
+      const matches = value.match(new RegExp(rval, "gi")) ? value.match(new RegExp(rval, "gi")) : null;
+      replaceItems.push(matches != null ? value.replace(...matches, rwith) : value);
+    });
+  }
   return replaceItems;
 };
+
+Element.prototype.setCss = function(name, value) {
+  this.style[name] = value;
+};
+
+Element.prototype.getCss = function(name) {
+  return this.style[name];
+};
+
+Element.prototype.setHtml = function(value) {
+  this.innerHTML = value;
+};
+
+Element.prototype.getHtml = function() {
+  return this.innerHTML;
+};
+
+HTMLElement.prototype.click = function(callback) {
+  this.onclick = function(e) { callback(e); };
+};
+
+Element.prototype.hover = function(onin, onout) {
+  if(onin) this.onmouseenter = function(e) { onin(e); };
+  if(onout) this.onmouseleave = function(e) { onout(e); };
+};
+
+Element.prototype.keydown = function(key, callback) {
+  this.onkeydown = function(e) { if(e.key == key) callback(e); };
+};
+
+Element.prototype.keypress = function(key, callback) {
+  this.onkeypress = function(e) { if(e.key == key) callback(e); };
+};
+
+Element.prototype.keyup = function(key, callback) {
+  this.onkeyup = function(e) { if(e.key == key) callback(e); };
+};
+
+HTMLElement.prototype.focus = function(callback) {
+  this.onfocus = function(e) { callback(e); };
+};
+
+Element.prototype.unfocus = function(callback) {
+  this.onblur = function(e) { callback(e); };
+};
+
+Element.prototype.load = function(callback) {
+  this.onload = function(e) { callback(e); };
+};
+
+Element.prototype.unload = function(callback) {
+  this.onunload = function(e) { callback(e); };
+};
+
+Element.prototype.input = function(callback) {
+  this.oninput = function(e) { callback(e); };
+};
+
+Element.prototype.scroll = function(callback) {
+  this.onscroll = function(e) { callback(e); };
+};
+
+HTMLFormElement.prototype.submit = function(callback) {
+  this.onsubmit = function(e) { callback(e); };
+};
+
+function elem(...query) {
+  const elarr = [];
+  for (const el of document.querySelectorAll([...query].reduce((a, b) => a + ", "  + b))) {
+    elarr.push(el);
+  }
+  return elarr.length != 1 ? elarr : document.querySelector(query);
+}
 
 Object.prototype.includes = function(query) {
   return this.hasOwnProperty(query);
@@ -108,20 +249,8 @@ Object.prototype.keys = function() {
   return Object.keys(this);
 };
 
-Object.prototype.forEachKey = function(callback) {
-  for (const key of Object.keys(this)) {
-    callback(key);
-  }
-};
-
 Object.prototype.values = function() {
   return Object.values(this);
-};
-
-Object.prototype.forEachValue = function(callback) {
-  for (const value of Object.values(this)) {
-    callback(value);
-  }
 };
 
 /*
@@ -189,7 +318,7 @@ class User {
   }
 }
 let username = new User("Guest");
-document.getElementById("message-form").addEventListener("submit", sendMessage);
+elem("#message-form").submit(function(e) { sendMessage(e); });
 
 function sendMessage(e) {
     e.preventDefault();
@@ -222,7 +351,7 @@ String.prototype.replaceArray = function(find, replace) {
 const fetchChat = database.ref("messages/");
 let tStamp = Date.now() + 250;
 
-  document.getElementById("user-form").addEventListener("submit", (ev) => {
+elem("#message-form").submit(function(ev) { 
    ev.preventDefault();
    username = new User(document.getElementById("user-input").value);
    if(username.meetsConstraints()) {
