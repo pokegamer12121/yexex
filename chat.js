@@ -12,7 +12,7 @@ String.prototype.toNumber = function() {
 };
 
 Number.prototype.isInteger = function() {
-  return Number.isInteger(this);
+  return (parseFloat(this) | 0) === parseFloat(this);
 };
 
 Array.prototype.deleteItem = function(item) {
@@ -205,12 +205,13 @@ HTMLFormElement.prototype.submit = function(callback) {
   this.onsubmit = function(e) { callback(e); };
 };
 
+NodeList.prototype.toArray = function() {
+  return [...this];
+};
+
 function elem(...query) {
-  const elarr = [];
-  for (const el of document.querySelectorAll([...query].reduce((a, b) => a + ", "  + b))) {
-    elarr.push(el);
-  }
-  return elarr.length != 1 ? elarr : document.querySelector(query);
+  const elemArray = document.querySelectorAll([...query].join(", ")).toArray();
+  return elemArray.length != 1 ? elemArray : document.querySelector(query);
 }
 
 Object.prototype.includes = function(query) {
@@ -293,7 +294,7 @@ class User {
     this.username = name;
   }
   meetsConstraints() {
-    return (this.username.length <= 25 && !usernames.includes(this.username) && !(/^yex$/i.test(this.username))) || ((/^yex$/i.test(this.username)) && localStorage.getItem('uuid') == atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5"));
+    return (this.username.length <= 25 && !usernames.includes(this.username) && !this.username.match(/^yex$/i)) || (this.username.match(/^yex$/i) && localStorage.getItem('uuid') == atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5"));
   }
   changeUsername(newName) {
     usernames.deleteItem(this.username);
@@ -312,7 +313,7 @@ class User {
       return errorMsgs[0];
     else if(usernames.includes(this.username))
       return errorMsgs[1]; 
-    else if((/^yex$/i.test(this.username)) && localStorage.getItem('uuid') != atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) 
+    else if(this.username.match(/^yex$/i) && localStorage.getItem('uuid') != atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) 
       return errorMsgs[1];
    } else return "No Error Thrown!"; 
   }
@@ -325,7 +326,7 @@ function sendMessage(e) {
 
     // get values to be submitted
     const timestamp = Date.now();
-    const messageInput = document.getElementById("message-input");
+    const messageInput = elem("#message-input");
     const message = messageInput.value;
 
   // clear the input box
@@ -351,11 +352,11 @@ String.prototype.replaceArray = function(find, replace) {
 const fetchChat = database.ref("messages/");
 let tStamp = Date.now() + 250;
 
-elem("#message-form").submit(function(ev) { 
+elem("#user-form").submit(function(ev) { 
    ev.preventDefault();
-   username = new User(document.getElementById("user-input").value);
+   username = new User(elem("#user-input").value);
    if(username.meetsConstraints()) {
-     document.getElementById("user-form").style.display = "none";
+     elem("#user-form").setCss("display", "none");
      database.ref("users/" + tStamp).set({username: username.name});
      SnackBar({
         message: "Username set to " + username.name,
@@ -364,10 +365,10 @@ elem("#message-form").submit(function(ev) {
         fixed: true,
         timeout: 1500
     });
-    document.getElementById("chat").style.display = "block";
-    document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
+    elem("#chat").setCss("display", "block");
+    elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
   } else {
-     document.getElementById("user-input").value = "";
+     elem("#user-input").value = "";
      SnackBar({
         message: username.errorMsg,
         status: 'error',
@@ -386,12 +387,16 @@ elem("#message-form").submit(function(ev) {
     username === messages.username ? "sent" : "receive"
   }><span id="user">@${messages.username}</span><br/><span id="msg">${messages.message.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + window.location.href.substring(8, 13) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
   // append the message on the page
-  document.getElementById("messages").innerHTML += message;
-  document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
+  elem("#messages").innerHTML += message;
+  if(elem("#messages > li") instanceof Array) {
+    elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
+  } else {
+    elem("#messages > li").scrollIntoView();
+  }
   let mentions = localStorage.getItem('mentions') != null ? JSON.parse(localStorage.getItem('mentions')) : [];
   if(messages.message.includes('@' + (username ? username : localStorage.uuid)) && !mentions.includes(messages.message)) {
       SnackBar({message: `${messages.username} mentioned you!`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500, actions: [{text: "View", function: function () {
-        for (let lm of document.querySelectorAll('#messages > li')) {
+        for (let lm of elem("#messages > li")) {
           if(lm.children[2].textContent == messages.message && lm.children[0].textContent == messages.username) {
             lm.scrollIntoView();
           }
@@ -404,7 +409,7 @@ elem("#message-form").submit(function(ev) {
 
 fetchChat.on("child_removed", function (snapshot) {
   const deletedMessage = snapshot.val();
-  for(const listItem of document.querySelectorAll('#messages > li')) {
+  for(const listItem of elem("#messages > li")) {
     if(listItem.textContent.includes(deletedMessage.username) && listItem.textContent.includes(deletedMessage.message)) {
       listItem.previousElementSibling.remove();
       listItem.children[1].remove();
@@ -412,6 +417,6 @@ fetchChat.on("child_removed", function (snapshot) {
       listItem.remove();
     }
   }
-  if(document.querySelectorAll('#messages > li').length > 0) document.querySelectorAll('#messages > li')[document.querySelectorAll('#messages > li').length - 1].scrollIntoView();
+  if(elem("#messages > li").length > 0) elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
 });
   window.onunload = () => database.ref("users/" + tStamp).remove();
