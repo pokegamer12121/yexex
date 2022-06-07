@@ -20,13 +20,13 @@
       <button id="settings" data-tippy-content="Settings"><i class="fa fa-fw fa-gear"></i></button>
       <ul class="dropdown">
         <li class="dropdown-item">
-          <a onclick="SnackBar({message: 'Sorry, that feature is not available yet!', status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 1500});" href="#">Light</a>
+          <a onclick="theme('red', this)" href="#">Red</a>
         </li>
         <li class="dropdown-item">
-          <a class="active" href="#">Dark</a>
+          <a onclick="theme('rgb(50, 150, 255)', this)" href="#">Blue</a>
         </li>
         <li class="dropdown-item">
-          <a onclick="SnackBar({message: 'Sorry, that feature is not available yet!', status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 1500});" href="#">Lime Green</a>
+          <a onclick="theme('limegreen', this)" href="#">Lime Green</a>
         </li>
       </ul>
     </div>
