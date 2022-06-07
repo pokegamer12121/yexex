@@ -17,6 +17,7 @@ h2 {
 body {
     background-color: #444;
     font-family: arista;
+  overflow: hidden;
 }
 
 p {
@@ -40,6 +41,7 @@ a {
     text-decoration: transparent;
     display: block;
     text-align:center;
+    transition: 0.5s all;
 }
 
 a:hover {

@@ -48,9 +48,17 @@ if(localStorage.getItem('ft') == null) {
   localStorage.setItem('ft', 'false');
 }
 
-if(localStorage.getItem("theme-color") != null) document.documentElement.style.setProperty("--theme-clr", localStorage.getItem("theme-color"));
-
 const themeButtons = [...document.querySelectorAll(".dropdown-item > a")];
+
+if(localStorage.getItem("theme-color") != null) { 
+  document.documentElement.style.setProperty("--theme-clr", localStorage.getItem("theme-color"));
+  themeButtons.forEach(value => {
+    if(value.getAttribute("onclick").includes(localStorage.getItem("theme-color")))
+      value.classList.add("active");
+    else if(value.classList.contains("active"))
+      value.classList.remove("active");
+  });
+}                                                 
 function theme(name, el) {
   document.documentElement.style.setProperty("--theme-clr", name);
   localStorage.setItem("theme-color", name);
