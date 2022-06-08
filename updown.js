@@ -48,26 +48,39 @@ if(localStorage.getItem('ft') == null) {
   localStorage.setItem('ft', 'false');
 }
 
-const themeButtons = [...document.querySelectorAll(".dropdown-item > a")];
+const themeButtons = [...document.querySelectorAll(".dropdown-item a")];
 
 if(localStorage.getItem("theme-color") != null) { 
   document.documentElement.style.setProperty("--theme-clr", localStorage.getItem("theme-color"));
   themeButtons.forEach(value => {
     if(value.getAttribute("onclick").includes(localStorage.getItem("theme-color")))
-      value.classList.add("active");
+      value.classList.add("active");     
     else if(value.classList.contains("active"))
       value.classList.remove("active");
+    if(localStorage.getItem("theme-custom") == "true")
+      themeButtons[3].classList.add("active");
   });
 }                                                 
-function theme(name, el) {
-  document.documentElement.style.setProperty("--theme-clr", name);
-  localStorage.setItem("theme-color", name);
-  themeButtons.forEach(value => {
-    if(value.classList.contains("active")) {
-      value.classList.remove("active");
-    }
-  });
-  el.classList.add("active");
+function theme(color, el, custom) {
+  if(!custom) {
+    localStorage.setItem("theme-custom", "false");
+    document.documentElement.style.setProperty("--theme-clr", color);
+    localStorage.setItem("theme-color", color);
+  } else {
+    localStorage.setItem("theme-custom", "true");
+    document.querySelector(".dropdown-item > input[type=color]").oninput = function(e) {
+      document.documentElement.style.setProperty("--theme-clr", e.target.value);
+      localStorage.setItem("theme-color", e.target.value);
+    };
+  }
+  if(el) {
+    themeButtons.forEach(value => {
+      if(value.classList.contains("active")) {
+        value.classList.remove("active");
+      }
+    });
+    el.classList.add("active");
+  }
 }
 
 if(window.location.href.endsWith(atob('ZDd5MjdiMTJjNzc4Y2IzNzJrMmxnYTBwNDdoLmh0bWw='))) {
@@ -98,6 +111,7 @@ if(!norun) {
   SnackBar({
     message: "Loading...",
     status: 'info',
+    theme: 'darker',
     icon: "i",
     fixed: true,
     position: "br",
@@ -117,10 +131,11 @@ if(!norun) {
 
   setTimeout(() => { 
     document.querySelector('div.loader').remove();
-    console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loaded");
+    console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loaded Successfully!");
     SnackBar({
-      message: "Loaded Successfully",
+      message: "Loaded Successfully!",
       status: 'success',
+      theme: 'darker',
       position: "br",
       fixed: true,
       timeout: 1500

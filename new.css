@@ -4,12 +4,10 @@
   --theme-clr: rgb(50, 150, 255);
 }
 
-html {
-  overflow: visible;
-}
-
 a {
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 * {
@@ -42,17 +40,15 @@ body {
 
 ::-webkit-scrollbar {
   width: 0.4rem;
-  height: 0.6rem;
+  height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
   background: #1e1e1e;
-  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   background:var(--theme-clr);
-  border-radius: 10px;
 }
 
 /* Nav Bar */
@@ -67,6 +63,11 @@ nav.bar {
   position:fixed;
   z-index:3;
   animation: swap-bottom 1s;
+}
+
+label {
+  width: 50px;
+  height:fit-content;
 }
 
 /* Nav Bar Header */
@@ -128,6 +129,14 @@ nav.bar a.yex:hover {
   color:white;
   text-shadow: none;
   transform: scale(1.05);
+}
+
+input[type=color] {
+  position:absolute;
+  visibility:hidden;
+  padding: 0;
+  border: none;
+  background: none;
 }
 
 nav.bar .dropdown {
@@ -205,11 +214,6 @@ div.overlay-text {
   text-align: center;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
 /* Headers */
 
 h1 {
@@ -217,10 +221,6 @@ h1 {
   color: white;
   text-shadow: 3px 1px var(--theme-clr);
   font-size: 45px;
-}
-
-h1.left {
-  text-align: left;
 }
 
 p i {
@@ -234,10 +234,6 @@ p {
   text-align: center;
   color: white;
   text-shadow: 2px 1px var(--theme-clr);
-}
-
-p.left {
-  text-align: left;
 }
 
 /* Profile Images */
@@ -257,7 +253,7 @@ a.lumi:hover { color:yellow; text-shadow: 0px 0px 4px yellow;  }
 
 /* Game Link */
 
-a.game {
+a.game, a.btn {
   color: white;
   border-radius: 15px;
   background-color: #555;
@@ -269,7 +265,7 @@ a.game {
   font-size:20px;
 }
 
-a.game:hover {
+a.game:hover, a.btn:hover {
   background-color: #666;
   transform: scale(1.1) translateY(-5%);
 }
@@ -286,24 +282,6 @@ a.bmrklet {
   font-size:20px;
   display: inline-block;
   padding: 16px;
-}
-
-a.btn {
-  color: white;
-  border-radius: 15px;
-  background-color: #555;
-  text-decoration: none;
-  margin-left: 10px;
-  margin-right: 1%;
-  margin-top: 1%;
-  display: inline-block;
-  padding: 16px;
-  font-size:20px;
-}
-
-a.btn:hover {
-  background-color: #666;
-  transform: scale(1.1);
 }
 
 a.btn:active {
