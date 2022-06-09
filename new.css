@@ -30,10 +30,11 @@ a {
 body {
   background-color: #2e2e2e;
   font-family: arista, arial, helvetica, sans-serif;
-  margin:0;
-  width:100%;
-  height:100%;
-  margin-top:75px;
+  margin: 0;
+  width: 100vw;
+  --body-margin-top: 75px;
+  height: calc(100vh - var(--body-margin-top));
+  margin-top: var(--body-margin-top);
 }
 
 /* Scroll Bar */
@@ -49,6 +50,42 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background:var(--theme-clr);
+}
+
+div.loaded-overlay {
+  display: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  z-index: 2;
+}
+
+div.loaded-overlay::before {
+  content: '';
+  background-color: rgba(25, 25, 25, 0.25);
+  backdrop-filter: blur(2px);
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  left:0;
+  top:0;
+  bottom:0;
+  animation: flowinleft 1.25s 0.2s forwards;
+}
+
+div.loaded-overlay::after {
+  content: '';
+  background-color: rgba(25, 25, 25, 0.25);
+  backdrop-filter: blur(2px);
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  right:0;
+  top:0;
+  bottom:0;
+  animation: flowinright 1.25s 0.2s forwards;
 }
 
 /* Nav Bar */
@@ -90,7 +127,8 @@ nav.bar h2 {
 
 nav.bar a, nav.bar button {
   padding: 8px;
-  display:block;
+  display:block;1
+  cursor:pointer;
   position: relative;
   font-size: 20px;
   margin-top: 4px;
@@ -182,31 +220,36 @@ div.has-dropdown button {
 
 div.overlay-info {
   position: relative;
+  width: 100px;
+  height:100px;
+  margin-inline: auto;
+  display: flex;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 div.overlay-container {
-  position: absolute;
-  border-radius: 50%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin-inline: auto;
   background-color: var(--clr-prof);
-  overflow: hidden;
-  width: 100px;
-  height:100px;
-  transform: scaleX(30%) scaleY(0);
-  transform-origin: center;
-  transition: 0.5s all;
+  width: 100%;
+  height: 100%;
+  border-radius:50%;
+  border: var(--clr-prof) solid 5px;
 }
 
-div.overlay-info:hover div.overlay-container {
-   transform: scaleX(100%) scaleY(100%);
+div.overlay-info > *:not(div.overlay-container) {
+  position: absolute;
+  background-color: #2e2e2e;
+  z-index: 1;
+}
+
+div.overlay-info:hover > *:not(div.overlay-container) {
+   transform: translateY(100%);
 }
 
 div.overlay-text {
   color: black;
-  font-size: 20px;
+  font-size: 30px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -401,9 +444,13 @@ div.loader-bar {
 
 /* Animations */
 
-@keyframes flowout {
-  from { transform:scaleX(0%); }
-  to { transform:scaleX(100%); }
+@keyframes flowinleft {
+  from { transform-origin: center left; transform:scaleX(100%); }
+  to { transform-origin: center left; transform:scaleX(0); }
+}
+@keyframes flowinright {
+  from { transform-origin: center right; transform:scaleX(100%); }
+  to { transform-origin: center right; transform:scaleX(0); }
 }
 @keyframes swap-bottom {
   0% { transform: translateX(0) translateY(-100%); }

@@ -9,19 +9,19 @@ var lol2 = false;
 let norun = false;
 function xd() {
   if(b) {
-    nav.style.top="-60px";
-    document.body.style.marginTop="0";
-    ud.style.transform="rotate(-180deg)";
-    up.style.borderRadius="10px / 10px";
-    up.style.transform="translateY(130%)";
-    up.style.backgroundColor="#696969";
+    nav.style.top = "-60px";
+    document.body.style.setProperty("--body-margin-top", "0");
+    ud.style.transform = "rotate(-180deg)";
+    up.style.borderRadius = "10px / 10px";
+    up.style.transform = "translateY(130%)";
+    up.style.backgroundColor = "#696969";
   } else {
-    ud.style.transform="rotate(0deg)";
-    nav.style.top="0";
-    document.body.style.marginTop="75px";
-    up.style.borderRadius="0px";
-    up.style.transform="translateY(0%)";
-    up.style.backgroundColor="transparent";
+    ud.style.transform = "rotate(0deg)";
+    nav.style.top = "0";
+    document.body.style.setProperty("--body-margin-top", "75px");
+    up.style.borderRadius = "0px";
+    up.style.transform = "translateY(0%)";
+    up.style.backgroundColor = "transparent";
   }
 }
 
@@ -127,10 +127,11 @@ if(!norun) {
       offset: [0, -1],
       placement: "bottom"
     });
-  }, 800)
+  }, 800);
 
   setTimeout(() => { 
     document.querySelector('div.loader').remove();
+    document.querySelector('div.loaded-overlay').style.display = "block";
     console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loaded Successfully!");
     SnackBar({
       message: "Loaded Successfully!",
@@ -141,6 +142,10 @@ if(!norun) {
       timeout: 1500
     });
   }, 1500);
+
+   setTimeout(() => {
+      document.querySelector('div.loaded-overlay').remove();
+  }, 2750);
 }
 
 var lmao = 0;
