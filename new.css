@@ -29,7 +29,7 @@ a {
 
 body {
   background-color: #2e2e2e;
-  font-family: arista, arial, helvetica, sans-serif;
+  font-family: arista, arial, sans-serif, monospace;
   margin: 0;
   width: 100vw;
   --body-margin-top: 75px;
@@ -49,7 +49,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background:var(--theme-clr);
+  background: var(--theme-clr);
 }
 
 div.loaded-overlay {
@@ -174,24 +174,24 @@ input[type=color] {
 
 nav.bar .dropdown {
   opacity: 0;
-    position: absolute;
+  position: absolute;
   list-style: none;
-    width: 300px;
-    background: #555;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    height: 2rem;
-    margin-top: 0.35rem;
-    padding: 0.5rem;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    transform: translateX(-40%);
+  width: 300px;
+  background: #555;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 2rem;
+  margin-top: 0.35rem;
+  padding: 0.5rem;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  transform: translateX(-40%);
 }
 
 nav.bar div.has-dropdown ul.dropdown li.dropdown-item a {
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   margin-top: -0.15rem;
 }
 
@@ -208,7 +208,7 @@ div.has-dropdown {
 }
 
 div.has-dropdown button {
-  float:none;
+  float: none;
 }
 
 div.overlay-info {
@@ -320,12 +320,12 @@ a.bmrklet {
   padding: 16px;
 }
 
-a.btn:active {
+a.btn:active, a.game:active {
   background-color: #444;
 }
 
 #center {
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 
