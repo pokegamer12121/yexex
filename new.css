@@ -405,6 +405,8 @@ div.loader-bar {
   animation: loader-bar-animation 1.5s linear forwards;
 }
 
+/* Animations */
+
 @keyframes loader-bar-animation {
   from {
     width:0;
@@ -435,37 +437,18 @@ div.loader-bar {
   }
 }
 
-/* Animations */
-
 @keyframes flowinleft {
   from { transform-origin: center left; transform:scaleX(100%); }
   to { transform-origin: center left; transform:scaleX(0); }
 }
+
 @keyframes flowinright {
   from { transform-origin: center right; transform:scaleX(100%); }
   to { transform-origin: center right; transform:scaleX(0); }
 }
+
 @keyframes swap-bottom {
   0% { transform: translateX(0) translateY(-100%); }
-  100% { transform: none; }
-}
-@keyframes swap-top {
-  0% { transform: translateX(0) translateY(100%); }
-  100% { transform: none; }
-}
-
-@keyframes topper {
-  0% { transform: translateX(0) translateY(150%); opacity: 0%;}
-  100% { transform: none; opacity:100%;}
-}
-
-@keyframes swap-right {
-  0% { transform: translateX(-100%) translateY(0); }
-  100% { transform: none; }
-}
-
-@keyframes swap-left {
-  0% { transform: translateX(100%) translateY(0); }
   100% { transform: none; }
 }
 
