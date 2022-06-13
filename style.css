@@ -17,7 +17,7 @@ h2 {
 body {
     background-color: #444;
     font-family: arista;
-  overflow: hidden;
+  
 }
 
 p {
@@ -35,47 +35,22 @@ h3 {
 
 /* Make sure check that the classes are in the right spots */
 
-a {
-    font-size: 22.5px;
-    color: dodgerblue;
-    text-decoration: transparent;
-    display: block;
-    text-align:center;
-    transition: 0.5s all;
+a#back {
+  font-size: 22.5px;
+  color: dodgerblue;
+  text-decoration: transparent;
+  left: 50%;
+  transform: translateX(-50%);
+  position:absolute;
+  top: 0;
+  z-index: 9999;
+  transition: 0.5s all;
 }
 
-a:hover {
+a#back:hover {
     color: deepskyblue;
     text-shadow: 0px 0px 4px;
-    transform: scale(1.05) translateY(-5%);
-}
-
-a.b {
-    font-size: 22.5px;
-    color: dodgerblue;
-    text-decoration: transparent;
-    display: block;
-    text-align:center;
-}
-
-a.b:hover {
-    color: deepskyblue;
-    text-shadow: 0px 0px 4px;
-    transform: scale(1.05) translateY(-5%);
-}
-
-a.c {
-    font-size: 22.5px;
-    color: dodgerblue;
-    text-decoration: transparent;
-    display: block;
-    text-align:center;
-}
-
-a.c:hover {
-    color: deepskyblue;
-    text-shadow: 0px 0px 4px;
-    transform: scale(1.05) translateY(-5%);
+    transform: translateX(-50%) scale(1.05) translateY(-5%);
 }
 
 h4 {
@@ -90,10 +65,9 @@ h4 {
 }
 
 iframe {
-    border-radius: 10px;
-    border: 3px solid black;
-    margin: 0 auto;
-    width: 1000px;
-    height: 562.45px;
+  margin: 50px auto 0 auto;
+  padding: 0;
+    width: 80%;
+    height: 80vh;
     display:block;
 }
