@@ -67,21 +67,7 @@ Array.prototype.reorder = function() {
   } else if(letters > nums && nums == 0) {
     this.sort();
     return this;
-  } else if(letters > nums && nums != 0) {
-    const numArray = [], letArray = [];
-    this.forEach(value => {
-      if(!isNaN(value)) {
-        numArray.push(value);
-      } else {
-        letArray.push(value);
-      }
-    });
-    numArray.sort(function(a, b) { return a - b; });
-    letArray.sort();
-    this.clear();
-    this.push(...numArray, ...letArray);
-    return this;
-  } else if(nums > letters && letters != 0) {
+  } else if(nums != 0 && letters != 0) {
     const numArray = [], letArray = [];
     this.forEach(value => {
       if(!isNaN(value)) {
@@ -133,7 +119,7 @@ Array.prototype.replace = function(rval, rwith) {
     });
   } else {
     this.forEach(value => {
-      const matches = value.match(new RegExp(rval, "gi")) ? value.match(new RegExp(rval, "gi")) : null;
+      const matches = value.match(new RegExp(rval, "i")) ? value.match(new RegExp(rval, "i")) : null;
       replaceItems.push(matches != null ? value.replace(...matches, rwith) : value);
     });
   }
@@ -319,7 +305,7 @@ class User {
   }
 }
 let username = new User("Guest");
-elem("#message-form").submit(function(e) { sendMessage(e); });
+elem("#message-form").submit(sendMessage);
 
 function sendMessage(e) {
     e.preventDefault();
