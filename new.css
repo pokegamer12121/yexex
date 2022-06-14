@@ -259,8 +259,9 @@ h1 {
   font-size: 45px;
 }
 
-p i {
-  cursor:text;
+p > i[class^="fa"] {
+  user-select: text;
+  cursor: text;
 }
 
 /* Paragraph */

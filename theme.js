@@ -1,0 +1,1 @@
+document.documentElement.style.setProperty("--theme-clr", localStorage.getItem("theme-color"));

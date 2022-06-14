@@ -1,46 +1,17 @@
-@font-face {
-  font-family: arista;
-  src: url("arista-new.woff2") format("woff2");
-}
-
-h1 {
-    text-align: center;
-    color: white;
-    font-size: 40px;
-}
-
-h2 {
-    color: white;
-    text-align: center;
-}
+@import "./new.css";
 
 body {
-    background-color: #444;
-    font-family: arista;
-  
+  background-image: linear-gradient(to right bottom, #2e2e2e, #4f4f4f);
 }
-
-p {
-    font-size: 22px;
-    color: crimson;
-    text-align: center;
-}
-
-h3 {
-    color: white;
-    font-size: 25px;
-    text-align: center
-}
-
-
-/* Make sure check that the classes are in the right spots */
 
 a#back {
   font-size: 22.5px;
-  color: dodgerblue;
+  color: white;
   text-decoration: transparent;
+  font-family: arista;
   left: 50%;
   transform: translateX(-50%);
+  text-shadow: 3px 1px var(--theme-clr);
   position:absolute;
   top: 0;
   z-index: 9999;
@@ -48,16 +19,26 @@ a#back {
 }
 
 a#back:hover {
-    color: deepskyblue;
+    color: var(--theme-clr);
     text-shadow: 0px 0px 4px;
-    transform: translateX(-50%) scale(1.05) translateY(-5%);
+    transform: translateX(-50%) scale(1.05);
 }
 
-h4 {
-    color: white;
-    font-size: 24px;
-    text-align: center;
-    text-decoration: underline;
+div.gameboy > a {
+  font-size: 22.5px;
+  color: white;
+  text-decoration: transparent;
+  text-shadow: 3px 1px var(--theme-clr);
+  width: max-content;
+  display: block;
+  margin: 0 auto;
+  transition: 0.5s all;
+}
+
+div.gameboy > a:hover {
+  color: var(--theme-clr);
+    text-shadow: 0px 0px 4px;
+    transform: scale(1.05);
 }
 
 .container {

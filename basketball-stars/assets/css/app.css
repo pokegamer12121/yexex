@@ -11,7 +11,7 @@ body, html {
     font-weight: normal;
     color: #ccc;
     background-color: #000000;
-    overflow: hidden;
+    overflow: visible;
 }
 #orientation {
     margin: 0 auto;
