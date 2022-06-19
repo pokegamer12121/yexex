@@ -38,7 +38,7 @@
     </div>
     <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
     <a href="chat.html" data-tippy-content="Chat"><i class="fa fa-fw fa-wechat"></i></a>
-    <a href="https://discord.gg/d55JGgdW4P" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
+    <a href="https://discord.gg/V49EfgSWgr" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
     <a class="active"><i class="fa fa-fw fa-code"></i></a>
   </nav>
   <div class="loader">
@@ -86,60 +86,41 @@ onkeydown="check_tab(this, event);"></textarea>
   <script src="updown.js"></script>
   <script src="prism.js"></script>
   <script>
-    let doc = document.getElementById('test').contentWindow.document;
+    const doc = document.getElementById('test').contentWindow.document;
     doc.title = "Code Environment";
-    var scrpt = doc.createElement('script');
-    var stylshit = doc.createElement('style');
     const removeChildren = (parent) => {
       while (parent.lastChild) {
         parent.removeChild(parent.lastChild);
       }
     };
-    if(!norun) {
-    if(typeof localStorage.getItem('cdjs') != "undefined") {
-      document.getElementById('editing-js').textContent = localStorage.getItem('cdjs');
-      update(localStorage.getItem('cdjs'), 'highlighting-content-js');
-    }
-    if(typeof localStorage.getItem('cdhtml') != "undefined") {
-      document.getElementById('editing-html').textContent = localStorage.getItem('cdhtml');
-      update(localStorage.getItem('cdhtml'), 'highlighting-content-html');
-    }
-    if(typeof localStorage.getItem('cdcss') != "undefined") {
-      document.getElementById('editing-css').textContent = localStorage.getItem('cdcss');
-      update(localStorage.getItem('cdcss'), 'highlighting-content-css');
-    }
-    }
+    const langs = ["html", "css", "js"];
+    langs.forEach(v => {
+      if(localStorage.getItem(`cd${v}`) && !norun) {
+         document.querySelector(`#editing-${v}`).textContent = localStorage.getItem(`cd${v}`);
+         update(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
+       }
+    });
     function exec(el, type) {
       el = document.querySelector(el);
-      if(type == "js") {
+      if(type == langs[2]) {
+        const scrpt = doc.querySelector("#scrpt") || doc.createElement('script');
         localStorage.setItem('cdjs', el.value);
-        if(typeof doc.querySelector('#scrpt') == "undefined") {
-          scrpt.innerHTML = el.value;
-          scrpt.id="scrpt";
-          doc.body.appendChild(scrpt);
-        } else {
-          scrpt.remove();
-          scrpt=doc.createElement('script');
-          scrpt.innerHTML = el.value;
-          scrpt.id="scrpt";
-          doc.body.appendChild(scrpt);
+        scrpt.innerHTML = el.value;
+        if(scrpt != doc.querySelector("#scrpt")) {
+         scrpt.id = "scrpt";
+         doc.body.appendChild(scrpt);
         }
-      } else if(type=="html") {
+      } else if(type == langs[0]) {
         localStorage.setItem('cdhtml', el.value);
         removeChildren(doc.body);
         doc.body.insertAdjacentHTML('beforeend', el.value);
-      } else if(type=="css") {
+      } else if(type == langs[1]) {
+        const stylshit = doc.querySelector("#stylshit") || doc.createElement('style');
         localStorage.setItem('cdcss', el.value);
-        if(typeof doc.querySelector('#stylshit') == "undefined") {
-          stylshit.innerHTML = el.value;
-          stylshit.id="stylshit";
-          doc.body.appendChild(stylshit);
-        } else {
-          stylshit.remove();
-          stylshit=doc.createElement('style');
-          stylshit.innerHTML = el.value;
-          stylshit.id="stylshit";
-          doc.body.appendChild(stylshit);
+        stylshit.innerHTML = el.value;
+        if(stylshit != doc.querySelector("#stylshit")) {
+         stylshit.id = "stylshit";
+         doc.head.appendChild(stylshit);
         }
       }
     }
@@ -206,7 +187,7 @@ function check_tab(element, event) {
     }
   }
 
-  if(event.code == "Digit9") {
+  if(event.key == "(") {
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
     let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab

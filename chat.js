@@ -167,6 +167,10 @@ HTMLElement.prototype.focus = function(callback) {
   this.onfocus = function(e) { callback(e); };
 };
 
+HTMLInputElement.prototype.val = function() {
+  return this.value;
+};
+
 Element.prototype.unfocus = function(callback) {
   this.onblur = function(e) { callback(e); };
 };
@@ -192,7 +196,7 @@ HTMLFormElement.prototype.submit = function(callback) {
 };
 
 NodeList.prototype.toArray = function() {
-  return [...this];
+  return Array.from(this);
 };
 
 function elem(...query) {
@@ -340,7 +344,7 @@ let tStamp = Date.now() + 250;
 
 elem("#user-form").submit(function(ev) { 
    ev.preventDefault();
-   username = new User(elem("#user-input").value);
+   username = new User(elem("#user-input").val());
    if(username.meetsConstraints()) {
      elem("#user-form").setCss("display", "none");
      database.ref("users/" + tStamp).set({username: username.name});
@@ -354,7 +358,7 @@ elem("#user-form").submit(function(ev) {
     elem("#chat").setCss("display", "block");
     elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
   } else {
-     elem("#user-input").value = "";
+     elem("#user-input").value = '';
      SnackBar({
         message: username.errorMsg,
         status: 'error',
