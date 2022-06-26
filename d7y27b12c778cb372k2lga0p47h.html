@@ -88,7 +88,7 @@ onkeydown="check_tab(this, event);"></textarea>
   <script>
     const doc = document.getElementById('test').contentWindow.document;
     doc.title = "Code Environment";
-    const scrpt = doc.createElement('script');
+    let scrpt = doc.createElement('script');
     const removeChildren = (parent) => {
       while (parent.lastChild) {
         parent.removeChild(parent.lastChild);
