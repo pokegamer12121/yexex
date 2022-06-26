@@ -105,16 +105,16 @@ onkeydown="check_tab(this, event);"></textarea>
       el = document.querySelector(el);
       if(type == langs[2]) {
         localStorage.setItem('cdjs', el.value);
-        if(doc.querySelector("#scrpt") != null) { 
-          scrpt.remove();
-          scrpt = document.createElement('script');
-          scrpt.id = "scrpt";
+        if(typeof doc.querySelector('#scrpt') == "undefined") {
           scrpt.innerHTML = el.value;
-          doc.body.appendChild(scrpt); 
+          scrpt.id="scrpt";
+          doc.body.appendChild(scrpt);
         } else {
-          scrpt.id = "scrpt";
+          scrpt.remove();
+          scrpt=doc.createElement('script');
           scrpt.innerHTML = el.value;
-          doc.body.appendChild(scrpt); 
+          scrpt.id="scrpt";
+          doc.body.appendChild(scrpt);
         }
       } else if(type == langs[0]) {
         localStorage.setItem('cdhtml', el.value);
