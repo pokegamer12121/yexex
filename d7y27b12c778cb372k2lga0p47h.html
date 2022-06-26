@@ -88,7 +88,8 @@ onkeydown="check_tab(this, event);"></textarea>
   <script>
     const doc = document.getElementById('test').contentWindow.document;
     doc.title = "Code Environment";
-    let scrpt = doc.createElement('script');
+    var scrpt = doc.createElement('script');
+    var stylshit = doc.createElement('style');
     const removeChildren = (parent) => {
       while (parent.lastChild) {
         parent.removeChild(parent.lastChild);
@@ -103,28 +104,29 @@ onkeydown="check_tab(this, event);"></textarea>
     });
     function exec(el, type) {
       el = document.querySelector(el);
+      var value = el.value;
       if(type == langs[2]) {
-        localStorage.setItem('cdjs', el.value);
+        localStorage.setItem('cdjs', value);
         if(typeof doc.querySelector('#scrpt') == "undefined") {
-          scrpt.innerHTML = el.value;
+          scrpt.innerHTML = value.replace("const ", "var ").replace("let ", "var ");
           scrpt.id="scrpt";
           doc.body.appendChild(scrpt);
         } else {
           scrpt.remove();
           scrpt=doc.createElement('script');
-          scrpt.innerHTML = el.value;
+          scrpt.innerHTML = value.replace("const ", "var ").replace("let ", "var ");
           scrpt.id="scrpt";
           doc.body.appendChild(scrpt);
         }
       } else if(type == langs[0]) {
-        localStorage.setItem('cdhtml', el.value);
+        localStorage.setItem('cdhtml', value);
         removeChildren(doc.body);
-        doc.body.insertAdjacentHTML('beforeend', el.value);
+        doc.body.insertAdjacentHTML('beforeend', value);
       } else if(type == langs[1]) {
-        const stylshit = doc.querySelector("#stylshit") || doc.createElement('style');
-        localStorage.setItem('cdcss', el.value);
-        stylshit.innerHTML = el.value;
-        if(stylshit != doc.querySelector("#stylshit")) {
+        var stylshit = doc.querySelector("#stylshit") || doc.createElement('style');
+        localStorage.setItem('cdcss', value);
+        stylshit.innerHTML = value;
+        if(doc.querySelector("#stylshit") == null) {
          stylshit.id = "stylshit";
          doc.head.appendChild(stylshit);
         }
