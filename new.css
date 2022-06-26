@@ -15,7 +15,7 @@ a {
 }
 
 *:not(#ud, #nav a, a.yex, #nav button, .lumi) {
-  transition: 0.5s all;
+  transition: all 0.5s;
 }
 
 /* New Font */
