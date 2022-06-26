@@ -107,6 +107,8 @@ onkeydown="check_tab(this, event);"></textarea>
         localStorage.setItem('cdjs', el.value);
         if(doc.querySelector("#scrpt") != null) { 
           scrpt.remove();
+          scrpt = document.createElement('script');
+          scrpt.id = "scrpt";
           scrpt.innerHTML = el.value;
           doc.body.appendChild(scrpt); 
         } else {
