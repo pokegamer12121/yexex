@@ -64,7 +64,7 @@ function sendMessage(e) {
     // get values to be submitted
     const timestamp = Date.now();
     const messageInput = elem("#message-input");
-    const message = messageInput.value;
+    const message = messageInput.val();
 
   // clear the input box
     messageInput.value = "";
@@ -87,13 +87,13 @@ String.prototype.replaceArray = function(find, replace) {
 };
 
 const fetchChat = database.ref("messages/");
-let tStamp = Date.now() + 250;
+let tStamp = Date.now();
 
 elem("#user-form").submit(function(ev) { 
    ev.preventDefault();
    username = new User(elem("#user-input").val());
    if(username.meetsConstraints()) {
-     elem("#user-form").setCss("display", "none");
+     elem("#user-form").css({display: "none"});
      database.ref("users/" + tStamp).set({username: username.name});
      SnackBar({
         message: "Username set to " + username.name,
@@ -102,8 +102,9 @@ elem("#user-form").submit(function(ev) {
         fixed: true,
         timeout: 1500
     });
-    elem("#chat").setCss("display", "block");
-    elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
+    elem("#chat").css({display: "block"});
+    if(Array.isArray(elem("#messages > li"))) 
+      elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
   } else {
      elem("#user-input").value = '';
      SnackBar({
