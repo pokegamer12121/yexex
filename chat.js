@@ -132,7 +132,7 @@ elem("#user-form").submit(function(ev) {
     elem("#messages > li").scrollIntoView();
   }
   let mentions = localStorage.getItem('mentions') != null ? JSON.parse(localStorage.getItem('mentions')) : [];
-  if(messages.message.includes('@' + (username ? username : localStorage.uuid)) && !mentions.includes(messages.message)) {
+  if(messages.message.includes('@' + username.name) && !mentions.includes(messages.message)) {
       SnackBar({message: `${messages.username} mentioned you!`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500, actions: [{text: "View", function: function () {
         for (let lm of elem("#messages > li")) {
           if(lm.children[2].textContent == messages.message && lm.children[0].textContent == messages.username) {
