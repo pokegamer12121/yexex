@@ -8,7 +8,7 @@
   <link href="new.css" rel="stylesheet" type="text/css" />
   <link href="snackbar.css" rel="stylesheet" type="text/css" />
   <script src="https://kit.fontawesome.com/8df7d40c3b.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet"href="prism.css">
+  <link rel="stylesheet" href="this.css">
 </head>
 
 <body>
@@ -53,7 +53,7 @@
   <div id="ide">
   <textarea placeholder="Enter HTML Source Code" id="editing-html" spellcheck="false" oninput="update(this.value, 'highlighting-content-html'); sync_scroll(this, 'highlighting-html');" onscroll="sync_scroll(this,'highlighting-html');" 
 onkeydown="check_tab(this, event);"></textarea>
-  <pre id="highlighting-html" aria-hidden="true">
+  <pre id="highlighting-html" class="language-html" tabindex="0" aria-hidden="true">
   <code class="language-html" id="highlighting-content-html">
   </code>
   </pre>
@@ -61,7 +61,7 @@ onkeydown="check_tab(this, event);"></textarea>
   <div id="ide">
   <textarea placeholder="Enter CSS Source Code" id="editing-css" spellcheck="false" oninput="update(this.value, 'highlighting-content-css'); sync_scroll(this, 'highlighting-css');" onscroll="sync_scroll(this,'highlighting-css');" 
 onkeydown="check_tab(this, event);"></textarea>
-  <pre id="highlighting-css" aria-hidden="true">
+  <pre id="highlighting-css" class="language-css" tabindex="0" aria-hidden="true">
   <code class="language-css" id="highlighting-content-css">
   </code>
   </pre>
@@ -69,83 +69,52 @@ onkeydown="check_tab(this, event);"></textarea>
   <div id="ide">
   <textarea placeholder="Enter JavaScript Source Code" id="editing-js" spellcheck="false" oninput="update(this.value, 'highlighting-content-js'); sync_scroll(this, 'highlighting-js');" onscroll="sync_scroll(this, 'highlighting-js');" 
 onkeydown="check_tab(this, event);"></textarea>
-  <pre id="highlighting-js" aria-hidden="true">
+  <pre id="highlighting-js" class="language-javascript" tabindex="0" aria-hidden="true">
   <code class="language-javascript" id="highlighting-content-js">
   </code>
   </pre>
   </div>
   </div>
   <br/>
-  <div id="center"> <a class="btn" onclick="exec('#editing-html', 'html'); exec('#editing-css', 'css'); exec('#editing-js', 'js')">Execute Code</a> </div>
+  <div id="center"> <a class="btn" onclick="exec()">Execute Code</a> </div>
   <br/>
-  <div id="center"> <iframe id="test" src="about:blank"></iframe> </div>
+  <div id="center"> <iframe id="test" srcdoc=""></iframe> </div>
 
   <script src="popper.js"></script>
   <script src="tippy.js"></script>
   <script src="snackbar.js"></script>
   <script src="updown.js"></script>
-  <script src="prism.js"></script>
+  <script src="this.js"></script>
+  
   <script>
-    const doc = document.getElementById('test').contentWindow.document;
-    doc.title = "Code Environment";
-    var scrpt = doc.createElement('script');
-    var stylshit = doc.createElement('style');
-    const removeChildren = (parent) => {
-      while (parent.lastChild) {
-        parent.removeChild(parent.lastChild);
-      }
-    };
+    const test = document.querySelector('#test');
     const langs = ["html", "css", "js"];
     langs.forEach(v => {
       if(localStorage.getItem(`cd${v}`) && !norun) {
-         document.querySelector(`#editing-${v}`).textContent = localStorage.getItem(`cd${v}`);
+         document.querySelector(`#editing-${v}`).value = localStorage.getItem(`cd${v}`);
          update(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
        }
     });
-    function exec(el, type) {
-      el = document.querySelector(el);
-      var value = el.value;
-      if(type == langs[2]) {
-        localStorage.setItem('cdjs', value);
-        if(typeof doc.querySelector('#scrpt') == "undefined") {
-          scrpt.innerHTML = value.replace("const ", "var ").replace("let ", "var ");
-          scrpt.id="scrpt";
-          doc.body.appendChild(scrpt);
-        } else {
-          scrpt.remove();
-          scrpt=doc.createElement('script');
-          scrpt.innerHTML = value.replace("const ", "var ").replace("let ", "var ");
-          scrpt.id="scrpt";
-          doc.body.appendChild(scrpt);
-        }
-      } else if(type == langs[0]) {
-        localStorage.setItem('cdhtml', value);
-        removeChildren(doc.body);
-        doc.body.insertAdjacentHTML('beforeend', value);
-      } else if(type == langs[1]) {
-        var stylshit = doc.querySelector("#stylshit") || doc.createElement('style');
-        localStorage.setItem('cdcss', value);
-        stylshit.innerHTML = value;
-        if(doc.querySelector("#stylshit") == null) {
-         stylshit.id = "stylshit";
-         doc.head.appendChild(stylshit);
-        }
-      }
+    function exec() {
+      langs.forEach(v => {
+        localStorage.setItem(`cd${v}`, document.querySelector(`#editing-${v}`).value);
+      });
+      test.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><style> ${document.querySelector("#editing-css").value} </style></head><body>${document.querySelector("#editing-html").value} <script> ${document.querySelector("#editing-js").value}\x3C/script></body></html>`;
     }
     function update(text, hel) {
       let result_element = document.querySelector("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
       }
-      result_element.innerHTML = text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;"); /* Global RegExp */
-      Prism.highlightElement(result_element);
-}
+      result_element.innerHTML = text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;");
+      hljs.highlightElement(result_element);
+    }
 
-  function sync_scroll(element, hel) {
-    let result_element = document.querySelector("#" + hel);
-    result_element.scrollTop = element.scrollTop;
-    result_element.scrollLeft = element.scrollLeft;
-  }
+function sync_scroll(element, hel) {
+  let result_element = document.querySelector("#" + hel);
+  result_element.scrollTop = element.scrollTop;
+  result_element.scrollLeft = element.scrollLeft;
+}
 
 let qstrt = 0;
 let qfnsh = 0; 
