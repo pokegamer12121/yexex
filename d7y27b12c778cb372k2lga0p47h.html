@@ -13,7 +13,7 @@
 
 <body>
   <nav class="bar" id="nav">
-    <h2 id="header"><a class="yex">Yex</a>'s Games</h2>
+    <h2 id="header"><a class="yex">Yex</a>'s IDE</h2>
     <a class="updown" id="updown" onclick="b=!b; xd()"><i id='ud' class="fa fa-fw fa-angle-double-up"></i></a>
     <a href="index.html" data-tippy-content="Home"><i class="fa fa-fw fa-home"></i></a>
     <a href="about.html" data-tippy-content="About"><i class="fa fa-fw fa-info-circle"></i></a>
@@ -51,15 +51,19 @@
   <div class="loaded-overlay"></div>
   <div id="center">
   <div id="ide">
-  <textarea placeholder="Enter HTML Source Code" id="editing-html" spellcheck="false" oninput="update(this.value, 'highlighting-content-html'); sync_scroll(this, 'highlighting-html');" onscroll="sync_scroll(this,'highlighting-html');" 
+  <textarea placeholder="Enter HTML Source Code" id="editing-html" spellcheck="false" oninput="update(this, 'highlighting-content-html'); sync_scroll(this, 'highlighting-html');" onscroll="sync_scroll(this,'highlighting-html');" 
 onkeydown="check_tab(this, event);"></textarea>
+  <div id="button-container">
+    <button id="head"><span style='color:#abb2bf;'>&lt;</span><span style='color:#e06c75;'>head</span><span style='color:#abb2bf;'>&gt;</span></button>
+    <button id="body" class="selected"><span style='color:#abb2bf;'>&lt;</span><span style='color:#e06c75;'>body</span><span style='color:#abb2bf;'>&gt;</span></button>
+  </div>
   <pre id="highlighting-html" class="language-html" tabindex="0" aria-hidden="true">
   <code class="language-html" id="highlighting-content-html">
   </code>
   </pre>
   </div>
   <div id="ide">
-  <textarea placeholder="Enter CSS Source Code" id="editing-css" spellcheck="false" oninput="update(this.value, 'highlighting-content-css'); sync_scroll(this, 'highlighting-css');" onscroll="sync_scroll(this,'highlighting-css');" 
+  <textarea placeholder="Enter CSS Source Code" id="editing-css" spellcheck="false" oninput="update(this, 'highlighting-content-css'); sync_scroll(this, 'highlighting-css');" onscroll="sync_scroll(this,'highlighting-css');" 
 onkeydown="check_tab(this, event);"></textarea>
   <pre id="highlighting-css" class="language-css" tabindex="0" aria-hidden="true">
   <code class="language-css" id="highlighting-content-css">
@@ -67,7 +71,7 @@ onkeydown="check_tab(this, event);"></textarea>
   </pre>
   </div> 
   <div id="ide">
-  <textarea placeholder="Enter JavaScript Source Code" id="editing-js" spellcheck="false" oninput="update(this.value, 'highlighting-content-js'); sync_scroll(this, 'highlighting-js');" onscroll="sync_scroll(this, 'highlighting-js');" 
+  <textarea placeholder="Enter JavaScript Source Code" id="editing-js" spellcheck="false" oninput="update(this, 'highlighting-content-js'); sync_scroll(this, 'highlighting-js');" onscroll="sync_scroll(this, 'highlighting-js');" 
 onkeydown="check_tab(this, event);"></textarea>
   <pre id="highlighting-js" class="language-javascript" tabindex="0" aria-hidden="true">
   <code class="language-javascript" id="highlighting-content-js">
@@ -88,20 +92,60 @@ onkeydown="check_tab(this, event);"></textarea>
   
   <script>
     const test = document.querySelector('#test');
-    const langs = ["html", "css", "js"];
-    langs.forEach(v => {
+
+    const setCode = v => {
+      document.querySelector(`#editing-${v}`).value = localStorage.getItem(`cd${v}`);
+      updateTxt(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
+    };
+    
+    const langs = ["html", "css", "js", "html-head"];
+    for(const v of langs) {
+      if(v === "html-head") continue;
       if(localStorage.getItem(`cd${v}`) && !norun) {
-         document.querySelector(`#editing-${v}`).value = localStorage.getItem(`cd${v}`);
-         update(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
+         setCode(v);
        }
-    });
-    function exec() {
-      langs.forEach(v => {
-        localStorage.setItem(`cd${v}`, document.querySelector(`#editing-${v}`).value);
-      });
-      test.srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><style> ${document.querySelector("#editing-css").value} </style></head><body>${document.querySelector("#editing-html").value} <script> ${document.querySelector("#editing-js").value}\x3C/script></body></html>`;
     }
-    function update(text, hel) {
+    function exec() {
+      test.srcdoc = `<!DOCTYPE html><html><head>${localStorage.getItem('cdhtml-head') != null ? localStorage.getItem('cdhtml-head') : ''}<style> ${document.querySelector("#editing-css").value} </style></head><body>${localStorage.getItem('cdhtml') != null ? localStorage.getItem('cdhtml') : ''} <script src="https://yexex.github.io/js-addons/addons.js">\x3C/script> <script> ${document.querySelector("#editing-js").value}\x3C/script></body></html>`;
+    }
+
+    exec();
+
+    [...document.querySelectorAll('button:where(#head, #body)')].forEach(el => {
+       el.onclick = () => { 
+         [...document.querySelectorAll('button:where(#head, #body)')].forEach(but => {
+           if(but.classList.contains("selected")) 
+              but.classList.remove('selected');
+         });
+         if(el.textContent.substring(1, 5) == "head") {
+            document.querySelector("#editing-html").setAttribute('head', 'true');
+            if(localStorage.getItem('cdhtml-head') != null) {
+              document.querySelector("#editing-html").value = localStorage.getItem('cdhtml-head');
+              updateTxt(localStorage.getItem('cdhtml-head'), "highlighting-content-html");
+            } else {
+              document.querySelector("#editing-html").value = '';
+              updateTxt('', "highlighting-content-html");
+            }
+         }
+         if(document.querySelector("#editing-html").hasAttribute('head') && el.textContent.substring(1, 5) == "body") {
+           document.querySelector("#editing-html").removeAttribute('head');
+           if(localStorage.getItem('cdhtml') != null) {
+              document.querySelector("#editing-html").value = localStorage.getItem('cdhtml');
+              updateTxt(localStorage.getItem('cdhtml'), "highlighting-content-html");
+           } else {
+              document.querySelector("#editing-html").value = '';
+              updateTxt('', "highlighting-content-html");
+            }
+         }
+         el.classList.toggle('selected'); 
+       };
+    });
+    
+    function update(el, hel) {
+      const text = el.value;
+      if(el.hasAttribute('head'))
+        localStorage.setItem('cdhtml-head', text);
+      else localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
       let result_element = document.querySelector("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
@@ -110,11 +154,24 @@ onkeydown="check_tab(this, event);"></textarea>
       hljs.highlightElement(result_element);
     }
 
-function sync_scroll(element, hel) {
-  let result_element = document.querySelector("#" + hel);
-  result_element.scrollTop = element.scrollTop;
-  result_element.scrollLeft = element.scrollLeft;
-}
+    function updateTxt(text, hel) {
+      if(document.querySelector("#" + hel).parentElement.parentElement.children[0].hasAttribute('head'))
+        localStorage.setItem('cdhtml-head', text);
+      else 
+        localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
+      let result_element = document.querySelector("#" + hel);
+      if(text[text.length-1] == "\n") {
+        text += " ";
+      }
+      result_element.innerHTML = text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;");
+      hljs.highlightElement(result_element);
+    }
+
+  function sync_scroll(element, hel) {
+    let result_element = document.querySelector("#" + hel);
+    result_element.scrollTop = element.scrollTop;
+    result_element.scrollLeft = element.scrollLeft;
+  }
 
 let qstrt = 0;
 let qfnsh = 0; 
@@ -132,13 +189,13 @@ function check_tab(element, event) {
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
   
@@ -154,13 +211,13 @@ function check_tab(element, event) {
     qstrt = cursor_pos;
     qfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
 
@@ -175,13 +232,13 @@ function check_tab(element, event) {
     pstrt = cursor_pos;
     pfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
 
@@ -197,13 +254,13 @@ function check_tab(element, event) {
     bstrt = cursor_pos;
     bfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
   
@@ -218,13 +275,13 @@ function check_tab(element, event) {
     qstrt = -1;
     qfnsh = -1;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
 
@@ -239,13 +296,13 @@ function check_tab(element, event) {
     pstrt = -1;
     pfnsh = -1;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
 
@@ -260,13 +317,13 @@ function check_tab(element, event) {
     bstrt = -1;
     bfnsh = -1;
     if(element.id == "editing-js") {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      update(element.value, 'highlighting-content-html');
+      updateTxt(element.value, 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      update(element.value, 'highlighting-content-css');
+      updateTxt(element.value, 'highlighting-content-css');
     } else {
-      update(element.value, 'highlighting-content-js');
+      updateTxt(element.value, 'highlighting-content-js');
     }
   }
 }

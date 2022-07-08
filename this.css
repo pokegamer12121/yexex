@@ -8,6 +8,7 @@
 
 #ide {
   display:inline-grid;
+  position: relative;
   width: 32.5%;
   height: 300px;
 }
@@ -23,15 +24,15 @@
   font-size: 20px;
   line-height: 20pt;
   width: 100%;
-  height:100%;
-  tab-size: 2;
+  height: 300px;
   grid-row:1;
   grid-column:1;
   z-index: 1;
   color: transparent;
   background: transparent;
   caret-color: limegreen;
-  white-space: nowrap; /* Allows textarea to scroll horizontally */
+  overflow: auto;
+  white-space: pre-wrap; /* Allows textarea to scroll horizontally */
   resize: none;
 }
 #highlighting-js, #highlighting-html, #highlighting-css {
@@ -39,16 +40,62 @@
   padding: 10px;
   border:0;
   font-family: monospace;
+  width: 100%;
+  height: 300px;
   font-size: 20px;
   line-height: 20pt;
-  width: 100%;
-  height:100%;
   tab-size: 2;
   grid-row:1;
   grid-column:1;
   z-index: 0;
+  overflow: auto;
   background: #282c34;
   white-space: nowrap; /* Allows textarea to scroll horizontally */
+}
+
+textarea#editing-html {
+  border-radius: 8px 8px 0 0;
+}
+
+textarea#editing-html:focus {
+  outline: none !important;
+  border-radius: 8px 8px 0 0;
+}
+
+div#button-container {
+  position: absolute;
+  bottom: -9.5%;
+  left: 10px;
+  right:0;
+  width: 100%;
+  z-index: 1;
+}
+
+button:where(#head, #body) {
+  position: absolute;
+  display:inline;
+  cursor: pointer;
+  background: #282c34;
+  font-family: monospace;
+  border: none;
+  outline: none;
+  width: 50%;
+  bottom: 0;
+  border: solid 1px whitesmoke;
+}
+
+#head {
+  left: 0;
+  border-radius: 0 0 0 8px;
+}
+
+#body {
+  right: 0;
+  border-radius: 0 0 8px 0;
+}
+
+button.selected {
+  background: #5a5f68;
 }
 
 #test {
@@ -58,7 +105,7 @@
 }
 
 .hljs {
-    white-space: pre;
+    white-space: pre-wrap;
     color: #abb2bf;
   }
   
