@@ -142,10 +142,11 @@ onkeydown="check_tab(this, event);"></textarea>
     });
     
     function update(el, hel) {
-      let text = el.value;
+      var text = el.value;
       if(el.hasAttribute('head'))
         localStorage.setItem('cdhtml-head', text);
-      else localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
+      else 
+        localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
       let result_element = document.querySelector("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
