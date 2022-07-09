@@ -64,7 +64,7 @@ textarea#editing-html:focus {
 
 div#button-container {
   position: absolute;
-  bottom: -9.5%;
+  bottom: -11%;
   left: 10px;
   right:0;
   width: 100%;
@@ -77,11 +77,13 @@ button:where(#head, #body) {
   cursor: pointer;
   background: #282c34;
   font-family: monospace;
+  font-size: 1rem;
   border: none;
   outline: none;
   width: 50%;
   bottom: 0;
   border: solid 1px whitesmoke;
+  border-top: 0;
 }
 
 #head {
@@ -102,6 +104,14 @@ button.selected {
   border: solid 1px whitesmoke;
   width: 35%;
   height: 375px;
+}
+
+span#s {
+  color: #abb2bf;
+}
+
+span#el {
+  color: #e06c75;
 }
 
 .hljs {

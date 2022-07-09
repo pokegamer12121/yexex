@@ -54,8 +54,8 @@
   <textarea placeholder="Enter HTML Source Code" id="editing-html" spellcheck="false" oninput="update(this, 'highlighting-content-html'); sync_scroll(this, 'highlighting-html');" onscroll="sync_scroll(this,'highlighting-html');" 
 onkeydown="check_tab(this, event);"></textarea>
   <div id="button-container">
-    <button id="head"><span style='color:#abb2bf;'>&lt;</span><span style='color:#e06c75;'>head</span><span style='color:#abb2bf;'>&gt;</span></button>
-    <button id="body" class="selected"><span style='color:#abb2bf;'>&lt;</span><span style='color:#e06c75;'>body</span><span style='color:#abb2bf;'>&gt;</span></button>
+    <button id="head"><span id="s">&lt;</span><span id="el">head</span><span id="s">&gt;</span></button>
+    <button id="body" class="selected"><span id="s">&lt;</span><span id="el">body</span><span id="s">&gt;</span></button>
   </div>
   <pre id="highlighting-html" class="language-html" tabindex="0" aria-hidden="true">
   <code class="language-html" id="highlighting-content-html">
@@ -137,7 +137,7 @@ onkeydown="check_tab(this, event);"></textarea>
               updateTxt('', "highlighting-content-html");
             }
          }
-         el.classList.toggle('selected'); 
+         el.classList.add('selected'); 
        };
     });
     
