@@ -39,7 +39,7 @@
     <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
     <a href="chat.html" data-tippy-content="Chat"><i class="fa fa-fw fa-wechat"></i></a>
     <a href="https://discord.gg/V49EfgSWgr" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
-    <a id="lock" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
+    <a href="ide.html" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
   </nav>
   <div class="loader">
     <div class="loader-logo">
@@ -76,16 +76,6 @@
   <script>
      document.getElementsByClassName('overlay-text')[0].children[0].href = "https://github.com/" + window.location.href.substring(8, 13);
     document.getElementsByClassName('overlay-text')[1].children[0].href = "https://github.com/Luminous-Technologies";
-    window.addEventListener("load", () => {
-    numpad.attach({
-          target: document.querySelector('nav.bar > a[data-tippy-content="IDE"]'),
-          max: 6,
-          decimal: false,
-          onselect : () => {
-            sub(lmao);
-        },
-    });
-  });
   </script>
 </body>
 

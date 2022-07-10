@@ -89,55 +89,72 @@ onkeydown="check_tab(this, event);"></textarea>
   <script src="snackbar.js"></script>
   <script src="updown.js"></script>
   <script src="this.js"></script>
-  
+  <script src="https://yexex.github.io/js-addons/addons.js"></script>
   <script>
-    const test = document.querySelector('#test');
+    const test = elem('#test');
 
     const setCode = v => {
-      document.querySelector(`#editing-${v}`).value = localStorage.getItem(`cd${v}`);
+      elem(`#editing-${v}`).value = localStorage.getItem(`cd${v}`);
       updateTxt(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
     };
     
     const langs = ["html", "css", "js", "html-head"];
     for(const v of langs) {
       if(v === "html-head") continue;
-      if(localStorage.getItem(`cd${v}`) && !norun) {
+      if(localStorage.getItem(`cd${v}`)) {
          setCode(v);
        }
     }
     function exec() {
-      test.srcdoc = `<!DOCTYPE html><html><head>${localStorage.getItem('cdhtml-head') != null ? localStorage.getItem('cdhtml-head') : ''}<style> ${document.querySelector("#editing-css").value} </style></head><body>${localStorage.getItem('cdhtml') != null ? localStorage.getItem('cdhtml') : ''} <script src="https://yexex.github.io/js-addons/addons.js">\x3C/script> <script> ${document.querySelector("#editing-js").value}\x3C/script></body></html>`;
-    }
+      test.attr('srcdoc', `
+         <!DOCTYPE html>
+         <html>
+           <head>
+             ${localStorage.getItem('cdhtml-head') != null ? localStorage.getItem('cdhtml-head') : ''}
+             <style> 
+               ${elem("#editing-css").value} 
+             </style>
+           </head>
+           <body>
+             ${localStorage.getItem('cdhtml') != null ? localStorage.getItem('cdhtml') : ''} 
+             <script src="https://yexex.github.io/js-addons/addons.js">\x3C/script> 
+             <script> 
+               ${elem("#editing-js").value}
+             \x3C/script>
+          </body>
+        </html>
+    `);
+  }
 
     exec();
 
-    [...document.querySelectorAll('button:where(#head, #body)')].forEach(el => {
+    elem('button:where(#head, #body)').forEach(el => {
        el.onclick = () => { 
-         [...document.querySelectorAll('button:where(#head, #body)')].forEach(but => {
-           if(but.classList.contains("selected")) 
-              but.classList.remove('selected');
+         elem('button:where(#head, #body)').forEach(but => {
+           if(but.hasClass("selected")) 
+              but.removeClass('selected');
          });
          if(el.textContent.substring(1, 5) == "head") {
-            document.querySelector("#editing-html").setAttribute('head', 'true');
+            elem("#editing-html").attr('head', 'true');
             if(localStorage.getItem('cdhtml-head') != null) {
-              document.querySelector("#editing-html").value = localStorage.getItem('cdhtml-head');
+              elem("#editing-html").value = localStorage.getItem('cdhtml-head');
               updateTxt(localStorage.getItem('cdhtml-head'), "highlighting-content-html");
             } else {
-              document.querySelector("#editing-html").value = '';
+              elem("#editing-html").value = '';
               updateTxt('', "highlighting-content-html");
             }
          }
-         if(document.querySelector("#editing-html").hasAttribute('head') && el.textContent.substring(1, 5) == "body") {
-           document.querySelector("#editing-html").removeAttribute('head');
+         if(elem("#editing-html").hasAttribute('head') && el.textContent.substring(1, 5) == "body") {
+           elem("#editing-html").removeAttribute('head');
            if(localStorage.getItem('cdhtml') != null) {
-              document.querySelector("#editing-html").value = localStorage.getItem('cdhtml');
+              elem("#editing-html").value = localStorage.getItem('cdhtml');
               updateTxt(localStorage.getItem('cdhtml'), "highlighting-content-html");
            } else {
-              document.querySelector("#editing-html").value = '';
+              elem("#editing-html").value = '';
               updateTxt('', "highlighting-content-html");
             }
          }
-         el.classList.add('selected'); 
+         el.addClass('selected'); 
        };
     });
     
@@ -147,29 +164,29 @@ onkeydown="check_tab(this, event);"></textarea>
         localStorage.setItem('cdhtml-head', text);
       else 
         localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
-      let result_element = document.querySelector("#" + hel);
+      let result_element = elem("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
       }
-      result_element.innerHTML = text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;");
+      result_element.html(text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;"));
       hljs.highlightElement(result_element);
     }
 
     function updateTxt(text, hel) {
-      if(document.querySelector("#" + hel).parentElement.parentElement.children[0].hasAttribute('head'))
+      if(elem("#" + hel).parentElement.parentElement.children[0].hasAttribute('head'))
         localStorage.setItem('cdhtml-head', text);
       else 
         localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
-      let result_element = document.querySelector("#" + hel);
+      let result_element = elem("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
       }
-      result_element.innerHTML = text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;");
+      result_element.html(text.replace(new RegExp("&", "g"), "&amp;").replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;"));
       hljs.highlightElement(result_element);
     }
 
   function sync_scroll(element, hel) {
-    let result_element = document.querySelector("#" + hel);
+    let result_element = elem("#" + hel);
     result_element.scrollTop = element.scrollTop;
     result_element.scrollLeft = element.scrollLeft;
   }

@@ -64,7 +64,7 @@ textarea#editing-html:focus {
 
 div#button-container {
   position: absolute;
-  bottom: -11%;
+  bottom: -2em;
   left: 10px;
   right:0;
   width: 100%;
@@ -78,7 +78,6 @@ button:where(#head, #body) {
   background: #282c34;
   font-family: monospace;
   font-size: 1rem;
-  border: none;
   outline: none;
   width: 50%;
   bottom: 0;

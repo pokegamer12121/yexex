@@ -42,8 +42,7 @@
     <a href="bookmarklets.html" data-tippy-content="Bookmarklets"><i class="fa fa-fw fa-bookmark"></i></a>
     <a href="chat.html" data-tippy-content="Chat"><i class="fa fa-fw fa-wechat"></i></a>
     <a href="https://discord.gg/V49EfgSWgr" data-tippy-content="Discord"><i class="fab fa-discord"></i></a>
-    <!-- Password Lock -->
-    <a id="lock" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
+    <a href="ide.html" data-tippy-content="IDE"><i class="fa fa-fw fa-code"></i></a>
   </nav>
   <!-- Loader -->
   <div class="loader">
@@ -63,17 +62,5 @@
   <script src="tippy.js"></script>
   <script src="snackbar.js"></script>
   <script src="updown.js"></script>
-  <script>
-    window.addEventListener("load", () => {
-    numpad.attach({
-          target: document.querySelector('nav.bar > a[data-tippy-content="IDE"]'),
-          max: 6,
-          decimal: false,
-          onselect : () => {
-            sub(lmao);
-        },
-    });
-  });
-  </script>
 </body>
 </html>
