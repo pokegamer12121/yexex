@@ -1,3 +1,33 @@
+
+function setRule(selector, rules) {
+  if(document.styleSheets.length > 0) {
+    for(const ss of document.styleSheets) {
+      const r = ss.cssRules ? [...ss.cssRules] : [...ss.rules];
+      if(r.some(v => v.selectorText === selector)) {
+        for(const rule of r) {
+          if(rule.selectorText === selector) {
+            if(typeof rules !== "string") 
+              rules.forEach((k, v) => { rule.style[k] = v; });
+            else 
+              cssToObj(rules).forEach((k, v) => { rule.style[k] = v; });
+          }
+        }
+      } else if(ss === document.styleSheets[document.styleSheets.length - 1]) {
+        const propText = typeof rules === "string" ? rules : Object.keys(rules).map(function (p) {
+          return p + ":" + (p === "content" ? "'" + rules[p] + "'" : rules[p]);
+        }).join(";");
+        ss.insertRule(`${selector} { ${propText} }`, r.length);
+      }
+    }
+  } else {
+    const style = document.head.appendChild(document.createElement("style")).sheet;
+    const propText = typeof rules === "string" ? rules : Object.keys(rules).map(function (p) {
+      return p + ":" + (p === "content" ? "'" + rules[p] + "'" : rules[p]);
+    }).join(";");
+    style.insertRule(`${selector} { ${propText} }`);
+  }
+}
+
 var b = false;
 var nav = document.querySelector('nav.bar');
 var up = document.getElementById('updown');
@@ -94,18 +124,16 @@ SnackBar({
 
 console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loading...");
 
-setTimeout(() => {
-    tippy('[data-tippy-content]', {
+tippy('[data-tippy-content]', {
       arrow: false,
       theme: 'darker',
       offset: [0, -1],
       placement: "bottom"
-    });
-}, 800);
+});
 
 setTimeout(() => { 
     document.querySelector('div.loader').remove();
-    document.querySelector('div.loaded-overlay').style.display = "block";
+    document.querySelector('div.loaded-overlay').style.display = 'block';
     console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loaded Successfully!");
     SnackBar({
       message: "Loaded Successfully!",
@@ -117,6 +145,5 @@ setTimeout(() => {
     });
 }, 1500);
 
-setTimeout(() => {
-  document.querySelector('div.loaded-overlay').remove();
-}, 2750);
+setTimeout(() => document.querySelector('div.loaded-overlay').remove(), 2750);
+

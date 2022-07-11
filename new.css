@@ -124,7 +124,6 @@ nav.bar a, nav.bar button {
   padding: 8px;
   display:block;
   cursor:pointer;
-  position: relative;
   font-size: 20px;
   margin-top: 4px;
   margin-left: 5px;
@@ -439,12 +438,12 @@ div.loader-bar {
 
 @keyframes flowinleft {
   from { transform-origin: center left; transform:scaleX(100%); }
-  to { transform-origin: center left; transform:scaleX(0); }
+  to { transform-origin: center left; transform:scaleX(0); display: none; }
 }
 
 @keyframes flowinright {
   from { transform-origin: center right; transform:scaleX(100%); }
-  to { transform-origin: center right; transform:scaleX(0); }
+  to { transform-origin: center right; transform:scaleX(0); display: none; }
 }
 
 @keyframes swap-bottom {

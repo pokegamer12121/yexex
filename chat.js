@@ -61,30 +61,27 @@ elem("#message-form").submit(sendMessage);
 function sendMessage(e) {
     e.preventDefault();
 
-    // get values to be submitted
     const timestamp = Date.now();
     const messageInput = elem("#message-input");
     const message = messageInput.val();
 
-  // clear the input box
-    messageInput.value = "";
+    if(messageInput.val().trim() !== '') {
+      messageInput.val('');
     
-  // create db collection and send in the data
-    database.ref("messages/" + timestamp).set({
-      username: username.name,
-      message
-    });
+      database.ref("messages/" + timestamp).set({
+        username: username.name,
+        message
+      });
+    } else {
+       SnackBar({
+        message: "Enter A Valid Message!",
+        status: 'error',
+        position: "br",
+        fixed: true,
+        timeout: 1500
+       });
+    }
 }
-
-String.prototype.replaceArray = function(find, replace) {
-  var replaceString = this;
-  var regex; 
-  for (var i = 0; i < find.length; i++) {
-    regex = new RegExp(find[i], "g");
-    replaceString = replaceString.replace(regex, replace[i]);
-  }
-  return replaceString;
-};
 
 const fetchChat = database.ref("messages/");
 let tStamp = Date.now();
@@ -106,7 +103,7 @@ elem("#user-form").submit(function(ev) {
     if(Array.isArray(elem("#messages > li"))) 
       elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
   } else {
-     elem("#user-input").value = '';
+     elem("#user-input").val('');
      SnackBar({
         message: username.errorMsg,
         status: 'error',
@@ -126,7 +123,7 @@ elem("#user-form").submit(function(ev) {
   }><span id="user">@${messages.username}</span><br/><span id="msg">${messages.message.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + window.location.href.substring(8, 13) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
   // append the message on the page
   elem("#messages").innerHTML += message;
-  if(elem("#messages > li") instanceof Array) {
+  if(Array.isArray(elem("#messages > li"))) {
     elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
   } else {
     elem("#messages > li").scrollIntoView();

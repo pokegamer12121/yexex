@@ -32,7 +32,7 @@
         </li>
         <li class="dropdown-item">
           <input type="color" id="thmclr"> 
-          <a href="#" onclick="theme('white', this, true)"><label for="thmclr"> Custom </label></a>
+          <a href="#" onclick="theme('white', this, true); this.previousElementSibling.click();">Custom</a>
         </li>
       </ul>
     </div>
@@ -91,6 +91,18 @@ onkeydown="check_tab(this, event);"></textarea>
   <script src="this.js"></script>
   <script src="https://yexex.github.io/js-addons/addons.js"></script>
   <script>
+    if(document.referrer.endsWith('d7y27b12c778cb372k2lga0p47h.html')) 
+      setTimeout(() => {
+        SnackBar({
+          message: "Redirected From Old Link",
+          status: 'info',
+          theme: 'darker',
+          position: "br",
+          fixed: true,
+          timeout: 1500
+        });
+      }, 3000);
+    
     const test = elem('#test');
 
     const setCode = v => {
@@ -112,6 +124,10 @@ onkeydown="check_tab(this, event);"></textarea>
            <head>
              ${localStorage.getItem('cdhtml-head') != null ? localStorage.getItem('cdhtml-head') : ''}
              <style> 
+               * {
+                 box-sizing: border-box;
+               }  
+
                ${elem("#editing-css").value} 
              </style>
            </head>
