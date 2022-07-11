@@ -112,6 +112,10 @@ function theme(color, el, custom) {
   }
 }
 
+document.querySelector('a[data-custom]').addEventListener('click', () => {
+  document.querySelector('input[type="color"]#thmclr').click();
+});
+
 SnackBar({
     message: "Loading...",
     status: 'info',
