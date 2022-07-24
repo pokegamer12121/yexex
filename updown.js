@@ -1,38 +1,7 @@
-
-function setRule(selector, rules) {
-  if(document.styleSheets.length > 0) {
-    for(const ss of document.styleSheets) {
-      const r = ss.cssRules ? [...ss.cssRules] : [...ss.rules];
-      if(r.some(v => v.selectorText === selector)) {
-        for(const rule of r) {
-          if(rule.selectorText === selector) {
-            if(typeof rules !== "string") 
-              rules.forEach((k, v) => { rule.style[k] = v; });
-            else 
-              cssToObj(rules).forEach((k, v) => { rule.style[k] = v; });
-          }
-        }
-      } else if(ss === document.styleSheets[document.styleSheets.length - 1]) {
-        const propText = typeof rules === "string" ? rules : Object.keys(rules).map(function (p) {
-          return p + ":" + (p === "content" ? "'" + rules[p] + "'" : rules[p]);
-        }).join(";");
-        ss.insertRule(`${selector} { ${propText} }`, r.length);
-      }
-    }
-  } else {
-    const style = document.head.appendChild(document.createElement("style")).sheet;
-    const propText = typeof rules === "string" ? rules : Object.keys(rules).map(function (p) {
-      return p + ":" + (p === "content" ? "'" + rules[p] + "'" : rules[p]);
-    }).join(";");
-    style.insertRule(`${selector} { ${propText} }`);
-  }
-}
-
 var b = false;
 var nav = document.querySelector('nav.bar');
 var up = document.getElementById('updown');
 var ud = document.getElementById('ud');
-var yes;
 var no = document.getElementsByClassName('yex');
 var maybe = document.getElementsByClassName('lumi');
 var lol2 = false;
@@ -41,25 +10,20 @@ function xd() {
     nav.style.top = "-60px";
     document.body.style.setProperty("--body-margin-top", "0");
     ud.style.transform = "rotate(-180deg)";
-    up.style.borderRadius = "10px / 10px";
-    up.style.transform = "translateY(130%)";
-    up.style.backgroundColor = "#696969";
+    up.style.cssText = "border-radius: 10px / 10px; transform: translateY(130%); background-color: #696969";
   } else {
     ud.style.transform = "rotate(0deg)";
     nav.style.top = "0";
     document.body.style.setProperty("--body-margin-top", "75px");
-    up.style.borderRadius = "0px";
-    up.style.transform = "translateY(0%)";
-    up.style.backgroundColor = "transparent";
+    up.style.cssText = "border-radius: 0; transform: translateY(0); background-color: transparent";
   }
 }
-
-for (var i = 0; i < no.length; i++) {
-    no[i].href="https://github.com/" + window.location.href.substring(8, 13);
-}
-for (var i = 0; i < maybe.length; i++) {
-    maybe[i].href="https://github.com/Luminous-Technologies";
-}
+[...document.querySelectorAll('.yex')].forEach(v => {
+  v.href = "https://github.com/" + location.hostname.substring(0, location.hostname.indexOf('.'));
+});
+[...document.querySelectorAll('.lumi')].forEach(v => {
+  v.href = "https://github.com/Luminous-Technologies";
+});
 
 function uuidv4() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -75,6 +39,13 @@ if(localStorage.getItem('ft') == null) {
   localStorage.setItem('ft', 'true');
 } else {
   localStorage.setItem('ft', 'false');
+}
+
+if(['iPad Simulator','iPhone Simulator','iPod Simulator','iPad','iPhone','iPod'].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document)) {
+  document.querySelector("div.has-dropdown").setAttribute('tabindex', '0');
+  [...document.querySelectorAll("div.has-dropdown *")].forEach(v => {
+    v.setAttribute('tabindex', '0');
+  });
 }
 
 const themeButtons = [...document.querySelectorAll(".dropdown-item a")];

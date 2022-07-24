@@ -106,7 +106,7 @@ onkeydown="check_tab(this, event);"></textarea>
     const test = elem('#test');
 
     const setCode = v => {
-      elem(`#editing-${v}`).value = localStorage.getItem(`cd${v}`);
+      elem(`#editing-${v}`).val(localStorage.getItem(`cd${v}`));
       updateTxt(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
     };
     
@@ -128,14 +128,14 @@ onkeydown="check_tab(this, event);"></textarea>
                  box-sizing: border-box;
                }  
 
-               ${elem("#editing-css").value} 
+               ${elem("#editing-css").val()} 
              </style>
            </head>
            <body>
              ${localStorage.getItem('cdhtml') != null ? localStorage.getItem('cdhtml') : ''} 
              <script src="https://yexex.github.io/js-addons/addons.js">\x3C/script> 
              <script> 
-               ${elem("#editing-js").value}
+               ${elem("#editing-js").val()}
              \x3C/script>
           </body>
         </html>
@@ -153,20 +153,20 @@ onkeydown="check_tab(this, event);"></textarea>
          if(el.textContent.substring(1, 5) == "head") {
             elem("#editing-html").attr('head', 'true');
             if(localStorage.getItem('cdhtml-head') != null) {
-              elem("#editing-html").value = localStorage.getItem('cdhtml-head');
+              elem("#editing-html").val(localStorage.getItem('cdhtml-head'));
               updateTxt(localStorage.getItem('cdhtml-head'), "highlighting-content-html");
             } else {
-              elem("#editing-html").value = '';
+              elem("#editing-html").val('');
               updateTxt('', "highlighting-content-html");
             }
          }
          if(elem("#editing-html").hasAttribute('head') && el.textContent.substring(1, 5) == "body") {
            elem("#editing-html").removeAttribute('head');
            if(localStorage.getItem('cdhtml') != null) {
-              elem("#editing-html").value = localStorage.getItem('cdhtml');
+              elem("#editing-html").val(localStorage.getItem('cdhtml'));
               updateTxt(localStorage.getItem('cdhtml'), "highlighting-content-html");
            } else {
-              elem("#editing-html").value = '';
+              elem("#editing-html").val('');
               updateTxt('', "highlighting-content-html");
             }
          }
@@ -175,7 +175,7 @@ onkeydown="check_tab(this, event);"></textarea>
     });
     
     function update(el, hel) {
-      var text = el.value;
+      var text = el.val();
       if(el.hasAttribute('head'))
         localStorage.setItem('cdhtml-head', text);
       else 
@@ -214,22 +214,23 @@ let pfnsh = 0;
 let bstrt = 0;
 let bfnsh = 0;  
 function check_tab(element, event) {
-  let code = element.value;
+  let code = element.val();
   if(event.key == "Tab") {
     event.preventDefault(); 
     let before_tab = code.slice(0, element.selectionStart);
-    let after_tab = code.slice(element.selectionEnd, element.value.length); 
-    let cursor_pos = element.selectionEnd + 1;  + "\t" + after_tab;
+    let after_tab = code.slice(element.selectionEnd, element.val().length); 
+    let cursor_pos = element.selectionEnd + 1;  
+    element.val(before_tab + "\t" + after_tab);
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
   
@@ -237,42 +238,42 @@ function check_tab(element, event) {
     var dble = event.key == '"';
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
-    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let after_add = code.slice(element.selectionEnd, element.val().length); // text after tab
     let cursor_pos = element.selectionEnd + 1;
-    element.value = before_add + (dble ? '""' : "''") + after_add;
+    element.val(before_add + (dble ? '""' : "''") + after_add);
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     qstrt = cursor_pos;
     qfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
   if(event.key == "(") {
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
-    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let after_add = code.slice(element.selectionEnd, element.val().length); // text after tab
     let cursor_pos = element.selectionEnd + 1;
-    element.value = before_add + '()' + after_add;
+    element.val(before_add + '()' + after_add);
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     pstrt = cursor_pos;
     pfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
@@ -280,84 +281,84 @@ function check_tab(element, event) {
     var crly = event.key == "{";
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
-    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let after_add = code.slice(element.selectionEnd, element.val().length); // text after tab
     let cursor_pos = element.selectionEnd + 1;
-    element.value = before_add + (crly ? '{}' : '[]') + after_add;
+    element.val(before_add + (crly ? '{}' : '[]') + after_add);
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     bstrt = cursor_pos;
     bfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
   
   if(event.key == "Backspace" && element.selectionEnd == qfnsh && element.selectionStart == qstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
-    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let after_del = code.slice(element.selectionEnd, element.val().length);
     let cursor_pos = element.selectionEnd - 1;
-    element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
+    element.val(before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length));
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     qstrt = -1;
     qfnsh = -1;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
   if(event.key == "Backspace" && element.selectionEnd == pfnsh && element.selectionStart == pstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
-    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let after_del = code.slice(element.selectionEnd, element.val().length);
     let cursor_pos = element.selectionEnd - 1;
-    element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
+    element.val(before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length));
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     pstrt = -1;
     pfnsh = -1;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
   if(event.key == "Backspace" && element.selectionEnd == bfnsh && element.selectionStart == bstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
-    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let after_del = code.slice(element.selectionEnd, element.val().length);
     let cursor_pos = element.selectionEnd - 1;
-    element.value = before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length);
+    element.val(before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length));
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     bstrt = -1;
     bfnsh = -1;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 }
