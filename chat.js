@@ -7,8 +7,19 @@ const firebaseConfig = {
   messagingSenderId: "784190773413",
   appId: "1:784190773413:web:5de305c6e34bc779a6154c"
 };
+
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
+
+String.prototype.indexsOf = function(val) {
+  const indexes = [];
+  for (let index = 0; index < this.length; index++) {
+    if (this[index] === val) {
+      indexes.push(index);
+    }
+  }
+  return indexes;
+}
 
 let usernames = [];
 let users = [];
@@ -56,6 +67,7 @@ class User {
   }
 }
 let username = new User("Guest");
+let lastPmTo;
 elem("#message-form").submit(sendMessage);
 
 function sendMessage(e) {
@@ -67,11 +79,34 @@ function sendMessage(e) {
 
     if(messageInput.val().trim() !== '') {
       messageInput.val('');
-    
-      database.ref("messages/" + timestamp).set({
-        username: username.name,
-        message
-      });
+      if(message.startsWith('/pm')) {
+        database.ref("pms/" + timestamp).set({
+          to: message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]),
+          username: username.name,
+          message: message.substring(message.indexsOf(' ')[1] + 1, message.length)
+        });
+      } else if(message.startsWith('/r')) {
+          if(typeof lastPmTo !== 'undefined') {
+            database.ref("pms/" + timestamp).set({
+              to: lastPmTo,
+              username: username.name,
+              message: message.substring(message.indexsOf(' ')[0] + 1, message.length)
+            });
+          } else {
+            SnackBar({
+              message: "Nobody to reply to!",
+              status: 'error',
+              position: "br",
+              fixed: true,
+              timeout: 1500
+            });
+          }
+      } else {
+        database.ref("messages/" + timestamp).set({
+          username: username.name,
+          message
+        });
+      }
     } else {
        SnackBar({
         message: "Enter A Valid Message!",
@@ -84,6 +119,7 @@ function sendMessage(e) {
 }
 
 const fetchChat = database.ref("messages/");
+const fetchPms = database.ref("pms/");
 let tStamp = Date.now();
 
 elem("#user-form").submit(function(ev) { 
@@ -100,6 +136,7 @@ elem("#user-form").submit(function(ev) {
         timeout: 1500
     });
     elem("#chat").css({display: "block"});
+    pms();
     if(Array.isArray(elem("#messages > li"))) 
       elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
   } else {
@@ -114,12 +151,29 @@ elem("#user-form").submit(function(ev) {
       });
    } 
   });
+
+function addPm(to, u, msg, k, n) {
+    const linkCatch = msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) : [];
+    const linkReplace = msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g).map(og => `<a id='clink' target='_blank' href='${og.startsWith("http://") || og.startsWith("https://") ? og : "https://" + og}'>` + og + "</a>") : [];
+    const message = `<div id="fname">${n === 1 ? to[0] : u[0]}</div><li data-time='${k}' class=${
+      username.name === u ? "sent" : "receive"
+    }><span id="user">${n === 1 ? '<em>to</em> @' + to : '<em>from</em> @' + u}</span><br/><span id="msg">${msg.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + location.hostname.substring(0, location.hostname.indexOf('.')) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
+  // append the message on the page
+    elem("#messages").innerHTML += message;
+    if(Array.isArray(elem("#messages > li"))) {
+      elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
+    } else {
+      elem("#messages > li").scrollIntoView();
+    }
+}
+
+
   fetchChat.on("child_added", function (snapshot) {
     const messages = snapshot.val();
     const linkCatch = messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) : [];
     const linkReplace = messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g).map(og => `<a id='clink' target='_blank' href='${og.startsWith("http://") || og.startsWith("https://") ? og : "https://" + og}'>` + og + "</a>") : [];
-    const message = `<div id="fname">${messages.username.substring(0, 1)}</div><li data-time='${snapshot.key}' class=${
-      username === messages.username ? "sent" : "receive"
+    const message = `<div id="fname">${messages.username[0]}</div><li data-time='${snapshot.key}' class=${
+      username.name === messages.username ? "sent" : "receive"
     }><span id="user">@${messages.username}</span><br/><span id="msg">${messages.message.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + location.hostname.substring(0, location.hostname.indexOf('.')) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
   // append the message on the page
   elem("#messages").innerHTML += message;
@@ -188,6 +242,22 @@ fetchChat.on("child_changed", function (snapshot) {
     }
   }
 });
+
+function pms() {
+fetchPms.on('child_added', function(snapshot) {
+  const pm = snapshot.val();
+  const TO = pm.to.startsWith('@') ? pm.to.substring(1, pm.to.length) : pm.to;
+  if(TO === username.name) {
+    addPm(TO, pm.username, pm.message, snapshot.key, 2);
+    lastPmTo = TO;
+    SnackBar({message: `Recieved PM from ${messages.username}`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500});
+  } else if(pm.username === username.name) {
+    addPm(TO, username.name, pm.message, snapshot.key, 1);
+    lastPmTo = TO;
+    SnackBar({message: `Sent PM to ${TO}`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500});
+  }
+});
+}
 
 window.addEventListener('beforeunload', function(e) { 
   e.preventDefault();
