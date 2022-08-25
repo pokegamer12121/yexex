@@ -50,7 +50,7 @@
   z-index: 0;
   overflow: auto;
   background: #282c34;
-  white-space: nowrap; /* Allows textarea to scroll horizontally */
+  white-space: pre-wrap; /* Allows textarea to scroll horizontally */
 }
 
 textarea#editing-html {
@@ -71,7 +71,7 @@ div#button-container {
   z-index: 1;
 }
 
-button:where(#head, #body) {
+button#head, button#body {
   position: absolute;
   display:inline;
   cursor: pointer;
