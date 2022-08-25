@@ -32,7 +32,7 @@
   background: transparent;
   caret-color: limegreen;
   overflow: auto;
-  white-space: pre-wrap; /* Allows textarea to scroll horizontally */
+  white-space: normal; /* Allows textarea to scroll horizontally */
   resize: none;
 }
 #highlighting-js, #highlighting-html, #highlighting-css {
@@ -50,7 +50,7 @@
   z-index: 0;
   overflow: auto;
   background: #282c34;
-  white-space: nowrap; /* Allows textarea to scroll horizontally */
+  white-space: normal; /* Allows textarea to scroll horizontally */
 }
 
 textarea#editing-html {
@@ -114,7 +114,7 @@ span#el {
 }
 
 .hljs {
-    white-space: pre;
+    white-space: normal;
     color: #abb2bf;
   }
   
