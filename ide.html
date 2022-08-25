@@ -144,9 +144,9 @@ onkeydown="check_tab(this, event);"></textarea>
 
     exec();
 
-    elem('button:where(#head, #body)').forEach(el => {
+    elem('button#head, button#body').forEach(el => {
        el.onclick = () => { 
-         elem('button:where(#head, #body)').forEach(but => {
+         elem('button#head, button#body').forEach(but => {
            if(but.hasClass("selected")) 
               but.removeClass('selected');
          });
