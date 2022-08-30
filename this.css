@@ -71,7 +71,7 @@ div#button-container {
   z-index: 1;
 }
 
-button#head, button#body {
+button:where(#head, #body) {
   position: absolute;
   display:inline;
   cursor: pointer;
@@ -95,7 +95,7 @@ button#head, button#body {
   border-radius: 0 0 8px 0;
 }
 
-.selected {
+button.selected {
   background: #5a5f68;
 }
 

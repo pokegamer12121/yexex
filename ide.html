@@ -89,6 +89,7 @@ onkeydown="check_tab(this, event);"></textarea>
   <script src="snackbar.js"></script>
   <script src="updown.js"></script>
   <script src="this.js"></script>
+  <script src="https://yexex.github.io/js-addons/addons.js"></script>
   <script>
     if(document.referrer.endsWith('d7y27b12c778cb372k2lga0p47h.html')) 
       setTimeout(() => {
@@ -102,10 +103,10 @@ onkeydown="check_tab(this, event);"></textarea>
         });
       }, 3000);
     
-    const test = document.querySelector('#test');
+    const test = elem('#test');
 
     const setCode = v => {
-      document.querySelector(`#editing-${v}`).val(localStorage.getItem(`cd${v}`));
+      elem(`#editing-${v}`).val(localStorage.getItem(`cd${v}`));
       updateTxt(localStorage.getItem(`cd${v}`), `highlighting-content-${v}`);
     };
     
@@ -121,20 +122,20 @@ onkeydown="check_tab(this, event);"></textarea>
          <!DOCTYPE html>
          <html>
            <head>
-             ${localStorage.getItem('cdhtml-head') != null ? localStorage.getItem('cdhtml-head') : ''}
+             ${localStorage.includes('cdhtml-head') ? localStorage.getItem('cdhtml-head') : ''}
              <style> 
                * {
                  box-sizing: border-box;
                }  
 
-               ${document.querySelector("#editing-css").value} 
+               ${elem("#editing-css").val()} 
              </style>
            </head>
            <body>
-             ${localStorage.getItem('cdhtml') != null ? localStorage.getItem('cdhtml') : ''} 
+             ${localStorage.includes('cdhtml') ? localStorage.getItem('cdhtml') : ''} 
              <script src="https://yexex.github.io/js-addons/addons.js">\x3C/script> 
              <script> 
-               ${document.querySelector("#editing-js").value}
+               ${elem("#editing-js").val()}
              \x3C/script>
           </body>
         </html>
@@ -143,43 +144,37 @@ onkeydown="check_tab(this, event);"></textarea>
 
     exec();
 
-     document.querySelector('button#head, button#body').forEach(function(el) {
-       el.onclick = function () { 
-         document.querySelector('button#head, button#body').forEach(function(but) {
-           if(but.classList.contains("selected")) 
-              but.classList.remove('selected');
+    elem('button:where(#head, #body)').forEach(el => {
+       el.onclick = () => { 
+         elem('button:where(#head, #body)').forEach(but => {
+           if(but.hasClass("selected")) 
+              but.removeClass('selected');
          });
          if(el.textContent.substring(1, 5) == "head") {
-            document.querySelector("#editing-html").setAttribute('head', 'true');
-            if(localStorage.getItem('cdhtml-head') != null) {
-              document.querySelector("#editing-html").value = localStorage.getItem('cdhtml-head');
-              updateTxt(localStorage.getItem('cdhtml-head'), "highlighting-content-html");
-            } else {
-              document.querySelector("#editing-html").value = '';
-              updateTxt('', "highlighting-content-html");
-            }
+            elem("#editing-html").attr('head', 'true');
+            if(!localStorage.includes('cdhtml-head')) 
+              localStorage.setItem('cdhtml-head', '');
+            elem("#editing-html").val(localStorage.getItem('cdhtml-head'));
+            updateTxt(localStorage.getItem('cdhtml-head'), "highlighting-content-html");
+         } 
+         if(elem("#editing-html").hasAttribute('head') && el.textContent.substring(1, 5) == "body") {
+           elem("#editing-html").removeAttribute('head');
+           if(!localStorage.includes('cdhtml')) 
+             localStorage.setItem('cdhtml', '');
+           elem("#editing-html").val(localStorage.getItem('cdhtml'));
+           updateTxt(localStorage.getItem('cdhtml'), "highlighting-content-html");
          }
-         if(document.querySelector("#editing-html").hasAttribute('head') && el.textContent.substring(1, 5) == "body") {
-           document.querySelector("#editing-html").removeAttribute('head');
-           if(localStorage.getItem('cdhtml') != null) {
-              document.querySelector("#editing-html").value = localStorage.getItem('cdhtml');
-              updateTxt(localStorage.getItem('cdhtml'), "highlighting-content-html");
-           } else {
-              document.querySelector("#editing-html").value = '';
-              updateTxt('', "highlighting-content-html");
-            }
-         }
-         el.classList.add("selected");
+         el.addClass('selected'); 
        };
     });
     
     function update(el, hel) {
-      var text = el.value;
+      var text = el.val();
       if(el.hasAttribute('head'))
         localStorage.setItem('cdhtml-head', text);
       else 
-        localStorage.setItem('cd' + hel.substring(21, hel.length), text);
-      let result_element = document.querySelector("#" + hel);
+        localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
+      let result_element = elem("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
       }
@@ -188,11 +183,11 @@ onkeydown="check_tab(this, event);"></textarea>
     }
 
     function updateTxt(text, hel) {
-      if(document.querySelector("#" + hel).parentElement.parentElement.children[0].hasAttribute('head'))
+      if(elem("#" + hel).parentElement.parentElement.children[0].hasAttribute('head'))
         localStorage.setItem('cdhtml-head', text);
       else 
-        localStorage.setItem('cd' + hel.substring(21, hel.length), text);
-      let result_element = document.querySelector("#" + hel);
+        localStorage.setItem(`cd${hel.substring(21, hel.length)}`, text);
+      let result_element = elem("#" + hel);
       if(text[text.length-1] == "\n") {
         text += " ";
       }
@@ -201,7 +196,7 @@ onkeydown="check_tab(this, event);"></textarea>
     }
 
   function sync_scroll(element, hel) {
-    let result_element = document.querySelector("#" + hel);
+    let result_element = elem("#" + hel);
     result_element.scrollTop = element.scrollTop;
     result_element.scrollLeft = element.scrollLeft;
   }
@@ -213,23 +208,23 @@ let pfnsh = 0;
 let bstrt = 0;
 let bfnsh = 0;  
 function check_tab(element, event) {
-  let code = element.value;
+  let code = element.val();
   if(event.key == "Tab") {
     event.preventDefault(); 
     let before_tab = code.slice(0, element.selectionStart);
-    let after_tab = code.slice(element.selectionEnd, element.value.length); 
+    let after_tab = code.slice(element.selectionEnd, element.val().length); 
     let cursor_pos = element.selectionEnd + 1;  
     element.val(before_tab + "\t" + after_tab);
     element.selectionStart = cursor_pos;
     element.selectionEnd = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
   
@@ -237,7 +232,7 @@ function check_tab(element, event) {
     var dble = event.key == '"';
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
-    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let after_add = code.slice(element.selectionEnd, element.val().length); // text after tab
     let cursor_pos = element.selectionEnd + 1;
     element.val(before_add + (dble ? '""' : "''") + after_add);
     element.selectionStart = cursor_pos;
@@ -245,20 +240,20 @@ function check_tab(element, event) {
     qstrt = cursor_pos;
     qfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
   if(event.key == "(") {
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
-    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let after_add = code.slice(element.selectionEnd, element.val().length); // text after tab
     let cursor_pos = element.selectionEnd + 1;
     element.val(before_add + '()' + after_add);
     element.selectionStart = cursor_pos;
@@ -266,13 +261,13 @@ function check_tab(element, event) {
     pstrt = cursor_pos;
     pfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
@@ -280,7 +275,7 @@ function check_tab(element, event) {
     var crly = event.key == "{";
     event.preventDefault();
     let before_add = code.slice(0, element.selectionStart); // text before tab
-    let after_add = code.slice(element.selectionEnd, element.value.length); // text after tab
+    let after_add = code.slice(element.selectionEnd, element.val().length); // text after tab
     let cursor_pos = element.selectionEnd + 1;
     element.val(before_add + (crly ? '{}' : '[]') + after_add);
     element.selectionStart = cursor_pos;
@@ -288,20 +283,20 @@ function check_tab(element, event) {
     bstrt = cursor_pos;
     bfnsh = cursor_pos;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
   
   if(event.key == "Backspace" && element.selectionEnd == qfnsh && element.selectionStart == qstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
-    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let after_del = code.slice(element.selectionEnd, element.val().length);
     let cursor_pos = element.selectionEnd - 1;
     element.val(before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length));
     element.selectionStart = cursor_pos;
@@ -309,20 +304,20 @@ function check_tab(element, event) {
     qstrt = -1;
     qfnsh = -1;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
   if(event.key == "Backspace" && element.selectionEnd == pfnsh && element.selectionStart == pstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
-    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let after_del = code.slice(element.selectionEnd, element.val().length);
     let cursor_pos = element.selectionEnd - 1;
     element.val(before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length));
     element.selectionStart = cursor_pos;
@@ -330,20 +325,20 @@ function check_tab(element, event) {
     pstrt = -1;
     pfnsh = -1;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 
   if(event.key == "Backspace" && element.selectionEnd == bfnsh && element.selectionStart == bstrt) {
     event.preventDefault();
     let before_del = code.slice(0, element.selectionStart);
-    let after_del = code.slice(element.selectionEnd, element.value.length);
+    let after_del = code.slice(element.selectionEnd, element.val().length);
     let cursor_pos = element.selectionEnd - 1;
     element.val(before_del.substring(0, before_del.length - 1) + after_del.substring(1, after_del.length));
     element.selectionStart = cursor_pos;
@@ -351,13 +346,13 @@ function check_tab(element, event) {
     bstrt = -1;
     bfnsh = -1;
     if(element.id == "editing-js") {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     } else if(element.id == "editing-html") {
-      updateTxt(element.value, 'highlighting-content-html');
+      updateTxt(element.val(), 'highlighting-content-html');
     } else if(element.id == "editing-css") {
-      updateTxt(element.value, 'highlighting-content-css');
+      updateTxt(element.val(), 'highlighting-content-css');
     } else {
-      updateTxt(element.value, 'highlighting-content-js');
+      updateTxt(element.val(), 'highlighting-content-js');
     }
   }
 }

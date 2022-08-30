@@ -12,13 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 String.prototype.indexsOf = function(val) {
-  const indexes = [];
-  for (let index = 0; index < this.length; index++) {
-    if (this[index] === val) {
-      indexes.push(index);
-    }
-  }
-  return indexes;
+  return this.map((v, i) => { return {i, iv: v === val}; }).filter(o => o.iv).map(k => k.i);
 }
 
 let usernames = [];
@@ -42,7 +36,7 @@ class User {
     this.username = name;
   }
   meetsConstraints() {
-    return (this.username.length <= 25 && !usernames.includes(this.username) && !this.username.match(/^yex$/i)) || (this.username.match(/^yex$/i) && localStorage.getItem('uuid') == atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5"));
+    return (this.username.length <= 25 && !usernames.includes(this.username) && !this.username.toLowerCase().includes(atob('bmlnZ2Vy')) && !this.username.match(/^yex$/i)) || (this.username.match(/^yex$/i) && localStorage.getItem('uuid') == atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5"));
   }
   changeUsername(newName) {
     usernames.deleteItem(this.username);
@@ -59,7 +53,7 @@ class User {
    if(!this.meetsConstraints()) {
     if(this.username.length > 25)
       return errorMsgs[0];
-    else if(usernames.includes(this.username))
+    else if(usernames.includes(this.username) || this.username.toLowerCase().includes(atob('bmlnZ2Vy')))
       return errorMsgs[1]; 
     else if(this.username.match(/^yex$/i) && localStorage.getItem('uuid') != atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) 
       return errorMsgs[1];
@@ -77,7 +71,7 @@ function sendMessage(e) {
     const messageInput = elem("#message-input");
     const message = messageInput.val();
 
-    if(messageInput.val().trim() !== '') {
+    if(messageInput.val().trim() !== '' && !messageInput.val().toLowerCase().includes(atob('bmlnZ2Vy'))) {
       messageInput.val('');
       if(message.startsWith('/pm')) {
         database.ref("pms/" + timestamp).set({

@@ -136,7 +136,7 @@ nav.bar a, nav.bar button {
   text-decoration: none;
 }
 
-nav.bar a:hover, nav.bar button:hover {
+nav.bar a:not(.yex, .active):hover, nav.bar button:hover {
   color: var(--theme-clr);
   text-shadow: 0px 0px 8px var(--theme-clr);
   transform: scale(1.05) translateY(-5%);
@@ -145,10 +145,6 @@ nav.bar a:hover, nav.bar button:hover {
 nav.bar .active {
   color: var(--theme-clr);
   text-shadow: 0px 0px 8px var(--theme-clr);
-}
-
-nav.bar .active:hover {
-  transform: none;
 }
 
 /* Nav Bar Header Link */
