@@ -200,11 +200,7 @@ window.onload = function() {
 }
 
 function downloadBIOS() {
-    if(window.location.href.includes("githack")) {
-       downloadFile("../../../files/master/game/gameboy/Binaries/gba_bios.bin", registerBIOS);
-    } else {
-       downloadFile("../files/game/gameboy/Binaries/gba_bios.bin", registerBIOS);
-    }
+    downloadFile("Binaries/gba_bios.bin", registerBIOS);
 }
 
 function registerBIOS() {
@@ -214,11 +210,7 @@ function registerBIOS() {
 
 function downloadROM(gamename) {
     writeRedTemporaryText("Downloading \"" + games[gamename] + ".\"");
-    if(window.location.href.includes("githack")) {
-       downloadFile("../../../files/master/game/gameboy/Binaries/" + gamename + ".gba", registerROM);
-    } else {
-       downloadFile("../files/game/gameboy/Binaries/" + gamename + ".gba", registerROM);
-    }
+    downloadFile("Binaries/" + gamename + ".gba", registerROM);
 }
 
 function registerROM() {
