@@ -173,6 +173,7 @@ input[type=color] {
 
 nav.bar > div.has-dropdown > ul.dropdown {
   visibility: hidden;
+  opacity: 0;
   position: absolute;
   list-style: none;
   width: 300px;
@@ -195,6 +196,7 @@ nav.bar > div.has-dropdown > ul.dropdown > li.dropdown-item > a {
 
 nav.bar > div.has-dropdown:focus-within > ul.dropdown {
   visibility: visible;
+  opacity: 1;
   pointer-events: auto;
 }
 
