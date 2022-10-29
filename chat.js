@@ -74,11 +74,21 @@ function sendMessage(e) {
     if(messageInput.val().trim() !== '' && !messageInput.val().toLowerCase().includes(atob('bmlnZ2Vy'))) {
       messageInput.val('');
       if(message.startsWith('/pm')) {
-        database.ref("pms/" + timestamp).set({
-          to: message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]),
-          username: username.name,
-          message: message.substring(message.indexsOf(' ')[1] + 1, message.length)
-        });
+        if(message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]) != username.name && message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]) != '@' + username.name) {
+          database.ref("pms/" + timestamp).set({
+            to: message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]),
+            username: username.name,
+            message: message.substring(message.indexsOf(' ')[1] + 1, message.length)
+          });
+        } else {
+          SnackBar({
+            message: "You cannot message yourself!",
+            status: 'error',
+            position: "br",
+            fixed: true,
+            timeout: 1500
+          });
+        }
       } else if(message.startsWith('/r')) {
           if(typeof lastPmTo !== 'undefined') {
             database.ref("pms/" + timestamp).set({
@@ -243,8 +253,8 @@ fetchPms.on('child_added', function(snapshot) {
   const TO = pm.to.startsWith('@') ? pm.to.substring(1, pm.to.length) : pm.to;
   if(TO === username.name) {
     addPm(TO, pm.username, pm.message, snapshot.key, 2);
-    lastPmTo = TO;
-    SnackBar({message: `Recieved PM from ${messages.username}`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500});
+    lastPmTo = pm.username;
+    SnackBar({message: `Recieved PM from ${pm.username}`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500});
   } else if(pm.username === username.name) {
     addPm(TO, username.name, pm.message, snapshot.key, 1);
     lastPmTo = TO;
