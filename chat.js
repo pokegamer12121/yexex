@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 String.prototype.indexsOf = function(val) {
-  return this.map((v, i) => { return {i, iv: v === val}; }).filter(o => o.iv).map(k => k.i);
+  return this.split('').map((v, i) => { return {i, iv: v === val}; }).filter(o => o.iv).map(k => k.i);
 }
 
 let usernames = [];
