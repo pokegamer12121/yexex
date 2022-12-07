@@ -1,7 +1,7 @@
 @import "./new.css";
 
 body {
-  background-image: linear-gradient(to right bottom, #2e2e2e, #4f4f4f);
+  background: linear-gradient(to right bottom, #2e2e2e, #4f4f4f);
 }
 
 a#back {
