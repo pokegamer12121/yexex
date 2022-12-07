@@ -33,7 +33,7 @@ body {
   margin: 0;
   max-width: 100vw;
   --body-margin-top: 75px;
-  height: calc(100vh - var(--body-margin-top));
+  height: calc(100% - var(--body-margin-top));
   margin-top: var(--body-margin-top);
 }
 
