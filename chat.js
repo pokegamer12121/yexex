@@ -10,107 +10,93 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
+const auth = firebase.auth();
+const storage = firebase.storage();
 
-String.prototype.indexsOf = function(val) {
-  return this.split('').map((v, i) => { return {i, iv: v === val}; }).filter(o => o.iv).map(k => k.i);
+const elem = (query) => document.querySelector(query);
+const elems = (query) => Array.from(document.querySelectorAll(query));
+
+elem("#message-form").addEventListener("submit", sendMessage);
+
+function scrollChatMessages() {
+  const liElems = elems("ul#channel-content > li");
+  if(liElems.length > 0)
+    liElems.at(-1).scrollIntoView();
 }
 
-let usernames = [];
-let users = [];
-let cusers = [];
-const fetchUsers = database.ref("users/");
-fetchUsers.on("child_added", function (snapshot) {
-  usernames.push(snapshot.val().username.toLowerCase());
-  users.push("@" + snapshot.val().username);
-  cusers.push("<span id='mcolor'>@" + snapshot.val().username + "</span>");
-});
+function replaceArray(str, find, replace) {
+  var replaceString = str;
+  var regex; 
+  for (var i = 0; i < find.length; i++) {
+    regex = new RegExp(find[i], "g");
+    replaceString = replaceString.replace(regex, replace[i]);
+  }
+  return replaceString;
+};
 
-fetchUsers.on("child_removed", function (snapshot) {
-  usernames.deleteItem(snapshot.val().username.toLowerCase());
-  users.deleteItem("@" + snapshot.val().username);
-  cusers.deleteItem("<span id='mcolor'>@" + snapshot.val().username + "</span>");
-});
+function createCategory(name) {
+  elem(`div#categories`).insertAdjacentHTML("beforeend", `
+    <div class="category" data-name="${name}">
+      <label class="name">${name}<input type="checkbox" /></label>
+      <div class="channels-container">
+        <div class="channels"></div>
+      </div>
+    </div>
+  `)
+}
 
-class User {
-  constructor(name) {
-    this.username = name;
-  }
-  meetsConstraints() {
-    return (this.username.length <= 25 && !usernames.includes(this.username) && !this.username.toLowerCase().includes(atob('bmlnZ2Vy')) && !this.username.match(/^yex$/i)) || (this.username.match(/^yex$/i) && localStorage.getItem('uuid') == atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5"));
-  }
-  changeUsername(newName) {
-    usernames.deleteItem(this.username);
-    this.username = newName;
-    usernames.push(newName);
-    users = usernames.map((og) => "@" + og);
-    cusers = users.map((og) => "<span id='mcolor'>" + og + "</span>");
-  }
-  get name() {
-    return this.username;
-  }
-  get errorMsg() {
-   const errorMsgs = ["That username is too long! max is 25 chars", "That username is in use!"]; 
-   if(!this.meetsConstraints()) {
-    if(this.username.length > 25)
-      return errorMsgs[0];
-    else if(usernames.includes(this.username) || this.username.toLowerCase().includes(atob('bmlnZ2Vy')))
-      return errorMsgs[1]; 
-    else if(this.username.match(/^yex$/i) && localStorage.getItem('uuid') != atob("YzUzNDBkYzQtODZmMi00NmFlLTg0OGYtZDYyZmU1YzJkZjA5")) 
-      return errorMsgs[1];
-   } else return "No Error Thrown!"; 
+function strToNode(str) {
+  const el = document.createElement("div");
+  el.insertAdjacentHTML("beforeend", str);
+  return el.children[0];
+}
+
+function createChannel(name, type, categoryName) {
+  elem(`div.category[data-name=${categoryName}] div.channels`).insertAdjacentHTML("beforeend", `
+    <a href="#${name}" id="${name}" class="channel" data-type="${type}">${name}</a>
+  `);
+}
+
+function createChatMessage(sender, content, timestamp) {
+  if(content.trim() !== '') {
+    const message = document.querySelector("ul#channel-content").appendChild(strToNode(`
+      <li class="chat-message" data-status="${(sender.uid || "") === auth.currentUser.uid ? 'sent' : 'received'}" data-timestamp="${(timestamp || Date.now())}"> 
+        <img class='profile-pic' src="${sender.photoURL}" alt="Profile Pic" />
+        <div class="user-message">
+          <p class="username">${(sender.displayName || "User")} <time class="timestamp" datetime="${new Date(parseInt((timestamp || Date.now()))).toISOString()}">${new Date(parseInt((timestamp || Date.now()))).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })}</time></p>
+          <div class="message-content">${marked.parse(content).replace(/@\S+/g, full => "<span class='mcolor'>" + full + "</span>")}</div>
+        </div>
+      </li>
+    `));
+    message.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    scrollChatMessages();
   }
 }
-let username = new User("Guest");
-let lastPmTo;
-elem("#message-form").submit(sendMessage);
+
+function extractKeys(keys, from) {
+  return Object.fromEntries(Object.entries(from).filter(([key]) => keys.includes(key)));
+}
 
 function sendMessage(e) {
     e.preventDefault();
 
-    const timestamp = Date.now();
     const messageInput = elem("#message-input");
-    const message = messageInput.val();
+    const message = messageInput.value; 
+    const user = extractKeys(["displayName", "photoURL", "uid"], auth.currentUser);
 
-    if(messageInput.val().trim() !== '' && !messageInput.val().toLowerCase().includes(atob('bmlnZ2Vy'))) {
-      messageInput.val('');
-      if(message.startsWith('/pm')) {
-        if(message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]) != username.name && message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]) != '@' + username.name) {
-          database.ref("pms/" + timestamp).set({
-            to: message.substring(message.indexsOf(' ')[0] + 1, message.indexsOf(' ')[1]),
-            username: username.name,
-            message: message.substring(message.indexsOf(' ')[1] + 1, message.length)
-          });
-        } else {
-          SnackBar({
-            message: "You cannot message yourself!",
-            status: 'error',
-            position: "br",
-            fixed: true,
-            timeout: 1500
-          });
-        }
-      } else if(message.startsWith('/r')) {
-          if(typeof lastPmTo !== 'undefined') {
-            database.ref("pms/" + timestamp).set({
-              to: lastPmTo,
-              username: username.name,
-              message: message.substring(message.indexsOf(' ')[0] + 1, message.length)
-            });
-          } else {
-            SnackBar({
-              message: "Nobody to reply to!",
-              status: 'error',
-              position: "br",
-              fixed: true,
-              timeout: 1500
-            });
-          }
-      } else {
-        database.ref("messages/" + timestamp).set({
-          username: username.name,
-          message
-        });
-      }
+    if(messageInput.value.trim() !== '' && !messageInput.value.toLowerCase().includes(atob('bmlnZ2Vy'))) {
+      database.ref(`${location.hash.slice(1)}/${Date.now()}`).set({
+        user,
+        message
+      }).then(() => messageInput.value = '').catch(err => {
+        SnackBar({
+          message: err.message,
+          status: 'error',
+          position: "br",
+          fixed: true,
+          timeout: 1500
+         });
+      });
     } else {
        SnackBar({
         message: "Enter A Valid Message!",
@@ -122,148 +108,171 @@ function sendMessage(e) {
     }
 }
 
-const fetchChat = database.ref("messages/");
-const fetchPms = database.ref("pms/");
-let tStamp = Date.now();
+elem('i[class^="fa"]#eye').onclick = function() {
+  this.previousElementSibling.type = this.previousElementSibling.type === "password" ? "text" : "password";
+  this.classList.toggle("fa-eye");
+  this.classList.toggle("fa-eye-slash");
+  this.previousElementSibling.focus();
+};
 
-elem("#user-form").submit(function(ev) { 
-   ev.preventDefault();
-   username = new User(elem("#user-input").val());
-   if(username.meetsConstraints()) {
-     elem("#user-form").css({display: "none"});
-     database.ref("users/" + tStamp).set({username: username.name});
-     SnackBar({
-        message: "Username set to " + username.name,
-        status: 'success',
-        position: "br",
-        fixed: true,
-        timeout: 1500
+if("user-email" in localStorage && "user-password" in localStorage) {
+  auth.signInWithEmailAndPassword(localStorage.getItem("user-email"), localStorage.getItem("user-password")).then(async userCredential => {
+    const user = userCredential.user;
+    const photoRef = storage.ref(`userPhotos/${user.uid}`) || storage.ref("userPhotos/default.png");
+    const photoURL = await photoRef.getDownloadURL();
+    elem("#user > img.profile-pic").setAttribute("src", photoURL);
+    elem("#user > #user-info > p.username").textContent = user.displayName;
+    elem("#user-form").toggleAttribute("hidden");
+    elem("#chat").toggleAttribute("hidden");
+    scrollChatMessages();
+  }).catch(thrownError => { 
+    SnackBar({
+      message: thrownError.message,
+      status: 'error',
+      icon: "!",
+      position: "br",
+      fixed: true,
+      timeout: 2000
     });
-    elem("#chat").css({display: "block"});
-    pms();
-    if(Array.isArray(elem("#messages > li"))) 
-      elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
-  } else {
-     elem("#user-input").val('');
-     SnackBar({
-        message: username.errorMsg,
-        status: 'error',
-        icon: "!",
-        position: "br",
-        fixed: true,
-        timeout: 2000
-      });
-   } 
+    console.error(thrownError);
   });
-
-function addPm(to, u, msg, k, n) {
-    const linkCatch = msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) : [];
-    const linkReplace = msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? msg.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g).map(og => `<a id='clink' target='_blank' href='${og.startsWith("http://") || og.startsWith("https://") ? og : "https://" + og}'>` + og + "</a>") : [];
-    const message = `<div id="fname">${n === 1 ? to[0] : u[0]}</div><li data-time='${k}' class=${
-      username.name === u ? "sent" : "receive"
-    }><span id="user">${n === 1 ? '<em>to</em> @' + to : '<em>from</em> @' + u}</span><br/><span id="msg">${msg.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + location.hostname.substring(0, location.hostname.indexOf('.')) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
-  // append the message on the page
-    elem("#messages").innerHTML += message;
-    if(Array.isArray(elem("#messages > li"))) {
-      elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
-    } else {
-      elem("#messages > li").scrollIntoView();
-    }
 }
 
-
-  fetchChat.on("child_added", function (snapshot) {
-    const messages = snapshot.val();
-    const linkCatch = messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) : [];
-    const linkReplace = messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g) ? messages.message.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g).map(og => `<a id='clink' target='_blank' href='${og.startsWith("http://") || og.startsWith("https://") ? og : "https://" + og}'>` + og + "</a>") : [];
-    const message = `<div id="fname">${messages.username[0]}</div><li data-time='${snapshot.key}' class=${
-      username.name === messages.username ? "sent" : "receive"
-    }><span id="user">@${messages.username}</span><br/><span id="msg">${messages.message.replaceArray(users, cusers).replace(/@yex/gi, "<a class='yex' href='https://github.com/" + location.hostname.substring(0, location.hostname.indexOf('.')) + "'>@Yex</a>").replaceArray(linkCatch, linkReplace)}</span></li><br/>`;
-  // append the message on the page
-  elem("#messages").innerHTML += message;
-  if(Array.isArray(elem("#messages > li"))) {
-    elem("#messages > li")[elem("#messages > li").length - 1].scrollIntoView();
-  } else {
-    elem("#messages > li").scrollIntoView();
+elem("#user-form #form-change").onclick = function() {
+  if(elem("#user-form").getAttribute("data-mode") === "login") {
+    this.textContent = "Login";
+    elem("#user-form h1").textContent = "Sign Up";
+    elem("#user-form").setAttribute("data-mode", "register");
+  } else if(elem("#user-form").getAttribute("data-mode") === "register") {
+    this.textContent = "Sign Up";
+    elem("#user-form h1").textContent = "Login";
+    elem("#user-form").setAttribute("data-mode", "login");
   }
-  let mentions = localStorage.getItem('mentions') != null ? JSON.parse(localStorage.getItem('mentions')) : [];
-  if(messages.message.includes('@' + username.name) && !mentions.includes(messages.message)) {
-      SnackBar({message: `${messages.username} mentioned you!`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500, actions: [{text: "View", function: function () {
-        if(Array.isArray(elem("#messages > li"))) {
-          for(const listItem of elem("#messages > li")) {
-            if(listItem.getAttribute('data-time') === snapshot.key) {
-              listItem.scrollIntoView();
-            }
-          }
-        } else {
-          const listItem = elem("#messages > li");
-          if(listItem.getAttribute('data-time') === snapshot.key) {
-            listItem.scrollIntoView();
-          }
-        }
-      }}]});
-      mentions.push(messages.message);
-      localStorage.setItem('mentions', JSON.stringify(mentions));
-  } 
-});
+  elems("#photo-input, #username-input").forEach(v => v.toggleAttribute("required"));
+};
 
-fetchChat.on("child_removed", function (snapshot) {
-  const deletedMessage = snapshot.val();
-  if(Array.isArray(elem("#messages > li"))) {
-    for(const listItem of elem("#messages > li")) {
-      if(listItem.getAttribute('data-time') === snapshot.key) {
-        listItem.previousElementSibling.remove();
-        listItem.nextElementSibling.remove();
-        listItem.remove();
+function taskToPromise(task) {
+  return new Promise((res, rej) => task.then(res, rej));
+}
+
+elem("#user-form").onsubmit = function(ev) { 
+   ev.preventDefault();
+
+   if(this.getAttribute("data-mode").toLowerCase() === "login")
+      auth.signInWithEmailAndPassword(elem("#email-input").value, elem("#password-input").value).then(async userCredential => {
+        const user = userCredential.user;
+        const photoRef = storage.ref(`userPhotos/${user.uid}`);
+        const photoURL = await photoRef.getDownloadURL();
+        elem("#user > img.profile-pic").setAttribute("src", photoURL);
+        elem("#user > #user-info > p.username").textContent = user.displayName;
+        elem("#user-form").toggleAttribute("hidden");
+        elem("#chat").toggleAttribute("hidden");
+        scrollChatMessages();
+      }).catch(thrownError => { 
+        SnackBar({
+          message: thrownError.message,
+          status: 'error',
+          icon: "!",
+          position: "br",
+          fixed: true,
+          timeout: 2000
+        });
+        console.error(thrownError);
+      });
+   else if(this.getAttribute("data-mode").toLowerCase() === "register")
+      auth.createUserWithEmailAndPassword(elem("#email-input").value, elem("#password-input").value).then(async userCredential => {
+        const user = userCredential.user;
+        const displayName = elem("#username-input").value;
+        const photoFile = elem("#photo-input").files[0];
+        if(displayName.length > 25 || displayName.toLowerCase().includes(atob('bmlnZ2Vy')))
+          throw new TypeError((displayName.length > 25 ? "Username is too long! " : "") + (displayName.toLowerCase().includes(atob('bmlnZ2Vy')) ? "That username is already in use!" : ""));
+        const photoUploaded = storage.ref("userPhotos").child(user.uid).put(photoFile);
+        const photoRef = (await taskToPromise(photoUploaded)).ref;
+        const photoURL = await photoRef.getDownloadURL();
+        user.updateProfile( { displayName, photoURL } );
+        elem("#user > img.profile-pic").setAttribute("src", photoURL);
+        elem("#user > #user-info > p.username").textContent = displayName;
+        elem("#user-form").toggleAttribute("hidden");
+        elem("#chat").toggleAttribute("hidden");
+        scrollChatMessages();
+      }).catch(thrownError => { 
+        SnackBar({
+          message: thrownError.message,
+          status: 'error',
+          icon: "!",
+          position: "br",
+          fixed: true,
+          timeout: 2000
+        });
+        console.error(thrownError);
+      });
+      if(this.querySelector("button.toggle-btn").classList.contains("active")) {
+        localStorage.setItem("user-email", elem("#email-input").value);
+        localStorage.setItem("user-password", elem("#password-input").value);
       }
-    }
-  } else {
-    const listItem = elem("#messages > li");
-    if(listItem.getAttribute('data-time') === snapshot.key) {
-        listItem.previousElementSibling.remove();
-        listItem.nextElementSibling.remove();
-        listItem.remove();
-    }
-  }
-});
+};
 
-fetchChat.on("child_changed", function (snapshot) {
+async function openFilePicker(options={}) {
+	const fileInput = document.createElement("input");
+	fileInput.type = "file";
+  if(options.accept) fileInput.setAttribute("accept", options.accept.join(", "));
+  if(options.multiple) fileInput.setAttribute("multiple", "");
+	if(fileInput.showPicker)
+    fileInput.showPicker();
+  else fileInput.click();
+	return await new Promise(res => {
+		fileInput.addEventListener("change", () => res( options.multiple ? Array.from(fileInput.files) : fileInput.files[0] ));
+	});
+}
+
+elem("div#user img.profile-pic").onclick = async function() {
+  const file = await openFilePicker( { multiple: false, accept: [ "image/png", "image/jpeg" ] } );
+  const photoRef = storage.ref("userPhotos/" + auth.currentUser.uid);
+  photoRef.put(file);
+  const photoURL = await photoRef.getDownloadURL();
+  auth.currentUser.updateProfile( { photoURL } );
+  this.src = photoURL;
+};
+
+function chatChannelChildAdded(snapshot) {
+  createChatMessage(...extractKeys([ "user", "message" ], snapshot.val()), snapshot.key);
+}
+  
+function chatChannelChildRemoved(snapshot) {
+  for(const listItem of document.querySelectorAll("ul#channel-content > li")) {
+    if(listItem.getAttribute('data-timestamp') === snapshot.key)
+      listItem.remove();
+  }
+}
+  
+async function chatChannelChildChanged(snapshot) {
   const newMessage = snapshot.val();
-  if(Array.isArray(elem("#messages > li"))) {
-    for(const listItem of elem("#messages > li")) {
-      if(listItem.getAttribute('data-time') === snapshot.key) {
-        listItem.previousElementSibling.textContent = newMessage.username[0];
-        listItem.querySelector('#msg').textContent = newMessage.message;
-        listItem.querySelector('#user').textContent = `@${newMessage.username}`;
-      }
-    }
-  } else {
-    const listItem = elem("#messages > li");
-    if(listItem.getAttribute('data-time') === snapshot.key) {
-        listItem.previousElementSibling.textContent = newMessage.username[0];
-        listItem.querySelector('#msg').textContent = newMessage.message;
-        listItem.querySelector('#user').textContent = `@${newMessage.username}`;
+  for(const listItem of document.querySelectorAll("ul#channel-content > li")) {
+    if(listItem.getAttribute('data-timestamp') === snapshot.key) {
+      listItem.querySelector(".profile-pic").src = newMessage.user.photoURL;
+      listItem.querySelector(".username").innerHTML = `${newMessage.user.displayName} <time class="timestamp" datetime=${(new Date(parseInt(snapshot.key))).toISOString()}> ${(new Date(parseInt(snapshot.key))).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })} </span>`;
+      listItem.querySelector(".message-content").textContent = newMessage.message;
     }
   }
-});
-
-function pms() {
-fetchPms.on('child_added', function(snapshot) {
-  const pm = snapshot.val();
-  const TO = pm.to.startsWith('@') ? pm.to.substring(1, pm.to.length) : pm.to;
-  if(TO === username.name) {
-    addPm(TO, pm.username, pm.message, snapshot.key, 2);
-    lastPmTo = pm.username;
-    SnackBar({message: `Recieved PM from ${pm.username}`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500});
-  } else if(pm.username === username.name) {
-    addPm(TO, username.name, pm.message, snapshot.key, 1);
-    lastPmTo = TO;
-    SnackBar({message: `Sent PM to ${TO}`, status: 'info', icon: 'i', fixed: true, position: 'br', timeout: 3500});
-  }
-});
 }
 
-window.addEventListener('beforeunload', function(e) { 
-  e.preventDefault();
-  database.ref("users/" + tStamp).remove();
-});
+let hashRef;
+  
+window.onhashchange = () => {
+  if(hashRef) {
+    hashRef.off("child_added", chatChannelChildAdded);
+    hashRef.off("child_removed", chatChannelChildRemoved);
+    hashRef.off("child_changed", chatChannelChildChanged);
+  }
+  elem("ul#channel-content").replaceChildren();
+  (elem("a.channel[data-type]:target") || elem(`a.channel[data-type]${location.hash}`)).closest("div.category[data-name]").querySelector("input[type='checkbox']").checked = true;
+  elem("ul#channel-content").setAttribute("data-channel", location.hash.slice(1));
+  hashRef = database.ref(`${location.hash.slice(1)}/`);
+  hashRef.on("child_added", chatChannelChildAdded);
+  hashRef.on("child_removed", chatChannelChildRemoved);
+  hashRef.on("child_changed", chatChannelChildChanged);
+};
+
+if(location.hash === "" || location.hash === "#")
+  location.hash = "#general";
+else window.onhashchange();

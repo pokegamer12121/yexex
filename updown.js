@@ -1,124 +1,67 @@
-var b = false;
-var nav = document.querySelector('nav.bar');
-var up = document.getElementById('updown');
-var ud = document.getElementById('ud');
-var no = document.getElementsByClassName('yex');
-var maybe = document.getElementsByClassName('lumi');
-var lol2 = false;
-function xd() {
-  if(b) {
-    nav.style.top = "-60px";
-    document.body.style.setProperty("--body-margin-top", "0");
-    ud.style.transform = "rotate(-180deg)";
-    up.style.cssText = "border-radius: 10px / 10px; transform: translateY(130%); background-color: #696969";
-  } else {
-    ud.style.transform = "rotate(0deg)";
-    nav.style.top = "0";
-    document.body.style.setProperty("--body-margin-top", "75px");
-    up.style.cssText = "border-radius: 0; transform: translateY(0); background-color: transparent";
-  }
+function toggler(sel, toggleName="active") {
+  if(Array.isArray(sel) && sel.every(v => v instanceof Element))
+    sel.forEach(el => {
+      el.addEventListener("click", () => {
+        sel.filter(v => v.classList.contains(toggleName)).forEach(v => v.classList.toggle(toggleName));
+        el.classList.toggle(toggleName);
+      });
+    });
+  else document.querySelectorAll(sel).forEach(el => el.addEventListener("click", () => el.classList.toggle(toggleName)));
 }
-[...document.querySelectorAll('.yex')].forEach(v => {
+
+toggler("button.toggle-btn");
+
+[...document.querySelectorAll('.yex'), ...document.querySelectorAll('a#github-link')].forEach(v => {
   v.href = "https://github.com/" + location.hostname.substring(0, location.hostname.indexOf('.'));
 });
-[...document.querySelectorAll('.lumi')].forEach(v => {
-  v.href = "https://github.com/Luminous-Technologies";
-});
-
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  );
-}
-
-if(localStorage.getItem('uuid') == null) {
-  localStorage.setItem('uuid', uuidv4());
-}
-
-if(localStorage.getItem('ft') == null) {
-  localStorage.setItem('ft', 'true');
-} else {
-  localStorage.setItem('ft', 'false');
-}
 
 if(['iPad Simulator','iPhone Simulator','iPod Simulator','iPad','iPhone','iPod'].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document)) {
   document.querySelector("div.has-dropdown").setAttribute('tabindex', '0');
-  [...document.querySelectorAll("div.has-dropdown *")].forEach(v => {
+  document.querySelectorAll("div.has-dropdown *").forEach(v => {
     v.setAttribute('tabindex', '0');
   });
 }
 
-const themeButtons = [...document.querySelectorAll(".dropdown-item a")];
+const themeButtons = Array.from(document.querySelectorAll(".dropdown-item button"));
 
-if(localStorage.getItem("theme-color") != null) { 
+if("theme-color" in localStorage) { 
   document.documentElement.style.setProperty("--theme-clr", localStorage.getItem("theme-color"));
   themeButtons.forEach(value => {
-    if(value.getAttribute("onclick").includes(localStorage.getItem("theme-color")))
-      value.classList.add("active");     
-    else if(value.classList.contains("active"))
+    if(value.getAttribute("data-color") === localStorage.getItem("theme-color") || localStorage.getItem("theme-color").startsWith("#") && value.hasAttribute("data-custom")) {
+      if(localStorage.getItem("theme-color").startsWith("#") && value.hasAttribute("data-custom")) value.parentElement.querySelector("input[type=color]").value = localStorage.getItem("theme-color");
+      value.classList.add("active"); 
+    } else if(value.classList.contains("active")) 
       value.classList.remove("active");
-    if(localStorage.getItem("theme-custom") == "true")
-      themeButtons[3].classList.add("active");
   });
-}                                                 
-function theme(color, el, custom) {
-  if(!custom) {
-    localStorage.setItem("theme-custom", "false");
-    document.documentElement.style.setProperty("--theme-clr", color);
-    localStorage.setItem("theme-color", color);
-  } else {
-    localStorage.setItem("theme-custom", "true");
-    document.querySelector(".dropdown-item > input[type=color]").oninput = function(e) {
-      document.documentElement.style.setProperty("--theme-clr", e.target.value);
-      localStorage.setItem("theme-color", e.target.value);
-    };
-  }
-  if(el) {
-    themeButtons.forEach(value => {
-      if(value.classList.contains("active")) {
-        value.classList.remove("active");
-      }
-    });
-    el.classList.add("active");
-  }
 }
+document.querySelector("button#settings + ul.dropdown").style.top = document.querySelector("header:has(nav)").getBoundingClientRect().height + 'px';
+document.querySelector("button#settings + ul.dropdown").style.left = document.querySelector("button#settings").getBoundingClientRect().left + 'px';
+window.matchMedia("only screen and ( max-width: 550px )").addEventListener("change", () => document.querySelector("button#settings + ul.dropdown").style.top = document.querySelector("header:has(nav)").getBoundingClientRect().bottom + 'px')
+window.addEventListener("resize", () => document.querySelector("button#settings + ul.dropdown").style.left = document.querySelector("button#settings").getBoundingClientRect().left + 'px');
+document.querySelector("button#settings").addEventListener("click", () => document.querySelector("button#settings + ul.dropdown").classList.toggle("open"));
 
-document.querySelector('a[data-custom]').addEventListener('click', () => {
-  document.querySelector('input[type="color"]#thmclr').click();
+toggler(themeButtons);
+
+themeButtons.forEach(button => {
+  button.onclick = () => {
+    if(button.hasAttribute("data-custom")) {
+      button.parentElement.querySelector("input[type=color]").showPicker?.();
+      document.documentElement.style.setProperty("--theme-clr", button.parentElement.querySelector("input[type=color]").value);
+      localStorage.setItem("theme-color", button.parentElement.querySelector("input[type=color]").value);
+      button.parentElement.querySelector("input[type=color]").oninput = function(e) {
+        document.documentElement.style.setProperty("--theme-clr", e.target.value);
+        localStorage.setItem("theme-color", e.target.value);
+      };
+    } else {
+      document.documentElement.style.setProperty("--theme-clr", button.getAttribute("data-color"));
+      localStorage.setItem("theme-color", button.getAttribute("data-color"));
+    }
+  };
 });
-
-SnackBar({
-    message: "Loading...",
-    status: 'info',
-    theme: 'darker',
-    icon: "i",
-    fixed: true,
-    position: "br",
-    timeout: 1000
-});
-
-console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loading...");
 
 tippy('[data-tippy-content]', {
       arrow: false,
       theme: 'darker',
-      offset: [0, -1],
+      offset: [0, 5],
       placement: "bottom"
 });
-
-setTimeout(() => { 
-    document.querySelector('div.loader').remove();
-    document.querySelector('div.loaded-overlay').style.display = 'block';
-    console.log("%cSite Status", "font-family: arial; color: white; text-shadow: 1px 1px limegreen; border: 1px solid limegreen; font-weight: 600; background: #333; padding: 5px 10px; border-radius: 10px;", "Loaded Successfully!");
-    SnackBar({
-      message: "Loaded Successfully!",
-      status: 'success',
-      theme: 'darker',
-      position: "br",
-      fixed: true,
-      timeout: 1500
-    });
-}, 1500);
-
-setTimeout(() => document.querySelector('div.loaded-overlay').remove(), 2750);
-

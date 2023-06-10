@@ -336,10 +336,5 @@ var cg = {
      cg.ctx.fillStyle = '#fff'
      cg.ctx.closePath()
      cg.ctx.fill()
-
- /*    cg.ctx.font = this.radius + 'pt Verdana'
-     cg.ctx.fillStyle = 'black'
-     w = cg.ctx.measureText(t = this.radius).width
-     cg.ctx.fillText(t, this.x - w / 2, this.y + this.radius  / 2)*/
    }
  }

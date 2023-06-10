@@ -2,53 +2,51 @@
 
 body {
   background-image: linear-gradient(to right bottom, #2e2e2e, #4f4f4f);
+  background-attachment: fixed;
 }
 
 a#back {
-  font-size: 22.5px;
+  font-size: 1.5rem;
   color: white;
-  text-decoration: transparent;
-  font-family: arista;
   left: 50%;
   transform: translateX(-50%);
   text-shadow: 3px 1px var(--theme-clr);
-  position:absolute;
+  position: absolute;
   top: 0;
-  z-index: 9999;
-  transition: 0.5s all;
+  z-index: 99999;
 }
 
 a#back:hover {
     color: var(--theme-clr);
-    text-shadow: 0px 0px 4px;
+    text-shadow: 0 0 4px;
     transform: translateX(-50%) scale(1.05);
 }
 
 div.gameboy > a {
-  font-size: 22.5px;
+  font-size: 1.5rem;
   color: white;
   text-decoration: transparent;
   text-shadow: 3px 1px var(--theme-clr);
   width: max-content;
   display: block;
   margin: 0 auto;
-  transition: 0.5s all;
 }
 
 div.gameboy > a:hover {
   color: var(--theme-clr);
-    text-shadow: 0px 0px 4px;
-    transform: scale(1.05);
+  text-shadow: 0px 0px 4px;
+  transform: scale(1.05);
 }
 
 .container {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 iframe {
-  margin: 50px auto 0 auto;
+  margin: 3rem auto 0 auto;
   padding: 0;
-    width: 80%;
-    height: 80vh;
-    display:block;
+  width: 80dvw;
+  height: 80dvh;
+  display: block;
+  border: none;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -7,9 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Vex 6</title>
-    <script type="text/javascript"></script>
     <link rel="icon" type="image/png" href="assets/icon.png">
-    <!-- For apple devices -->
     <link rel="apple-touch-icon" type="image/png" href="assets/icon.png">
     <link rel="stylesheet" href="assets/css/app.css" type="text/css">
 </head>
@@ -17,8 +15,6 @@
     <div id="content"> </div>
     <div id="orientation"></div>
     <script type="text/javascript">
-        var gtag;
-
         var _azerionIntegration = {
             "rType": "none",
             "af": false,
@@ -39,7 +35,6 @@
             version = 'Yandex-43',
             azCP = false;
 
-        //This all here is for cache busting;
         function addScript(src, buster, callback) {
             var s = document.createElement('script');
             s.setAttribute('src', src + '?v=' + buster);
