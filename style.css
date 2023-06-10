@@ -1,12 +1,8 @@
 @import "./new.css";
 
 body {
-<<<<<<< HEAD
   background-image: linear-gradient(to right bottom, #2e2e2e, #4f4f4f);
   background-attachment: fixed;
-=======
-  background: linear-gradient(to right bottom, #2e2e2e, #4f4f4f);
->>>>>>> fc76a472a3545db057805ebea1e2e5df892864c6
 }
 
 a#back {
