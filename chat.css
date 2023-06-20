@@ -155,7 +155,8 @@ div.user-message, div#user-info {
 }
 
 .message-content {
-  word-break: break-all;
+  white-space: pre-wrap;
+  tab-size: 2;
 }
 
 .message-content * {
@@ -171,10 +172,11 @@ div.user-message, div#user-info {
   color: deepskyblue;
 }
 
-.message-content blockquote {
-  border-left: 0.25rem solid #3e3e3e;
+.message-content pre {
+  border: 1px solid #2e2e2e;
+  padding: 0.5em;
+  background-color: #1e1e1e;
   border-radius: 0.25rem;
-  padding-left: 1rem;
 }
 
 p.username time.timestamp {
@@ -273,13 +275,12 @@ div.category[data-name] label.name::before {
   transition: transform 300ms;
 }
 
-div.category[data-name]:has(input[type="checkbox"]:checked) label.name::before {
+div.category[data-name] label.name:has(input[type="checkbox"]:checked)::before {
   transform: rotate(0.25turn);
 }
  
 div#bar {
   display: flex;
-  min-height: max-content;
   padding: 0.125rem;
   position: relative;
   border-bottom: 1px rgb(175, 175, 175, 0.2)solid;
@@ -305,11 +306,6 @@ p {
   margin: 0;
   text-align: initial;
   width: auto;
-}
-
-p:is(.username, #status, .message-content) {
-  margin-block: 0;
-  margin-inline: 0;
 }
 
 p.username {
@@ -343,9 +339,10 @@ ul#channel-content[data-channel] + form#message-form {
   border-top: 1px rgb(175, 175, 175, 0.2) solid;
 }
 
-#message-input {
+textarea#message-input {
   padding: 0.5rem;
   flex: 1;
+  tab-size: 2;
   font-size: 1.25rem;
   border-radius: 0;
   text-align: left;
@@ -359,13 +356,17 @@ ul#channel-content[data-channel] + form#message-form {
   transition: box-shadow 300ms ease-in-out;
 }
 
-#message-input::placeholder {
+textarea#message-input::placeholder {
   color: var(--theme-clr);
   opacity: 0.5;
 }
 
-#message-input:focus {
+textarea#message-input:focus {
   box-shadow: 0 0 5px 0 var(--theme-clr) inset, 0 0 5px 0 var(--theme-clr);
+}
+
+textarea#message-input:disabled + div#controls {
+  display: none;
 }
 
 div#controls {

@@ -17,6 +17,12 @@ const elem = (query) => document.querySelector(query);
 const elems = (query) => Array.from(document.querySelectorAll(query));
 
 elem("#message-form").addEventListener("submit", sendMessage);
+elem("#message-input").addEventListener("keydown", function(ev) {
+  if(ev.key === "Tab") {
+    ev.preventDefault();
+    this.setRangeText('\t', this.selectionStart, this.selectionEnd, "end");
+  }
+})
 
 function scrollChatMessages() {
   const liElems = elems("ul#channel-content > li");
@@ -32,7 +38,7 @@ function replaceArray(str, find, replace) {
     replaceString = replaceString.replace(regex, replace[i]);
   }
   return replaceString;
-};
+}
 
 function createCategory(name) {
   elem(`div#categories`).insertAdjacentHTML("beforeend", `
@@ -59,16 +65,15 @@ function createChannel(name, type, categoryName) {
 
 function createChatMessage(sender, content, timestamp) {
   if(content.trim() !== '') {
-    const message = document.querySelector("ul#channel-content").appendChild(strToNode(`
+    document.querySelector("ul#channel-content").insertAdjacentHTML("beforeend", `
       <li class="chat-message" data-status="${(sender.uid || "") === auth.currentUser.uid ? 'sent' : 'received'}" data-timestamp="${(timestamp || Date.now())}"> 
-        <img class='profile-pic' src="${sender.photoURL}" alt="Profile Pic" />
+        <img class='profile-pic' src="${sender.photoURL}" alt="Profile Pic" loading="lazy">
         <div class="user-message">
           <p class="username">${(sender.displayName || "User")} <time class="timestamp" datetime="${new Date(parseInt((timestamp || Date.now()))).toISOString()}">${new Date(parseInt((timestamp || Date.now()))).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })}</time></p>
-          <div class="message-content">${marked.parse(content).replace(/@\S+/g, full => "<span class='mcolor'>" + full + "</span>")}</div>
+          <div class="message-content">${replaceArray(content.trim(), ["\&", "\<", "\>", /*/`{3,4} *(\w*)\s+([^`]*)`{3,4}/g,*/ /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g, /@\S+/g], ["&amp;", "&lt;", "&gt;", /*(_, lang, code) => "<pre><code>" + hljs.highlight(code, { language: lang || "plaintext" }).value + "</code></pre>",*/ full => `<a href="${full}">${full}</a>`, full => `<span class='mcolor'>${full}</span>`])}</div>
         </div>
       </li>
-    `));
-    message.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    `);
     scrollChatMessages();
   }
 }
@@ -88,15 +93,13 @@ function sendMessage(e) {
       database.ref(`${location.hash.slice(1)}/${Date.now()}`).set({
         user,
         message
-      }).then(() => messageInput.value = '').catch(err => {
-        SnackBar({
-          message: err.message,
-          status: 'error',
-          position: "br",
-          fixed: true,
-          timeout: 1500
-         });
-      });
+      }).then(() => messageInput.value = '').catch(err => SnackBar({
+        message: err.message,
+        status: 'error',
+        position: "br",
+        fixed: true,
+        timeout: 1500
+      }));
     } else {
        SnackBar({
         message: "Enter A Valid Message!",
@@ -151,10 +154,6 @@ elem("#user-form #form-change").onclick = function() {
   elems("#photo-input, #username-input").forEach(v => v.toggleAttribute("required"));
 };
 
-function taskToPromise(task) {
-  return new Promise((res, rej) => task.then(res, rej));
-}
-
 elem("#user-form").onsubmit = function(ev) { 
    ev.preventDefault();
 
@@ -165,7 +164,7 @@ elem("#user-form").onsubmit = function(ev) {
         const photoURL = await photoRef.getDownloadURL();
         elem("#user > img.profile-pic").setAttribute("src", photoURL);
         elem("#user > #user-info > p.username").textContent = user.displayName;
-        elem("#user-form").toggleAttribute("hidden");
+        this.toggleAttribute("hidden");
         elem("#chat").toggleAttribute("hidden");
         scrollChatMessages();
       }).catch(thrownError => { 
@@ -185,14 +184,13 @@ elem("#user-form").onsubmit = function(ev) {
         const displayName = elem("#username-input").value;
         const photoFile = elem("#photo-input").files[0];
         if(displayName.length > 25 || displayName.toLowerCase().includes(atob('bmlnZ2Vy')))
-          throw new TypeError((displayName.length > 25 ? "Username is too long! " : "") + (displayName.toLowerCase().includes(atob('bmlnZ2Vy')) ? "That username is already in use!" : ""));
-        const photoUploaded = storage.ref("userPhotos").child(user.uid).put(photoFile);
-        const photoRef = (await taskToPromise(photoUploaded)).ref;
+          throw new TypeError((displayName.length > 25 ? "Username is too long! " : '') + (displayName.toLowerCase().includes(atob('bmlnZ2Vy')) ? "That username is already in use!" : ''));
+        const photoRef = (await Promise.resolve(storage.ref("userPhotos").child(user.uid).put(photoFile))).ref;
         const photoURL = await photoRef.getDownloadURL();
-        user.updateProfile( { displayName, photoURL } );
+        user.updateProfile({ displayName, photoURL });
         elem("#user > img.profile-pic").setAttribute("src", photoURL);
         elem("#user > #user-info > p.username").textContent = displayName;
-        elem("#user-form").toggleAttribute("hidden");
+        this.toggleAttribute("hidden");
         elem("#chat").toggleAttribute("hidden");
         scrollChatMessages();
       }).catch(thrownError => { 
@@ -202,7 +200,7 @@ elem("#user-form").onsubmit = function(ev) {
           icon: "!",
           position: "br",
           fixed: true,
-          timeout: 2000
+          timeout: 2500
         });
         console.error(thrownError);
       });
@@ -212,21 +210,21 @@ elem("#user-form").onsubmit = function(ev) {
       }
 };
 
-async function openFilePicker(options={}) {
+function openFilePicker({ accept="*", multiple=false }) {
 	const fileInput = document.createElement("input");
 	fileInput.type = "file";
-  if(options.accept) fileInput.setAttribute("accept", options.accept.join(", "));
-  if(options.multiple) fileInput.setAttribute("multiple", "");
+  fileInput.accept = accept;
+  fileInput.multiple = multiple;
 	if(fileInput.showPicker)
     fileInput.showPicker();
   else fileInput.click();
-	return await new Promise(res => {
+	return new Promise(res => {
 		fileInput.addEventListener("change", () => res( options.multiple ? Array.from(fileInput.files) : fileInput.files[0] ));
 	});
 }
 
 elem("div#user img.profile-pic").onclick = async function() {
-  const file = await openFilePicker( { multiple: false, accept: [ "image/png", "image/jpeg" ] } );
+  const file = await openFilePicker( { accept: "image/png, image/jpeg" } );
   const photoRef = storage.ref("userPhotos/" + auth.currentUser.uid);
   photoRef.put(file);
   const photoURL = await photoRef.getDownloadURL();
@@ -235,7 +233,9 @@ elem("div#user img.profile-pic").onclick = async function() {
 };
 
 function chatChannelChildAdded(snapshot) {
-  createChatMessage(...extractKeys([ "user", "message" ], snapshot.val()), snapshot.key);
+  const val = snapshot.val();
+  if(typeof val === "object")
+    createChatMessage(val.user, val.message, snapshot.key);
 }
   
 function chatChannelChildRemoved(snapshot) {
@@ -246,9 +246,9 @@ function chatChannelChildRemoved(snapshot) {
 }
   
 async function chatChannelChildChanged(snapshot) {
-  const newMessage = snapshot.val();
   for(const listItem of document.querySelectorAll("ul#channel-content > li")) {
     if(listItem.getAttribute('data-timestamp') === snapshot.key) {
+      const newMessage = snapshot.val();
       listItem.querySelector(".profile-pic").src = newMessage.user.photoURL;
       listItem.querySelector(".username").innerHTML = `${newMessage.user.displayName} <time class="timestamp" datetime=${(new Date(parseInt(snapshot.key))).toISOString()}> ${(new Date(parseInt(snapshot.key))).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })} </span>`;
       listItem.querySelector(".message-content").textContent = newMessage.message;
@@ -258,7 +258,7 @@ async function chatChannelChildChanged(snapshot) {
 
 let hashRef;
   
-window.onhashchange = () => {
+window.onhashchange = async () => {
   if(hashRef) {
     hashRef.off("child_added", chatChannelChildAdded);
     hashRef.off("child_removed", chatChannelChildRemoved);
@@ -271,8 +271,12 @@ window.onhashchange = () => {
   hashRef.on("child_added", chatChannelChildAdded);
   hashRef.on("child_removed", chatChannelChildRemoved);
   hashRef.on("child_changed", chatChannelChildChanged);
+  elem("textarea#message-input").value = '';
+  const readonly = (await hashRef.child("readonly").get()).val();
+  elem("textarea#message-input").disabled = readonly;
+  elem("textarea#message-input").placeholder = readonly ? "You do not have permissions to send messages in this channel." : "Enter Message...";
 };
 
-if(location.hash === "" || location.hash === "#")
+if(location.hash === '' || location.hash === '#')
   location.hash = "#general";
 else window.onhashchange();

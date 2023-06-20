@@ -4,6 +4,7 @@
 	
 <head>
   <title> Burrito Bison </title>
+  <link rel="stylesheet" href="../style.css" />
   <style>
         *,
         *:before,
@@ -14,25 +15,6 @@
         body {
             margin: 0;
             background: #000000;
-        }
-
-
-        a#back {
-            text-decoration: none;
-            font-size: 1.5rem;
-            color: white;
-            left: 50%;
-            transform: translateX(-50%);
-            text-shadow: 3px 1px var(--theme-clr, rgb(50, 150, 255));
-            position: absolute;
-            top: 0;
-            z-index: 99999;
-        }
-
-        a#back:hover {
-            color: var(--theme-clr, rgb(50, 150, 255));
-            text-shadow: 0 0 4px;
-            transform: translateX(-50%) scale(1.05);
         }
 
         #gameContainer {
@@ -118,8 +100,8 @@
             <div class="full"></div>
         </div>
   </div>
-	<script src="UnityLoader.js"></script>
-	<script src='kongregate_api.js'></script>
+  <script src="../unity/UnityLoader.js"></script>
+  <script src='kongregate_api.js'></script>
   <script>
     var gameInstance = UnityLoader.instantiate("gameContainer", "web.json", {
         onProgress: UnityProgress
