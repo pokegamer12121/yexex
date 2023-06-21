@@ -100,15 +100,13 @@ function sendMessage(e) {
         fixed: true,
         timeout: 1500
       }));
-    } else {
-       SnackBar({
-        message: "Enter A Valid Message!",
-        status: 'error',
-        position: "br",
-        fixed: true,
-        timeout: 1500
-       });
-    }
+    } else SnackBar({
+      message: "Enter A Valid Message!",
+      status: 'error',
+      position: "br",
+      fixed: true,
+      timeout: 1500
+    });
 }
 
 elem('i[class^="fa"]#eye').onclick = function() {
