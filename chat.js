@@ -70,7 +70,7 @@ function createChatMessage(sender, content, timestamp) {
         <img class='profile-pic' src="${sender.photoURL}" alt="Profile Pic" loading="lazy">
         <div class="user-message">
           <p class="username">${(sender.displayName || "User")} <time class="timestamp" datetime="${new Date(parseInt((timestamp || Date.now()))).toISOString()}">${new Date(parseInt((timestamp || Date.now()))).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })}</time></p>
-          <div class="message-content">${replaceArray(content.trim(), ["\&", "\<", "\>", /*/`{3,4} *(\w*)\s+([^`]*)`{3,4}/g,*/ /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g, /@\S+/g], ["&amp;", "&lt;", "&gt;", /*(_, lang, code) => "<pre><code>" + hljs.highlight(code, { language: lang || "plaintext" }).value + "</code></pre>",*/ full => `<a href="${full}">${full}</a>`, full => `<span class='mcolor'>${full}</span>`])}</div>
+          <div class="message-content">${replaceArray(content.trim(), ["\&", "\<", "\>", /*/`{3,4} *(\w*)\s+((?:.|\s)*)`{3,4}/g,*/ /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g, /@\S+/g], ["&amp;", "&lt;", "&gt;", /*(_, lang, code) => "<pre><code>" + hljs.highlight(code, { language: lang || "plaintext" }).value + "</code></pre>",*/ full => `<a href="${full}">${full}</a>`, full => `<span class='mcolor'>${full}</span>`])}</div>
         </div>
       </li>
     `);
