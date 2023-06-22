@@ -16,7 +16,7 @@ const storage = firebase.storage();
 const elem = (query) => document.querySelector(query);
 const elems = (query) => Array.from(document.querySelectorAll(query));
 
-elem("#message-form").addEventListener("submit", sendMessage);
+elem("#message-form").addEventListener("submit", messageSub);
 elem("#message-input").addEventListener("keydown", function(ev) {
   if(ev.key === "Tab") {
     ev.preventDefault();
@@ -40,27 +40,27 @@ function replaceArray(str, find, replace) {
   return replaceString;
 }
 
-function createCategory(name) {
-  elem(`div#categories`).insertAdjacentHTML("beforeend", `
-    <div class="category" data-name="${name}">
-      <label class="name">${name}<input type="checkbox" /></label>
-      <div class="channels-container">
-        <div class="channels"></div>
-      </div>
-    </div>
-  `)
-}
-
 function strToNode(str) {
   const el = document.createElement("div");
   el.insertAdjacentHTML("beforeend", str);
   return el.children[0];
 }
 
+function createCategory(name) {
+  return elem("div#categories").appendChild(strToNode(`
+    <div class="category" data-name="${name}">
+      <label class="name">${name}<input type="checkbox" /></label>
+      <div class="channels-container">
+        <div class="channels"></div>
+      </div>
+    </div>
+  `));
+}
+
 function createChannel(name, type, categoryName) {
-  elem(`div.category[data-name=${categoryName}] div.channels`).insertAdjacentHTML("beforeend", `
+  return elem(`div.category[data-name=${categoryName}] div.channels`).appendChild(strToNode(`
     <a href="#${name}" id="${name}" class="channel" data-type="${type}">${name}</a>
-  `);
+  `));
 }
 
 function createChatMessage(sender, content, timestamp) {
@@ -82,31 +82,49 @@ function extractKeys(keys, from) {
   return Object.fromEntries(Object.entries(from).filter(([key]) => keys.includes(key)));
 }
 
-function sendMessage(e) {
+function errorNotif(msg) {
+  return SnackBar({
+    message: msg,
+    status: "error",
+    position: "br",
+    icon: '!',
+    fixed: true,
+    timeout: 2000
+  });
+}
+
+function sendMessage(user, message, messageInput) {
+  if(message.trim() !== '' && !message.toLowerCase().includes(atob("bmlnZ2Vy"))) {
+    database.ref(`channels/${location.hash.slice(1)}/messages/${Date.now()}`).set({
+      user,
+      message
+    }).then(() => { if(messageInput) messageInput.value = '' }).catch(err => errorNotif(err.message));
+  } else errorNotif("Enter A Valid Message!");
+}
+
+function messageSub(e) {
     e.preventDefault();
 
     const messageInput = elem("#message-input");
     const message = messageInput.value; 
     const user = extractKeys(["displayName", "photoURL", "uid"], auth.currentUser);
 
-    if(messageInput.value.trim() !== '' && !messageInput.value.toLowerCase().includes(atob('bmlnZ2Vy'))) {
-      database.ref(`${location.hash.slice(1)}/${Date.now()}`).set({
-        user,
-        message
-      }).then(() => messageInput.value = '').catch(err => SnackBar({
-        message: err.message,
-        status: 'error',
-        position: "br",
-        fixed: true,
-        timeout: 1500
-      }));
-    } else SnackBar({
-      message: "Enter A Valid Message!",
-      status: 'error',
-      position: "br",
-      fixed: true,
-      timeout: 1500
-    });
+    if(message.startsWith('/')) {
+      const cmdName = message.slice(1).split(' ').shift();
+      const cmdArgs = message.split(' ').slice(1);
+
+      switch(cmdName) {
+        case "tableflip":
+          sendMessage(user, "(╯°□°）╯︵ ┻━┻", messageInput);
+          break;
+        case "shrug":
+          sendMessage(user, "¯\\_(ツ)_/¯", messageInput);
+          break;
+        default:
+          errorNotif("Unknown Command.");
+          break;
+      }
+    } else sendMessage(user, message, messageInput);
 }
 
 elem('i[class^="fa"]#eye').onclick = function() {
@@ -114,12 +132,13 @@ elem('i[class^="fa"]#eye').onclick = function() {
   this.classList.toggle("fa-eye");
   this.classList.toggle("fa-eye-slash");
   this.previousElementSibling.focus();
-};
+}
 
 if("user-email" in localStorage && "user-password" in localStorage) {
   auth.signInWithEmailAndPassword(localStorage.getItem("user-email"), localStorage.getItem("user-password")).then(async userCredential => {
+    loadMessages();
     const user = userCredential.user;
-    const photoRef = storage.ref(`userPhotos/${user.uid}`) || storage.ref("userPhotos/default.png");
+    const photoRef = storage.ref(`userPhotos/${user.uid}`);
     const photoURL = await photoRef.getDownloadURL();
     elem("#user > img.profile-pic").setAttribute("src", photoURL);
     elem("#user > #user-info > p.username").textContent = user.displayName;
@@ -127,19 +146,12 @@ if("user-email" in localStorage && "user-password" in localStorage) {
     elem("#chat").toggleAttribute("hidden");
     scrollChatMessages();
   }).catch(thrownError => { 
-    SnackBar({
-      message: thrownError.message,
-      status: 'error',
-      icon: "!",
-      position: "br",
-      fixed: true,
-      timeout: 2000
-    });
+    errorNotif(thrownError.message);
     console.error(thrownError);
   });
 }
 
-elem("#user-form #form-change").onclick = function() {
+elem("#form-change").onclick = function() {
   if(elem("#user-form").getAttribute("data-mode") === "login") {
     this.textContent = "Login";
     elem("#user-form h1").textContent = "Sign Up";
@@ -150,13 +162,14 @@ elem("#user-form #form-change").onclick = function() {
     elem("#user-form").setAttribute("data-mode", "login");
   }
   elems("#photo-input, #username-input").forEach(v => v.toggleAttribute("required"));
-};
+}
 
 elem("#user-form").onsubmit = function(ev) { 
    ev.preventDefault();
 
    if(this.getAttribute("data-mode").toLowerCase() === "login")
       auth.signInWithEmailAndPassword(elem("#email-input").value, elem("#password-input").value).then(async userCredential => {
+        loadMessages();
         const user = userCredential.user;
         const photoRef = storage.ref(`userPhotos/${user.uid}`);
         const photoURL = await photoRef.getDownloadURL();
@@ -166,23 +179,17 @@ elem("#user-form").onsubmit = function(ev) {
         elem("#chat").toggleAttribute("hidden");
         scrollChatMessages();
       }).catch(thrownError => { 
-        SnackBar({
-          message: thrownError.message,
-          status: 'error',
-          icon: "!",
-          position: "br",
-          fixed: true,
-          timeout: 2000
-        });
+        errorNotif(thrownError.message);
         console.error(thrownError);
       });
    else if(this.getAttribute("data-mode").toLowerCase() === "register")
       auth.createUserWithEmailAndPassword(elem("#email-input").value, elem("#password-input").value).then(async userCredential => {
+        loadMessages();
         const user = userCredential.user;
         const displayName = elem("#username-input").value;
         const photoFile = elem("#photo-input").files[0];
         if(displayName.length > 25 || displayName.toLowerCase().includes(atob('bmlnZ2Vy')))
-          throw new TypeError((displayName.length > 25 ? "Username is too long! " : '') + (displayName.toLowerCase().includes(atob('bmlnZ2Vy')) ? "That username is already in use!" : ''));
+          throw new TypeError((displayName.length > 25 ? "Username is too long! " : '') + (displayName.toLowerCase().includes(atob("bmlnZ2Vy")) ? "That username is already in use!" : ''));
         const photoRef = (await Promise.resolve(storage.ref("userPhotos").child(user.uid).put(photoFile))).ref;
         const photoURL = await photoRef.getDownloadURL();
         user.updateProfile({ displayName, photoURL });
@@ -192,21 +199,14 @@ elem("#user-form").onsubmit = function(ev) {
         elem("#chat").toggleAttribute("hidden");
         scrollChatMessages();
       }).catch(thrownError => { 
-        SnackBar({
-          message: thrownError.message,
-          status: 'error',
-          icon: "!",
-          position: "br",
-          fixed: true,
-          timeout: 2500
-        });
+        errorNotif(thrownError.message);
         console.error(thrownError);
       });
       if(this.querySelector("button.toggle-btn").classList.contains("active")) {
         localStorage.setItem("user-email", elem("#email-input").value);
         localStorage.setItem("user-password", elem("#password-input").value);
       }
-};
+}
 
 function openFilePicker({ accept="*", multiple=false }) {
 	const fileInput = document.createElement("input");
@@ -216,24 +216,22 @@ function openFilePicker({ accept="*", multiple=false }) {
 	if(fileInput.showPicker)
     fileInput.showPicker();
   else fileInput.click();
-	return new Promise(res => {
-		fileInput.addEventListener("change", () => res( options.multiple ? Array.from(fileInput.files) : fileInput.files[0] ));
+	return new Promise((res) => {
+		fileInput.addEventListener("change", () => res( multiple ? Array.from(fileInput.files) : fileInput.files[0] ));
 	});
 }
 
 elem("div#user img.profile-pic").onclick = async function() {
-  const file = await openFilePicker( { accept: "image/png, image/jpeg" } );
+  const file = await openFilePicker({ accept: "image/png, image/jpeg" });
   const photoRef = storage.ref("userPhotos/" + auth.currentUser.uid);
   photoRef.put(file);
   const photoURL = await photoRef.getDownloadURL();
-  auth.currentUser.updateProfile( { photoURL } );
+  auth.currentUser.updateProfile({ photoURL });
   this.src = photoURL;
-};
+}
 
 function chatChannelChildAdded(snapshot) {
-  const val = snapshot.val();
-  if(typeof val === "object")
-    createChatMessage(val.user, val.message, snapshot.key);
+  createChatMessage(snapshot.val().user, snapshot.val().message, snapshot.key);
 }
   
 function chatChannelChildRemoved(snapshot) {
@@ -255,26 +253,25 @@ async function chatChannelChildChanged(snapshot) {
 }
 
 let hashRef;
-  
-window.onhashchange = async () => {
+
+async function loadMessages() {
+  if(location.hash === '' || location.hash.trim() === "#") location.hash = "general";
   if(hashRef) {
-    hashRef.off("child_added", chatChannelChildAdded);
-    hashRef.off("child_removed", chatChannelChildRemoved);
-    hashRef.off("child_changed", chatChannelChildChanged);
+    hashRef.child("messages").off("child_added", chatChannelChildAdded);
+    hashRef.child("messages").off("child_removed", chatChannelChildRemoved);
+    hashRef.child("messages").off("child_changed", chatChannelChildChanged);
   }
   elem("ul#channel-content").replaceChildren();
-  (elem("a.channel[data-type]:target") || elem(`a.channel[data-type]${location.hash}`)).closest("div.category[data-name]").querySelector("input[type='checkbox']").checked = true;
+  (elem(`a.channel[data-type]${location.hash}`) || createChannel(location.hash.slice(1), "chat", "chats")).closest("div.category[data-name]").querySelector("input[type='checkbox']").checked = true;
   elem("ul#channel-content").setAttribute("data-channel", location.hash.slice(1));
-  hashRef = database.ref(`${location.hash.slice(1)}/`);
-  hashRef.on("child_added", chatChannelChildAdded);
-  hashRef.on("child_removed", chatChannelChildRemoved);
-  hashRef.on("child_changed", chatChannelChildChanged);
-  elem("textarea#message-input").value = '';
-  const readonly = (await hashRef.child("readonly").get()).val();
-  elem("textarea#message-input").disabled = readonly;
-  elem("textarea#message-input").placeholder = readonly ? "You do not have permissions to send messages in this channel." : "Enter Message...";
-};
-
-if(location.hash === '' || location.hash === '#')
-  location.hash = "#general";
-else window.onhashchange();
+  hashRef = database.ref(`channels/${location.hash.slice(1)}`);
+  hashRef.child("messages").on("child_added", chatChannelChildAdded);
+  hashRef.child("messages").on("child_removed", chatChannelChildRemoved);
+  hashRef.child("messages").on("child_changed", chatChannelChildChanged);
+  elem("#message-input").value = '';
+  const readonly = (await hashRef.child("readonly").get()).val() || false;
+  elem("#message-input").disabled = readonly;
+  elem("#message-input").placeholder = readonly ? "You do not have permissions to send messages in this channel." : "Enter Message...";
+}
+  
+window.onhashchange = loadMessages;
