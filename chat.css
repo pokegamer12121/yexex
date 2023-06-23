@@ -102,8 +102,8 @@ form#user-form[data-mode="login"] :is(input#username-input, input[type="file"]#p
   display: none;
 }
 
-:is(div#chat, form#user-form)[hidden] {
-  display: none;
+[hidden] {
+  display: none !important;
 }
 
 div#chat {
@@ -132,18 +132,22 @@ ul#channel-content {
   margin-block: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
   overflow-y: auto;
-  padding: 0.125rem;
   scroll-behavior: smooth;
 }
 
 li.chat-message, div#user {
   display: flex;
+  padding-block: 0.1rem;
 }
 
 li.chat-message:first-child {
   margin-top: auto;
+}
+
+li.chat-message[data-status="sent"]:hover {
+  background-color: #111;
 }
 
 div.user-message, div#user-info {
@@ -159,10 +163,6 @@ div.user-message, div#user-info {
   tab-size: 2;
 }
 
-.message-content * {
-  margin: 0 !important;
-}
-
 .message-content a {
   color: dodgerblue;
   transition: color 300ms;
@@ -172,11 +172,28 @@ div.user-message, div#user-info {
   color: deepskyblue;
 }
 
-.message-content pre {
+/* .message-content pre {
   border: 1px solid #2e2e2e;
   padding: 0.5em;
   background-color: #1e1e1e;
   border-radius: 0.25rem;
+} */
+
+p.username span.bot::before {
+  content: "\f00c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 0.5rem;
+  font-weight: 900;
+  margin-right: 0.2rem;
+}
+
+p.username span.bot {
+  color: white;
+  padding: 0.05rem 0.15rem;
+  background-color: royalblue;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  border-radius: 0.2rem;
 }
 
 p.username time.timestamp {
