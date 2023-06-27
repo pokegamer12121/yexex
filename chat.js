@@ -11,7 +11,17 @@ const database = firebase.database();
 const auth = firebase.auth();
 const storage = firebase.storage();
 
+/**
+ * @param {string} query The CSS-like query to search for.
+ * @returns {Element?} The first element that matches the query, or `null` if no elements match the provided query.
+ * @example
+ * elem("h1#heading.black > span:nth-child(2) + i[data-name='italic'] ~ strong:last-child")
+*/
 const elem = (query) => document.querySelector(query);
+/**
+ * @param {string} query The CSS query to search for.
+ * @returns {Element[]} An array of elements matching the query, or an empty array if no elements match the provided query.
+*/
 const elems = (query) => Array.from(document.querySelectorAll(query));
 const channelContent = elem("ul#channel-content");
 
@@ -21,13 +31,22 @@ elem("#message-input").addEventListener("keydown", function(ev) {
     ev.preventDefault();
     this.setRangeText('\t', this.selectionStart, this.selectionEnd, "end");
   }
-})
+});
+
+/** @description If there are list items (chat messages) present within ***`ul#channel-content`***, it will be scrolled by a certain amount so it can be successfully viewed by the user. */
 
 function scrollChatMessages() {
   const liElems = elems("ul#channel-content > li");
   if(liElems.length > 0)
     liElems.at(-1).scrollIntoView();
 }
+
+/**
+ * @param {string} str The string to perform the replace operation on.
+ * @param {(string|RegExp)[]} find An array of strings and/or regexes for which to look for matches in `str`.
+ * @param {string[]} replace An array of strings to replace respective matches from `find` with.
+ * @returns {string} `str` with all of the matches of each item in `find` in `str` replaced with all of the strings in `replace`.
+*/
 
 function replaceArray(str, find, replace) {
   var replaceString = str;
@@ -39,11 +58,21 @@ function replaceArray(str, find, replace) {
   return replaceString;
 }
 
+/**
+ * @param {string} str String to convert
+ * @returns {Element} Returns a element node that is constructed from the markup inside `str` and sanitized.
+*/
+
 function strToNode(str) {
   const el = document.createElement("div");
-  el.insertAdjacentHTML("beforeend", str);
+  el.insertAdjacentHTML("beforeend", str.trim());
   return el.children[0];
 }
+
+/**
+ * @param {string} name The name of the new chat category.
+ * @returns {HTMLDivElement} The `div` element that represents the category after it is appended to `div#categories`.
+*/
 
 function createCategory(name) {
   return elem("div#categories").appendChild(strToNode(`
@@ -56,35 +85,82 @@ function createCategory(name) {
   `));
 }
 
+/**
+ * @param {string} name The name of the channel.
+ * @param {"chat"|"list"|"news"} type The type of the channel.
+ * @param {string} categoryName The name of the category to add the channel to.
+ * @returns {HTMLAnchorElement} The `a` element that represents the new channel after it is appended to the `div.channels` element within the category with the name of `categoryName`.
+*/
+
 function createChannel(name, type, categoryName) {
   return elem(`div.category[data-name=${categoryName}] div.channels`).appendChild(strToNode(`
     <a href="#${name}" id="${name}" class="channel" data-type="${type}">${name}</a>
   `));
 }
 
-function createChatMessage(content, sender={}, timestamp=Date.now()) {
+const ownerUIDs = ["pZ9mJ2ZI3HOpHHD1LfEvGAxJSAK2"];
+
+/**
+ * @param {string} content The content of `sender`'s message
+ * @param {{ displayName: string, photoURL: string, uid: string }} sender The sender of the chat message, the `displayName` being the username of the sender, the `photoURL` being the url to the profile picture of the sender, the `uid` being the unique user id assigned to the sender.
+ * @param {number} timestamp a number of milliseconds elapsed since the *epoch* **(12:00 AM, January 1, 1970, UTC.)** that is converted into a `Date` object.
+*/
+
+function createChatMessage(content, sender, timestamp) {
   if(content.trim() !== '') {
     const prevMax = channelContent.scrollHeight - channelContent.clientHeight;
     channelContent.insertAdjacentHTML("beforeend", `
-      <li class="chat-message" data-status="${(sender.uid || '') === auth.currentUser.uid ? 'sent' : 'received'}" data-timestamp="${(timestamp || Date.now())}"> 
-        <img class='profile-pic' src="${(sender.photoURL || "./favicon.png")}" alt="Profile Pic" loading="lazy">
+      <li class="chat-message" data-status="${sender.uid === auth.currentUser.uid ? 'sent' : 'received'}" data-timestamp="${timestamp}"> 
+        <img class='profile-pic' src="${sender.photoURL}" alt="Profile Pic" loading="lazy">
         <div class="user-message">
-          <p class="username">${(sender.displayName || "Chat Bot <span class='bot'>BOT</span>")} <time class="timestamp" datetime="${new Date(timestamp).toISOString()}">${new Date(timestamp).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })}</time></p>
-          <div class="message-content">${replaceArray(content.trim(), ["\&", "\<", "\>", /*/`{3,4} *(\w*)\s+((?:.|\s)*)`{3,4}/g,*/ /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g, /@\S+/g], ["&amp;", "&lt;", "&gt;", /*(_, lang, code) => "<pre><code>" + hljs.highlight(code, { language: lang || "plaintext" }).value + "</code></pre>",*/ full => `<a href="${full}">${full}</a>`, full => `<span class='mcolor'>${full}</span>`])}</div>
+          <p class="username">${sender.displayName + (ownerUIDs.includes(sender.uid) ? " <span class='owner'>Owner</span>" : '')} <time class="timestamp" datetime="${new Date(timestamp).toISOString()}">${new Date(timestamp).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })}</time></p>
+          <div class="message-content">${replaceArray(content.trim(), ["\&", "\<", "\>", /*/`{3,4} *(\w*)\s+((?:.|\s)*)`{3,4}/g,*/ /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)/g, /@\S+/g], ["&amp;", "&lt;", "&gt;", /*(_, lang, code) => "<pre><code>" + hljs.highlight(code, { language: lang || "plaintext" }).value + "</code></pre>",*/ full => `<a href="${full}" target="_blank">${full}</a>`, full => `<span class='mcolor'>${full}</span>`])}</div>
         </div>
       </li>
     `);
-    if(channelContent.scrollTop === prevMax || (sender.uid || '') === auth.currentUser.uid)
+    if(channelContent.scrollTop === prevMax || sender.uid === auth.currentUser.uid)
       scrollChatMessages();
   }
 }
 
-function extractKeys(keys, from) {
-  return Object.fromEntries(Object.entries(from || {}).filter(([key]) => keys.includes(key)));
+/**
+ * @param {string} content The content of the bot's message
+ * @param {string=} botName The optional name for the bot. Defaults to "Chat Bot."
+ * @param {string=} photoURL The optional url pointing to the preferred profile picture for the bot. Defaults to "./favicon.png."
+*/
+
+function createBotMessage(content, botName="Chat Bot", photoURL="./favicon.png") {
+  if(content.trim() !== '') {
+    channelContent.insertAdjacentHTML("beforeend", `
+      <li class="chat-message" data-status="received" data-timestamp="${Date.now()}"> 
+        <img class='profile-pic' src="${photoURL}" alt="Profile Pic" loading="lazy">
+        <div class="user-message">
+          <p class="username">${botName} <span class='bot'>Bot</span> <time class="timestamp" datetime="${new Date().toISOString()}">${new Date().toLocaleString('en-US', { dateStyle: "short", timeStyle: "short" })}</time></p>
+          <div class="message-content">${content.trim()}<span class='reminder'><i class='fas fa-eye'></i> Only you can see this.</span></div>
+        </div>
+      </li>
+    `);
+    scrollChatMessages();
+  }
 }
 
+/**
+ * @param {string[]} keys An array of keys to extract from `object`.
+ * @param {object} object The object to extract the keys from.
+ * @returns {object} `object` with the only the keys specified in `keys` included and all other omitted.
+*/
+
+function extractKeys(keys, object) {
+  return Object.fromEntries(Object.entries(object).filter(([key]) => keys.includes(key)));
+}
+
+/**
+ * @description Display a fixed error snackbar notification that stays for 2 seconds on the bottom right of the screen with a message of `msg`
+ * @param {string} msg The message to display on the snackbar notification. 
+*/
+
 function errorNotif(msg) {
-  return SnackBar({
+  SnackBar({
     message: msg,
     status: "error",
     position: "br",
@@ -94,40 +170,93 @@ function errorNotif(msg) {
   });
 }
 
+/**
+ * @description if `message` is not empty (i.e. all whitespace or `length` of 0) and it doesn't contain `atob("bmlnZ2Vy")`, it will be added to the messages of the current channel with a key of `Date.now()` and having the properties of the current user (`auth.currentUser`) and `message`. The `#message-input` element will be cleared if `clearMessageInput` is `true`, and any errors that are thrown will print as notifications. An error notification also occurs if the first condition evaluates to `false`.
+ * @param {string} message The message for `auth.currentUser` to send.
+ * @param {boolean=} clearMessageInput A boolean that if `true`, clears the `#message-input` element. Defaults to `true`.
+*/
+
 function sendMessage(message, clearMessageInput=true) {
   if(message.trim() !== '' && !message.toLowerCase().includes(atob("bmlnZ2Vy"))) {
     database.ref(`channels/${location.hash.slice(1)}/messages/${Date.now()}`).set({
       user: extractKeys(["displayName", "photoURL", "uid"], auth.currentUser),
       message
-    }).then(() => clearMessageInput ? elem("#message-input").value = '' : null).catch(err => errorNotif(err.message));
+    }).then(() => clearMessageInput && (elem("#message-input").value = '')).catch(err => errorNotif(err.message));
   } else errorNotif("Enter A Valid Message!");
 }
 
-const commands = {
-  "shrug": function() {
-    sendMessage([...arguments].join(' ') + " ¯\\_(ツ)_/¯");
-  },
-  "tableflip": function() {
-    sendMessage([...arguments].join(' ') + " (╯°□°）╯︵ ┻━┻");
-  },
-  "help": function() {
-    createChatMessage("Commands:\n" + Object.keys(this).map(v => `\t>\t/${v}`).join('\n'));
+String.prototype.if = function(value) {
+  if(value) return this.valueOf();
+  return '';
+}
+
+/**
+ * @typedef {object} CommandArgument
+ * @prop {string} name The name of the argument.
+ * @prop {boolean=} optional A boolean that represents if the argument is optional or not. Defaults to `false`.
+*/
+
+/**
+ * @typedef {object} Command
+ * @prop {string} name The name of the command.
+ * @prop {string[]} aliases All aliases or alternative names of the command.
+ * @prop {CommandArgument[]} args An array of objects that represent argument definitions for the command.
+ * @prop {CommandCallback} callback The callback function that is executed when the command is recognized.
+*/
+
+/**
+ * @callback CommandCallback
+ * @param {object} argsObject The object that contains the named arguments with the values as specified in the command calling.
+*/
+
+/** @type {Command[]} */
+
+const commands = [{
+  name: "shrug",
+  aliases: [],
+  args: [{
+    name: "message",
+    optional: true
+  }],
+  callback: ({ message='' }) => {
+    sendMessage(message + " ¯\\_(ツ)_/¯");
   }
-};
+}, {
+  name: "tableflip",
+  aliases: ["fliptable"],
+  args: [{
+    name: "message",
+    optional: true
+  }],
+  callback: ({ message='' }) => {
+    sendMessage(message + " (╯°□°）╯︵ ┻━┻");
+  }
+}, {
+  name: "help",
+  aliases: ["helpme"],
+  args: [],
+  callback: () => {
+    createBotMessage("Commands: <ul>" + commands.map(({ name, aliases, args }) => `<li>/${name + (' ' + args.map(({ name, optional }) => `&lt;${name + '?'.if(optional || false)}&gt;`).join(' ')).if(args.length > 0) + (" | Aliases: " + aliases.join(', ')).if(aliases.length > 0)}</li>`).join('') + "</ul>");
+  }
+}];
+
+/**
+ * @description Listens for the submit event on `#message-form` and prevents the default redirect from happening. It then pulls the message from the `#message-input` element's value and if it starts with a '/' character, it is recognized as a command and parsed and executed as one, if not, `sendMessage` is called with the pulled message as its singular argument.
+ * @param {SubmitEvent} e The event that is fired when the `#message-form` element is submitted.
+ */
 
 function messageSub(e) {
     e.preventDefault();
 
-    const messageInput = elem("#message-input");
-    const message = messageInput.value; 
+    const message = elem("#message-input").value; 
 
     if(message.startsWith('/')) {
       const cmdName = message.slice(1).split(' ').shift().toLowerCase();
       const cmdArgs = message.split(' ').slice(1);
 
-      if(Object.keys(commands).includes(cmdName)) 
-        commands[cmdName](...cmdArgs);
-      else errorNotif("Unknown Command.");
+      if(cmd = commands.find(({ name, aliases }) => name === cmdName || aliases.includes(cmdName)))
+        cmd.callback(Object.fromEntries(cmd.args.map(({ name }, i) => [name, cmdArgs[i]])));
+      else createBotMessage("Unknown Command. Use /help or /helpme for a list of commands.");
     } else sendMessage(message);
 }
 
@@ -165,6 +294,11 @@ elem("#form-change").onclick = function() {
   elems("#photo-input, #username-input").forEach(v => v.toggleAttribute("required"));
 }
 
+/**
+ * @description If the user is on the login screen then sign ing with the provided credentials and do necessary operations. If the user is on the register screen, then the user is signed up with provided credentials and necessary operations are performed. If **Remember Me** is toggled, then save the user's credentials for the next visit to the website.
+ * @param {SubmitEvent} ev The event fired when `#user-form` is submitted.
+ */
+
 elem("#user-form").onsubmit = function(ev) { 
    ev.preventDefault();
 
@@ -197,13 +331,19 @@ elem("#user-form").onsubmit = function(ev) {
         elem("#chat").toggleAttribute("hidden");
         scrollChatMessages();
       }).catch(thrownError => errorNotif(thrownError.message));
-      if(this.querySelector("button.toggle-btn").classList.contains("active")) {
-        localStorage.setItem("user-email", elem("#email-input").value);
-        localStorage.setItem("user-password", elem("#password-input").value);
-      }
+  if(this.querySelector("button.toggle-btn").classList.contains("active")) {
+    localStorage.setItem("user-email", elem("#email-input").value);
+    localStorage.setItem("user-password", elem("#password-input").value);
+  }
 }
 
-function openFilePicker({ accept="*", multiple=false }) {
+/**
+ * @description Opens a file picker. A promise is returned that resolves one `File` if `multiple` is `false`, otherwise an array of the selected `File`s.
+ * @param {{ accept: string, multiple: boolean }=} options If `options.multiple` is `true`, then allow selection of multiple files, `options.accept` is a comma seperated list of MIME types that are allowed when picking the file. `options.multiple` defaults to `false` and `options.accept` defaults to `*`.
+ * @returns {Promise<File|File[]>}
+*/
+
+function openFilePicker({ accept="*", multiple=false }={}) {
 	const fileInput = document.createElement("input");
 	fileInput.type = "file";
   fileInput.accept = accept;
@@ -220,12 +360,22 @@ elem("div#user img.profile-pic").onclick = async function() {
   const file = await openFilePicker({ accept: "image/png, image/jpeg" });
   const photoRef = storage.ref("userPhotos/" + auth.currentUser.uid);
   await photoRef.put(file);
-  this.src = this.src + '?' + Date.now();
+  this.src = this.src + '?' + Date.now(); // cache bust
 }
+
+/**
+ * @description Fires when any child (message) of the current channel is added from another user or from the console. Also fires when a new channel a selected, and it's children (messages) are initialized.
+ * @param {DataSnapshot} snapshot The snapshot for the added or initialized message.
+*/
 
 function chatChannelChildAdded(snapshot) {
   createChatMessage(snapshot.val().message, snapshot.val().user, Number(snapshot.key));
 }
+
+/**
+ * @description Fires when any child (message) of the current channel is removed from the console.
+ * @param {DataSnapshot} snapshot The snapshot for the removed message.
+*/
   
 function chatChannelChildRemoved(snapshot) {
   for(const listItem of elems("ul#channel-content > li")) {
@@ -233,6 +383,11 @@ function chatChannelChildRemoved(snapshot) {
       listItem.remove();
   }
 }
+
+/**
+ * @description Fires when any child (message) of the current channel is modified from the console.
+ * @param {DataSnapshot} snapshot The snapshot for the changed message.
+*/
   
 function chatChannelChildChanged(snapshot) {
   if(messageElem = elems("ul#channel-content > li").find(v => v.getAttribute('data-timestamp') === snapshot.key)) {
@@ -243,7 +398,10 @@ function chatChannelChildChanged(snapshot) {
   }
 }
 
+/** @type {Reference} */
 let hashRef;
+
+/** @description Loads and displays the messages of the current channel (dependent on ~~`window.`~~`location.hash`) and if the channel is read-only, disable use of message input. */
 
 async function loadMessages() {
   if(location.hash === '' || location.hash.trim() === "#") location.hash = "general";
