@@ -163,12 +163,16 @@ div.user-message, div#user-info {
   tab-size: 2;
 }
 
-.message-content a {
+.message-content * {
+  margin-block: 0 !important;
+}
+ 
+.message-content :is(a, button) {
   color: dodgerblue;
   transition: color 300ms;
 }
 
-.message-content a:hover {
+.message-content :is(a, button):hover {
   color: deepskyblue;
 }
 
@@ -179,7 +183,7 @@ div.user-message, div#user-info {
   border-radius: 0.25rem;
 } */
 
-p.username span.bot::before {
+p.username span::before {
   content: "\f00c";
   font-family: "Font Awesome 5 Free";
   font-size: 0.5rem;
@@ -187,18 +191,29 @@ p.username span.bot::before {
   margin-right: 0.2rem;
 }
 
-p.username span.bot {
+p.username span {
   color: white;
   padding: 0.05rem 0.15rem;
-  background-color: royalblue;
-  text-transform: uppercase;
   font-size: 0.75rem;
   border-radius: 0.2rem;
 }
 
-p.username time.timestamp {
+p.username span.bot {
+  background-color: royalblue;
+}
+
+p.username span.owner {
+  background-color: purple;
+}
+
+p.username time.timestamp, .message-content span.reminder {
   font-size: 0.625rem;
   color: gray;
+}
+
+.message-content span.reminder {
+  user-select: none;
+  display: block;
 }
 
 aside#sidebar {
