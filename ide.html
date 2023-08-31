@@ -103,18 +103,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
   <script type="module">
-    import expand, * as emmet from 'https://cdnjs.cloudflare.com/ajax/libs/emmet/2.4.3/emmet.es.min.js';
+    import expand from 'https://cdnjs.cloudflare.com/ajax/libs/emmet/2.4.3/emmet.es.min.js';
     if(document.referrer.endsWith('d7y27b12c778cb372k2lga0p47h.html')) 
-      setTimeout(() => {
-        SnackBar({
-          message: "Redirected From Old Link",
-          status: 'info',
-          theme: 'darker',
-          position: "br",
-          fixed: true,
-          timeout: 1500
-        });
-      }, 3000);
+      SnackBar({
+        message: "Redirected From Old Link",
+        status: 'info',
+        theme: 'darker',
+        position: "br",
+        fixed: true,
+        timeout: 2000
+      });
 
     // Selection Change Polyfill
     (() => {
@@ -296,9 +294,8 @@
       const lineElements = Array.from(gutter.children);
       Array.from(result_element.querySelectorAll("span.line")).forEach((el, lineNumber) => {
         const height = el.getBoundingClientRect().height;
-        if(lineElements[lineNumber].getBoundingClientRect().height !== height && !Array.from(el.children).find(v => v.matches("span.line"))) {
+        if(lineElements[lineNumber].getBoundingClientRect().height !== height && !Array.from(el.children).find(v => v.matches("span.line")))
           lineElements[lineNumber].style.height = height + 'px';
-        }
       });
 
       Array.from(result_element.children)[curLineIndex]?.scrollIntoViewIfNeeded();

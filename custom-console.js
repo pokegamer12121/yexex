@@ -29,7 +29,7 @@ const docAsStr = window.parent.document.querySelector("#test").getAttribute("src
 
 function encodeHl(value) {
     if(value instanceof Error) { 
-        const [ lineNumber, columnNumber ] = value.stack.slice(value.stack.lastIndexOf("about:srcdoc:") + 13).split(":").map(v => Number(v));
+        const [ lineNumber, columnNumber ] = value.stack.slice(value.stack.lastIndexOf("about:srcdoc:") + 13).split(":").map(Number);
         window.parent.document.querySelector(".editor-container[data-lang='js'] code").children[lineNumber - (docAsStr.substr(0, docAsStr.lastIndexOf("<script")).split("\n").length + 2)].classList.add("error");
         return `${value.name}: ${value.message}\n\tat ide.js:${lineNumber - (docAsStr.substr(0, docAsStr.lastIndexOf("<script")).split("\n").length + 1)}:${columnNumber}`; 
     }

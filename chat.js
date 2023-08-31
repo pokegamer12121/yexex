@@ -155,7 +155,7 @@ function extractKeys(keys, object) {
 }
 
 /**
- * @description Display a fixed error snackbar notification that stays for 2 seconds on the bottom right of the screen with a message of `msg`
+ * @description Display a fixed error snackbar notification that stays for 2 seconds on the bottom right of the screen with a message of `msg`.
  * @param {string} msg The message to display on the snackbar notification. 
 */
 
@@ -325,6 +325,7 @@ elem("#user-form").onsubmit = function(ev) {
         const photoRef = (await storage.ref("userPhotos").child(user.uid).put(photoFile)).ref;
         const photoURL = await photoRef.getDownloadURL();
         user.updateProfile({ displayName, photoURL });
+        auth.updateCurrentUser(user);
         elem("#user img.profile-pic").setAttribute("src", photoURL);
         elem("#user p.username").textContent = displayName;
         this.toggleAttribute("hidden");
@@ -365,7 +366,7 @@ elem("div#user img.profile-pic").onclick = async function() {
 
 /**
  * @description Fires when any child (message) of the current channel is added from another user or from the console. Also fires when a new channel a selected, and it's children (messages) are initialized.
- * @param {DataSnapshot} snapshot The snapshot for the added or initialized message.
+ * @param {firebase.database.DataSnapshot} snapshot The snapshot for the added or initialized message.
 */
 
 function chatChannelChildAdded(snapshot) {
@@ -374,7 +375,7 @@ function chatChannelChildAdded(snapshot) {
 
 /**
  * @description Fires when any child (message) of the current channel is removed from the console.
- * @param {DataSnapshot} snapshot The snapshot for the removed message.
+ * @param {firebase.database.DataSnapshot} snapshot The snapshot for the removed message.
 */
   
 function chatChannelChildRemoved(snapshot) {
@@ -386,7 +387,7 @@ function chatChannelChildRemoved(snapshot) {
 
 /**
  * @description Fires when any child (message) of the current channel is modified from the console.
- * @param {DataSnapshot} snapshot The snapshot for the changed message.
+ * @param {firebase.database.DataSnapshot} snapshot The snapshot for the changed message.
 */
   
 function chatChannelChildChanged(snapshot) {
@@ -398,7 +399,7 @@ function chatChannelChildChanged(snapshot) {
   }
 }
 
-/** @type {Reference} */
+/** @type {firebase.database.Reference} */
 let hashRef;
 
 /** @description Loads and displays the messages of the current channel (dependent on ~~`window.`~~`location.hash`) and if the channel is read-only, disable use of message input. */
